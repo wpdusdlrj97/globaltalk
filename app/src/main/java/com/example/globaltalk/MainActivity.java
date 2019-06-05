@@ -1,5 +1,6 @@
 package com.example.globaltalk;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     String mJsonString;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,10 +84,8 @@ public class MainActivity extends AppCompatActivity {
         //task.execute( mEditTextSearchKeyword1.getText().toString(), mEditTextSearchKeyword2.getText().toString());
         task.execute("http://54.180.122.247/global_communication/mypage.php", "");
 
+
     }
-
-
-
 
 
 
@@ -222,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("티칭홀더",TeachHolder);
                 bundle.putString("LearnHolder", LearnHolder);
                 Log.d("러닝홀더",LearnHolder);
+                bundle.putString("NameHolder", NameHolder);
+                Log.d("이름홀더",NameHolder);
 
 
 

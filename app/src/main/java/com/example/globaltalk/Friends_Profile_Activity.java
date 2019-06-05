@@ -39,6 +39,8 @@ public class Friends_Profile_Activity extends AppCompatActivity {
     private static final String TAG_TEACH = "teach";
     private static final String TAG_LEARN = "learn";
 
+    private static final String TAG_CONTENT = "content";
+
 
     private static final String TAG_IMAGE1 ="image1";
     private static final String TAG_IMAGE2 ="image2";
@@ -66,6 +68,8 @@ public class Friends_Profile_Activity extends AppCompatActivity {
     //배울 언어
     private TextView friend_learn;
 
+    private TextView friends_intro;
+
     public static final String UserEmail = "";
 
     private ImageView friend_img1;
@@ -86,6 +90,12 @@ public class Friends_Profile_Activity extends AppCompatActivity {
 
         friend_name = (TextView) findViewById(R.id.friend_name);
         friend_age = (TextView) findViewById(R.id.friend_age);
+
+        friends_intro = (TextView) findViewById(R.id.friends_intro);
+
+
+
+
         //pf_sex = (TextView)rootView.findViewById(R.id.pf_sex);
         //pf_email = (TextView)rootView.findViewById(R.id.pf_email);
         friend_teach = (TextView) findViewById(R.id.friend_teach);
@@ -239,6 +249,9 @@ public class Friends_Profile_Activity extends AppCompatActivity {
                 String teach = item.getString(TAG_TEACH);
                 String learn = item.getString(TAG_LEARN);
 
+                String content = item.getString(TAG_CONTENT);
+
+
                 String image1 = item.getString(TAG_IMAGE1);
                 String image2 = item.getString(TAG_IMAGE2);
                 String image3 = item.getString(TAG_IMAGE3);
@@ -282,6 +295,12 @@ public class Friends_Profile_Activity extends AppCompatActivity {
                 //pf_sex.setText(sex);
                 friend_teach.setText(teach);
                 friend_learn.setText(learn);
+
+                if(content.equals("null")){
+                    friends_intro.setText("");
+                }else{
+                    friends_intro.setText(content);
+                }
 
 
                 //mArrayList.add(hashMap);

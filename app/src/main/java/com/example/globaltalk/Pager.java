@@ -33,7 +33,9 @@ public class Pager extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
+                //게시물 업로드하는 tab1에 필요한 정보 - email, name
                 Tab1 tab1 = new Tab1();
+                tab1.setArguments(bundle);
                 return tab1;
             case 1:
                 Tab2 tab2 = new Tab2();

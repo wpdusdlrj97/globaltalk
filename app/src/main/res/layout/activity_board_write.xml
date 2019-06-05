@@ -48,12 +48,16 @@
         android:gravity="top"
         android:background="@drawable/black"/>
 
-    <ImageView
-        android:id="@+id/board_write_image1"
-        android:layout_width="90dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:background="#eeeeee" />
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
 
+    </android.support.v7.widget.RecyclerView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,33 +71,14 @@
             android:src="@drawable/image"
             android:layout_weight="1"/>
 
-        <ImageView
-            android:id="@+id/board_write_camera"
-            android:layout_width="40dp"
+        <TextView
+            android:layout_width="338dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
-            android:src="@drawable/camera" />
+            android:gravity="center"
+            android:text="이미지를 첨부하세요"
+            android:textColor="#050505"
+            android:textSize="24sp" />
 
-        <ImageView
-            android:id="@+id/board_write_video"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/video"
-            android:layout_weight="1"/>
-
-        <ImageView
-            android:id="@+id/board_write_mic"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/mic"
-            android:layout_weight="1"/>
-
-        <ImageView
-            android:id="@+id/board_write_translate"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/translate"
-            android:layout_weight="1"/>
 
 
     </LinearLayout>

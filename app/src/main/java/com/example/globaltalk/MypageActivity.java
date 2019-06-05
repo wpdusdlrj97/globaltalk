@@ -166,9 +166,9 @@ public class MypageActivity extends AppCompatActivity {
 
 
 
-        //로그인할 때 받아온 이메일 값
-        Intent intent = getIntent();
-        EmailHolder = intent.getStringExtra(Tab5.UserEmail);
+        //Tab5로부터 받아온 값
+        Intent intent5 = getIntent();
+        EmailHolder = intent5.getStringExtra(Tab5.UserEmail);
 
 
 
@@ -1042,9 +1042,13 @@ public class MypageActivity extends AppCompatActivity {
                 String image2 = item.getString(TAG_IMAGE2);
                 String image3 = item.getString(TAG_IMAGE3);
 
+                if(content.equals("null")){
+                    mypage_intro.setText("");
+                }else{
+                    mypage_intro.setText(content);
+                }
 
 
-                mypage_intro.setText(content);
 
 
 

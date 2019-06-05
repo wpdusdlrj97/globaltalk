@@ -188,11 +188,11 @@ public class Tab5 extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), MypageActivity.class);
+                Intent intent5 = new Intent(getActivity(), MypageActivity.class);
 
-                intent.putExtra(UserEmail, EmailHolder);
+                intent5.putExtra(UserEmail, EmailHolder);
                 //intent.putExtra(UserEmail, email);
-                startActivity(intent);
+                startActivity(intent5);
             }
         });
 
@@ -402,7 +402,14 @@ public class Tab5 extends Fragment {
                 //pf_sex.setText(sex);
                 mypage_teach.setText(teach);
                 mypage_learn.setText(learn);
-                mypage_intro.setText(content);
+
+                if(content.equals("null")){
+                    mypage_intro.setText("");
+                }else{
+                    mypage_intro.setText(content);
+                }
+
+
 
 
 
