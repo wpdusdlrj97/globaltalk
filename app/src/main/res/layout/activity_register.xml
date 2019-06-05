@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="12dp"
+    android:paddingTop="12dp"
+    android:paddingRight="12dp">
+
+    <!--회원가입 텍스트-->
+    <TextView
+        android:id="@+id/signup_text"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="회원가입"
+        android:textColor="#050505"
+        android:textSize="24sp" />
+
+
+    <!--프로필 사진-->
+
+    <ImageView
+        android:id="@+id/register_image"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:layout_marginBottom="30dp"
+        android:background="#eeeeee"
+        android:gravity="center"
+        android:layout_gravity="center"/>
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--회원가입 이메일-->
+        <EditText
+            android:id="@+id/register_email"
+            android:layout_width="293dp"
+            android:layout_height="50dp"
+            android:maxLength="30"
+            android:hint="이메일"
+            android:inputType="textEmailAddress" />
+
+        <Button
+            android:id="@+id/btn_email_check"
+            android:text="중복체크"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+    <!--회원가입 비밀번호-->
+
+    <EditText
+        android:id="@+id/register_password"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:inputType="textPassword"
+        android:maxLength="15"
+        android:hint="비밀번호 (숫자/영문/특수문자 조합 8~15자)" />
+    <!--회원가입 비밀번호 재입력-->
+    <EditText
+        android:id="@+id/register_passwordcheck"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:inputType="textPassword"
+        android:maxLength="15"
+        android:hint="비밀번호 확인" />
+
+
+    <!--회원가입 이름-->
+    <EditText
+        android:id="@+id/register_name"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:maxLength="25"
+        android:hint="이름" />
+
+    <!--회원가입 나이-->
+    <EditText
+        android:id="@+id/register_age"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:inputType="number"
+        android:maxLength="2"
+        android:hint="나이" />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="성별"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation='horizontal'>
+
+            <RadioButton
+                android:id="@+id/radio_man"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="남자" />
+
+            <RadioButton
+                android:id="@+id/radio_woman"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:text="여자" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/teach_language"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="가르칠 언어"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Spinner
+            android:id="@+id/spinner_teach"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/language"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/learn_language"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="학습 언어"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Spinner
+            android:id="@+id/spinner_learn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/language"/>
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+    <!--회원가입 버튼-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <Button
+            android:id="@+id/register_finish"
+            android:text="회원가입"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/register_cancel"
+            android:text="취소"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

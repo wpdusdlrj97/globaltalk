@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+     >
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+    <ImageView
+        android:id="@+id/mypage_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="90dp"
+        android:src="@drawable/before" />
+
+        <TextView
+            android:id="@+id/tvHello"
+            android:layout_width="171dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="프로필 수정"
+            android:textColor="#000000"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_gravity="center"
+        android:id="@+id/pf_image"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        android:background="#eeeeee" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="자기소개"
+            android:textColor="@android:color/black"
+            android:textSize="19dp" />
+
+        <Button
+            android:id="@+id/pf_intro_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="작성완료"
+            android:layout_marginLeft="250dp" />
+    </LinearLayout>
+
+
+
+    <!--자기소개-->
+    <EditText
+        android:id="@+id/mypage_intro"
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:background="@drawable/black"
+        android:gravity="top"
+        android:hint=" 자기소개를 적어주세요 :) " />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="대표사진"
+            android:textColor="@android:color/black"
+            android:textSize="19dp" />
+
+        <Button
+            android:id="@+id/pf_images_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="수정하기"
+            android:layout_marginLeft="250dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+
+        <ImageView
+            android:id="@+id/img1"
+            android:scaleType="centerCrop"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            />
+
+        <ImageView
+            android:id="@+id/img2"
+            android:scaleType="centerCrop"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+
+        <ImageView
+            android:id="@+id/img3"
+            android:scaleType="centerCrop"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

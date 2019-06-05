@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#050505"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tvHello"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="90dp"
+        android:text="GLOBAL COMMUNICATION"
+        android:textColor="#F3E940"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/login_email"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="#ffffff"
+        android:maxLength="30"
+        android:maxLines="1"
+        android:inputType="textEmailAddress"
+        android:hint="E-MAIL"
+        android:layout_marginBottom="10dp"/>
+
+    <EditText
+        android:id="@+id/login_password"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="#ffffff"
+        android:inputType="textPassword"
+        android:maxLength="30"
+        android:hint="PASSWORD"
+        android:layout_marginBottom="10dp"/>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/Login_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:text="로그인"
+            android:textColor="@android:color/black"
+            android:layout_marginRight="10dp"/>
+
+        <Button
+            android:id="@+id/Register_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:textColor="@android:color/black"
+            android:text="회원가입" />
+
+
+    </LinearLayout>
+</LinearLayout>

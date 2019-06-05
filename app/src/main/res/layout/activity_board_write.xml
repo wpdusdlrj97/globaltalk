@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--게시글 작성-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/board_write_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/before" />
+
+
+        <TextView
+            android:layout_width="338dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="게시글 작성"
+            android:textColor="#050505"
+            android:textSize="24sp" />
+
+
+        <ImageView
+            android:id="@+id/board_write_upload"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/upload" />
+
+    </LinearLayout>
+
+
+    <!--게시글-->
+    <EditText
+        android:id="@+id/board_write_text"
+        android:layout_width="match_parent"
+        android:layout_height="238dp"
+        android:hint=" 게시글을 작성하세요 :) "
+        android:gravity="top"
+        android:background="@drawable/black"/>
+
+    <ImageView
+        android:id="@+id/board_write_image1"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:background="#eeeeee" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/board_write_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/image"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/board_write_camera"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/camera" />
+
+        <ImageView
+            android:id="@+id/board_write_video"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/video"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/board_write_mic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/mic"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/board_write_translate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/translate"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</LinearLayout>
