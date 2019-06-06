@@ -1100,7 +1100,7 @@ public class MypageActivity extends AppCompatActivity {
 
     }
 
-    //로그인 함수
+    //자기소개 업로드 함수
     public void IntroFunction(final String email, final String intro) {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {

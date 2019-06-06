@@ -87,13 +87,16 @@ public class Board_writeActivity extends AppCompatActivity {
     String Profile_image = "Profile_image";
     String Profile_email = "Profile_email";
 
-    String Get_email = "matisse19@naver.com";
+    //String Get_email = "matisse19@naver.com";
 
     String num;
     String uploadimg;
 
 
+    HttpParse httpParse = new HttpParse();
+    String finalResult;
 
+    String TextHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,11 +142,27 @@ public class Board_writeActivity extends AppCompatActivity {
         board_write_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mSelected!=null){
-                    //UploadFunction();
-                }else{
-                    Toast.makeText(Board_writeActivity.this, "이미지를 선택해주세요", Toast.LENGTH_SHORT).show();
+
+                // 작성된 글의 존재 여부
+                TextHolder = board_write_text.getText().toString();
+
+                // 글을 작성하면 최초로 DB에 insert되고 그 이후에 가장 최근 board_id를 불러와서 사진을 update하는 형식
+
+                if (TextUtils.isEmpty(TextHolder)) { // 글이 입력되지 않았을 때
+                    Toast.makeText(Board_writeActivity.this, "내용을 입력해주세요", Toast.LENGTH_LONG).show();
+
+                } else { // 글이 입력되었다면 텍스트 업로드
+                    TextFunction(NameHolder,TextHolder);
+
+                    if(mSelected!=null){  // 이미지가 있다면 업로드 후 finish
+                        UploadFunction();
+                        finish();
+                    }else{  // 이미지가 없으면 바로 finish
+                        finish();
+                    }
                 }
+
+
             }
         });
 
@@ -196,52 +215,6 @@ public class Board_writeActivity extends AppCompatActivity {
 
             mAdapter.setData(mSelected);
             //Log.d("마티세 선택 ", mSelected.toString());
-
-
-            /*
-
-            //배열로 URI 모음 가져오기
-            mSelectedarray = mSelected.toString();
-            Log.d("마티세 선택1 ", mSelectedarray);
-
-            //앞에 [ 제거
-            mSelectedarray = mSelectedarray.substring(1);
-            Log.d("마티세 선택2 ", mSelectedarray);
-
-            //뒤에 ] 제거
-            mSelectedarray = mSelectedarray.replaceAll("]", "");
-            Log.d("마티세 선택3 ", mSelectedarray);
-
-            // , 단위로 나누기
-            String[] array = mSelectedarray.split(",");
-
-            //비트맵 배열 생성
-            bitmap_array = new String[9];
-
-            for (int i = 0; i < array.length; i++) {
-                //System.out.println(array[i]);
-
-                array[i] = array[i].trim();
-                Log.d("마티세  URI", array[i]);
-
-                // 가져온 array[i]를 URI로 파싱 - > 비트맵으로 만들기
-                try {
-                    bitmap = (Bitmap) MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(array[i]));
-                    Log.d("마티세 비트맵" + i, bitmap.toString());
-
-                    num=String.valueOf(i);
-                    uploadimg=getStringImage(bitmap);
-
-                    ImageUploadToServerFunction(num, uploadimg);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-
-            */
-
 
         }
     }
@@ -359,14 +332,14 @@ public class Board_writeActivity extends AppCompatActivity {
                 HashMapParams.put(Profile_number, number);
                 Log.d("프로필 번호", number);
 
-                HashMapParams.put(Profile_email, Get_email);
-                Log.d("프로필 이메일", Get_email);
+                HashMapParams.put(Profile_email, EmailHolder);
+                Log.d("프로필 이메일", EmailHolder);
 
                 HashMapParams.put(Profile_image, bitmap_s);
                 Log.d("프로필 이미지", bitmap_s);
 
 
-                String FinalData = imageProcessClass.ImageHttpRequest("http://54.180.122.247/global_communication/matisse.php", HashMapParams);
+                String FinalData = imageProcessClass.ImageHttpRequest("http://54.180.122.247/global_communication/board_image.php", HashMapParams);
 
                 return FinalData;
             }
@@ -517,6 +490,62 @@ public class Board_writeActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    //게시물 텍스트 업로드 함수
+    public void TextFunction(final String name, final String text) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog = ProgressDialog.show(Board_writeActivity.this, "Loading Data", null, true, true);
+            }
+
+            @Override
+            protected void onPostExecute(String httpResponseMsg) {
+
+                super.onPostExecute(httpResponseMsg);
+
+                progressDialog.dismiss();
+
+                //php로부터 로그인 성공이라는 메시지가 오면
+                if (httpResponseMsg.equalsIgnoreCase("자기소개 업로드 성공")) {
+
+                    finish();
+
+                } else {
+
+                    Toast.makeText(Board_writeActivity.this, httpResponseMsg, Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                HashMap<String, String> hashMap = new HashMap<>();
+
+
+                hashMap.put("name", params[0]);
+                hashMap.put("text", params[1]);
+
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/board_text.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(name,text);
+    }
+
+
+
 
     //URI 모음을 어댑터로 전달해 하나하나 Glide로 넣어준다
     private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
