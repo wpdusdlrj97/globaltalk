@@ -152,7 +152,7 @@ public class Board_writeActivity extends AppCompatActivity {
                     Toast.makeText(Board_writeActivity.this, "내용을 입력해주세요", Toast.LENGTH_LONG).show();
 
                 } else { // 글이 입력되었다면 텍스트 업로드
-                    TextFunction(NameHolder,TextHolder);
+                    TextFunction(NameHolder,EmailHolder, TextHolder);
 
                     if(mSelected!=null){  // 이미지가 있다면 업로드 후 finish
                         UploadFunction();
@@ -493,7 +493,7 @@ public class Board_writeActivity extends AppCompatActivity {
 
 
     //게시물 텍스트 업로드 함수
-    public void TextFunction(final String name, final String text) {
+    public void TextFunction(final String name, final String email, final String text) {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -530,7 +530,8 @@ public class Board_writeActivity extends AppCompatActivity {
 
 
                 hashMap.put("name", params[0]);
-                hashMap.put("text", params[1]);
+                hashMap.put("email", params[1]);
+                hashMap.put("text", params[2]);
 
 
                 finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/board_text.php");
@@ -541,7 +542,7 @@ public class Board_writeActivity extends AppCompatActivity {
 
         UserLoginClass userLoginClass = new UserLoginClass();
 
-        userLoginClass.execute(name,text);
+        userLoginClass.execute(name,email,text);
     }
 
 

@@ -48,9 +48,11 @@ public class Tab4 extends Fragment {
     private EditText mEditTextName;
     private EditText mEditTextCountry;
     //private TextView mTextViewResult;
+
     private ArrayList<PersonalData> mArrayList;
     private UsersAdapter mAdapter;
     private RecyclerView mRecyclerView;
+
     private EditText mEditTextSearchKeyword;
     private String mJsonString;
 
@@ -107,6 +109,15 @@ public class Tab4 extends Fragment {
         mArrayList.clear();
         mAdapter.notifyDataSetChanged();
 
+
+        return rootView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -129,13 +140,9 @@ public class Tab4 extends Fragment {
         }));
 
 
-
-
         //데이터 받아오기
         GetData task = new GetData();
         task.execute(TeachHolder,LearnHolder);
-
-        return rootView;
     }
 
 
@@ -186,6 +193,9 @@ public class Tab4 extends Fragment {
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
         }
     }
+
+
+
 
 
 
