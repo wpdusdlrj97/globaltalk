@@ -106,9 +106,6 @@ public class Tab4 extends Fragment {
 
 
 
-        mArrayList.clear();
-        mAdapter.notifyDataSetChanged();
-
 
         return rootView;
     }
@@ -117,6 +114,9 @@ public class Tab4 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        mArrayList.clear();
+        mAdapter.notifyDataSetChanged();
 
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new ClickListener() {
             @Override

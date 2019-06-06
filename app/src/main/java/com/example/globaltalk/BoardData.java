@@ -7,7 +7,16 @@ public class BoardData {
     private String img0;
     private String img1;
     private String img2;
+
     private String img3;
+    private String img4;
+    private String img5;
+
+    private String img6;
+    private String img7;
+    private String img8;
+
+
 
 
 
@@ -39,6 +48,27 @@ public class BoardData {
         return img3;
     }
 
+    public String getimg4() {
+        return img4;
+    }
+
+    public String getimg5() {
+        return img5;
+    }
+
+    public String getimg6() {
+        return img6;
+    }
+
+    public String getimg7() {
+        return img7;
+    }
+
+    public String getimg8() {
+        return img8;
+    }
+
+
 
 
     public void setwriter(String writer) {
@@ -68,5 +98,29 @@ public class BoardData {
     public void setimg3(String img3) {
         this.img3 = img3;
     }
+
+    public void setimg4(String img4) {
+        this.img4 = img4;
+    }
+
+    public void setimg5(String img5) {
+        this.img5 = img5;
+    }
+
+    public void setimg6(String img6) {
+        this.img6 = img6;
+    }
+
+    public void setimg7(String img7) {
+        this.img7 = img7;
+    }
+
+    public void setimg8(String img8) {
+        this.img8 = img8;
+    }
+
+
+
+
 
 }

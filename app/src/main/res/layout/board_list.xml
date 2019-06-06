@@ -107,9 +107,11 @@
     <TextView
         android:id="@+id/board_list_text"
         android:layout_width="400dp"
-        android:layout_height="111dp"
+        android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="2019.06.06"
+        android:text="글을 작성해주세요"
+        android:maxLines="5"
+        android:ellipsize="end"
         android:textAlignment="textStart"
         android:textColor="@android:color/black"
         android:textSize="15dp" />
@@ -123,33 +125,122 @@
 
             <ImageView
                android:id="@+id/board_list_image0"
-               android:layout_width="60dp"
-               android:layout_height="60dp"
+               android:layout_width="100dp"
+               android:layout_height="100dp"
                android:background="#eeeeee"
                android:scaleType="centerCrop" />
 
             <ImageView
                 android:id="@+id/board_list_image1"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:background="#eeeeee"
                 android:scaleType="centerCrop" />
 
             <ImageView
                 android:id="@+id/board_list_image2"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="#eeeeee"
-                android:scaleType="centerCrop" />
-
-            <ImageView
-                android:id="@+id/board_list_image3"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:background="#eeeeee"
                 android:scaleType="centerCrop" />
 
         </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <ImageView
+                android:id="@+id/board_list_image3"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#eeeeee"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/board_list_image4"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#eeeeee"
+                android:scaleType="centerCrop" />
+            <ImageView
+                android:id="@+id/board_list_image5"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#eeeeee"
+                android:scaleType="centerCrop" />
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <ImageView
+                android:id="@+id/board_list_image6"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#eeeeee"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/board_list_image7"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#eeeeee"
+                android:scaleType="centerCrop" />
+            <ImageView
+                android:id="@+id/board_list_image8"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#eeeeee"
+                android:scaleType="centerCrop" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="3dp"
+        >
+
+        <ImageView
+            android:id="@+id/board_list_heart"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/heart" />
+
+        <ImageView
+            android:id="@+id/board_write_comment"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:src="@drawable/comment" />
+
+        <ImageView
+            android:id="@+id/board_write_translate"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:src="@drawable/translate" />
+
+        <ImageView
+            android:id="@+id/board_write_more"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="190dp"
+            android:src="@drawable/more" />
 
 
     </LinearLayout>

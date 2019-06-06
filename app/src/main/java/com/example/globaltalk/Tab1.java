@@ -81,15 +81,14 @@ public class Tab1 extends Fragment {
         bRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 1));
 
 
-        bArrayList.clear();
-        bAdapter.notifyDataSetChanged();
+
 
         write_button = (ImageView) rootView.findViewById(R.id.write_button);
 
 
 
-
         return rootView;
+
 
     }
 
@@ -100,11 +99,13 @@ public class Tab1 extends Fragment {
         super.onResume();
 
 
+        //리사이클러뷰 초기화후, 재정렬
+        bArrayList.clear();
+        bAdapter.notifyDataSetChanged();
+
+
         GetData task = new GetData();
         task.execute( "http://54.180.122.247/global_communication/board_list.php", "");
-
-
-
 
         // 게시물 쓰기 화면으로 이동
         write_button.setOnClickListener(new View.OnClickListener() {
@@ -240,10 +241,18 @@ public class Tab1 extends Fragment {
         String TAG_WRITER ="writer";
         String TAG_WDATE ="wdate";
         String TAG_CONTENT = "content";
+
         String TAG_IMG0 ="img_file0";
-        String TAG_IMG ="img_file1";
+        String TAG_IMG1 ="img_file1";
         String TAG_IMG2 ="img_file2";
+
         String TAG_IMG3 ="img_file3";
+        String TAG_IMG4 ="img_file4";
+        String TAG_IMG5 ="img_file5";
+
+        String TAG_IMG6 ="img_file6";
+        String TAG_IMG7 ="img_file7";
+        String TAG_IMG8 ="img_file8";
 
 
 
@@ -262,14 +271,31 @@ public class Tab1 extends Fragment {
                 Log.d("제이슨",wdate);
                 String content = item.getString(TAG_CONTENT);
                 Log.d("제이슨",content);
+
                 String img0 = item.getString(TAG_IMG0);
-                Log.d("제이슨",img0);
-                String img1 = item.getString(TAG_IMG);
-                Log.d("제이슨",img1);
+                Log.d("제이슨0",img0);
+                String img1 = item.getString(TAG_IMG1);
+                Log.d("제이슨1",img1);
                 String img2 = item.getString(TAG_IMG2);
-                Log.d("제이슨",img2);
+                Log.d("제이슨2",img2);
+
+
                 String img3 = item.getString(TAG_IMG3);
-                Log.d("제이슨",img3);
+                Log.d("제이슨3",img3);
+                String img4 = item.getString(TAG_IMG4);
+                Log.d("제이슨4",img4);
+                String img5 = item.getString(TAG_IMG5);
+                Log.d("제이슨5",img5);
+
+                String img6 = item.getString(TAG_IMG6);
+                Log.d("제이슨6",img6);
+                String img7 = item.getString(TAG_IMG7);
+                Log.d("제이슨7",img7);
+                String img8 = item.getString(TAG_IMG8);
+                Log.d("제이슨8",img8);
+
+
+
 
                 BoardData boardData = new  BoardData();
 
@@ -280,8 +306,14 @@ public class Tab1 extends Fragment {
                 boardData.setimg0(img0);
                 boardData.setimg1(img1);
                 boardData.setimg2(img2);
-                boardData.setimg3(img3);
 
+                boardData.setimg3(img3);
+                boardData.setimg4(img4);
+                boardData.setimg5(img5);
+
+                boardData.setimg6(img6);
+                boardData.setimg7(img7);
+                boardData.setimg8(img8);
 
                 bArrayList.add(boardData);
                 bAdapter.notifyDataSetChanged();
