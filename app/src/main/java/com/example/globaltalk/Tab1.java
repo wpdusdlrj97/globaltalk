@@ -254,6 +254,8 @@ public class Tab1 extends Fragment {
         String TAG_IMG7 ="img_file7";
         String TAG_IMG8 ="img_file8";
 
+        String TAG_IMAGE ="profile_image";
+
 
 
 
@@ -264,6 +266,9 @@ public class Tab1 extends Fragment {
             for(int i=0;i<jsonArray.length();i++){
 
                 JSONObject item = jsonArray.getJSONObject(i);
+
+                String profile_image = item.getString(TAG_IMAGE);
+                Log.d("프로필 이미지",profile_image);
 
                 String writer = item.getString(TAG_WRITER);
                 Log.d("제이슨",writer);
@@ -295,9 +300,14 @@ public class Tab1 extends Fragment {
                 Log.d("제이슨8",img8);
 
 
+                //가져온 이메일 값을 넣어서 프로필 이미지 가져오기
+                //String email = item.getString(TAG_EMAIL);
+
 
 
                 BoardData boardData = new  BoardData();
+
+                boardData.setprofile_image(profile_image);
 
                 boardData.setwriter(writer);
                 boardData.setwdate(wdate);

@@ -29,6 +29,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
+        protected ImageView board_list_pfimage;
+
         protected TextView board_list_name;
         protected TextView board_list_time;
         protected TextView board_list_text;
@@ -62,6 +64,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             this.board_list_image8 = (ImageView) view.findViewById(R.id.board_list_image8);
 
 
+            this.board_list_pfimage = (ImageView) view.findViewById(R.id.board_list_pfimage);
             this.board_list_name = (TextView) view.findViewById(R.id.board_list_name);
             this.board_list_time = (TextView) view.findViewById(R.id.board_list_time);
             this.board_list_text = (TextView) view.findViewById(R.id.board_list_text);
@@ -83,6 +86,16 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
 
         Log.d("보드 포지션", String.valueOf(position));
+
+
+        Glide.with(context)
+                .load(bList.get(position).getprofile_image())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .thumbnail(0.1f)
+                .fitCenter()
+                .into(viewholder.board_list_pfimage);
+        Log.d("보드 프로필이미지", bList.get(position).getprofile_image());
 
         viewholder.board_list_name.setText(bList.get(position).getwriter());
         Log.d("보드 네임", bList.get(position).getwriter());

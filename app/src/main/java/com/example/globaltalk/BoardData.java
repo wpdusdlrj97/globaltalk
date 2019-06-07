@@ -1,6 +1,9 @@
 package com.example.globaltalk;
 
 public class BoardData {
+
+    private String profile_image;
+
     private String writer;
     private String wdate;
     private String content;
@@ -19,6 +22,9 @@ public class BoardData {
 
 
 
+    public String getprofile_image() {
+        return profile_image;
+    }
 
     public String getwriter() {
         return writer;
@@ -70,6 +76,10 @@ public class BoardData {
 
 
 
+
+    public void setprofile_image(String profile_image) {
+        this.profile_image = profile_image;
+    }
 
     public void setwriter(String writer) {
         this.writer = writer;
