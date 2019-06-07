@@ -2,6 +2,8 @@ package com.example.globaltalk;
 
 public class BoardData {
 
+    private String board_id;
+
     private String profile_image;
 
     private String writer;
@@ -20,7 +22,9 @@ public class BoardData {
     private String img8;
 
 
-
+    public String getboard_id() {
+        return board_id;
+    }
 
     public String getprofile_image() {
         return profile_image;
@@ -76,6 +80,10 @@ public class BoardData {
 
 
 
+
+    public void setboard_id(String board_id) {
+        this.board_id = board_id;
+    }
 
     public void setprofile_image(String profile_image) {
         this.profile_image = profile_image;

@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TranslateActivity"></activity>
+        <activity android:name=".Board_editActivity"></activity>
+        <activity android:name=".TranslateActivity" />
         <activity android:name=".Friends_Profile_Activity" />
         <activity android:name=".Profile_Image_Activity" />
         <activity android:name=".Board_writeActivity" />

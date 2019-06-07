@@ -1,10 +1,13 @@
 package com.example.globaltalk;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +30,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Belal on 2/3/2016.
@@ -39,6 +44,7 @@ public class Tab1 extends Fragment {
     private ArrayList<BoardData> bArrayList;
     private BoardAdapter bAdapter;
     private RecyclerView bRecyclerView;
+    private SwipeRefreshLayout swipeRefresh;
 
     private String bJsonString;
 
@@ -47,6 +53,27 @@ public class Tab1 extends Fragment {
 
     public static final String UserEmail = "";
     public static final String UserName = "name";
+
+
+    String profile_image;
+
+    String wdate;
+    String content;
+    String writer;
+    String img0;
+    String img1;
+    String img2;
+    String img3;
+    String img4;
+    String img5;
+    String img6;
+    String img7;
+    String img8;
+
+    String board_id;
+
+
+
 
 
     ImageView write_button;
@@ -67,10 +94,11 @@ public class Tab1 extends Fragment {
 
         View rootView = inflater.inflate(R.layout.tab1, container, false);
 
+        bArrayList = new ArrayList<>();
+
         bRecyclerView = (RecyclerView) rootView.findViewById(R.id.listView_board_list);
         bRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        bArrayList = new ArrayList<>();
+        bRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 1));
 
         bAdapter = new BoardAdapter(getActivity(), bArrayList);
         bRecyclerView.setAdapter(bAdapter);
@@ -78,7 +106,6 @@ public class Tab1 extends Fragment {
         //List의 orientation이 vertical 일때 DividerItemDecoration 생성자의 두번째 인자를 1로 세팅해주면되고,
         //
         //Horizontal 인 경우 0으로 설정해주면 됩니다.
-        bRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 1));
 
 
 
@@ -98,6 +125,20 @@ public class Tab1 extends Fragment {
     public void onResume() {
         super.onResume();
 
+        //swipeRefresh.setOnRefreshListener(this);
+
+        /*
+        bRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager llManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (dy > 0 && llManager.findLastCompletelyVisibleItemPosition() == (bAdapter.getItemCount() - 2)) {
+                    bAdapter.showLoading();
+                }
+            }
+        });
+        */
 
         //리사이클러뷰 초기화후, 재정렬
         bArrayList.clear();
@@ -122,6 +163,73 @@ public class Tab1 extends Fragment {
 
 
     }
+
+
+
+    /*
+    @Override
+    public void onRefresh() {
+        Log.d("MainActivity_", "onRefresh");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefresh.setRefreshing(false);
+                loadData();
+
+            }
+        }, 2000);
+    }
+    */
+
+
+    /*
+    @Override
+    public void onLoadMore() {
+        Log.d("MainActivity_", "onLoadMore");
+        new AsyncTask<Void, Void, List<BoardData>>() {
+            @Override
+            protected List<BoardData> doInBackground(Void... voids) {
+
+                 //   Delete everything what is below // and place your code logic
+
+                ///////////////////////////////////////////
+                int start = bAdapter.getItemCount() - 1;
+                int end = start + 15;
+                List<BoardData> list = new ArrayList<>();
+                if (end < 200) {
+                    for (int i = start + 1; i <= end; i++) {
+                        list.add(new BoardData());
+                    }
+                }
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                /////////////////////////////////////////////////
+                return list;
+
+            }
+
+
+
+            @Override
+            protected void onPostExecute(List<BoardData> items) {
+                super.onPostExecute(items);
+                bAdapter.dismissLoading();
+                bAdapter.addItemMore(items);
+                bAdapter.setMore(true);
+            }
+        }.execute();
+
+    }
+    */
+
+
+
+
+
+
 
 
 
@@ -256,85 +364,100 @@ public class Tab1 extends Fragment {
 
         String TAG_IMAGE ="profile_image";
 
+        String TAG_BOARDID ="board_id";
 
 
 
-        try {
-            JSONObject jsonObject = new JSONObject(bJsonString);
-            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+            try {
+                JSONObject jsonObject = new JSONObject(bJsonString);
+                JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
 
-            for(int i=0;i<jsonArray.length();i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
 
-                JSONObject item = jsonArray.getJSONObject(i);
-
-                String profile_image = item.getString(TAG_IMAGE);
-                Log.d("프로필 이미지",profile_image);
-
-                String writer = item.getString(TAG_WRITER);
-                Log.d("제이슨",writer);
-                String wdate = item.getString(TAG_WDATE);
-                Log.d("제이슨",wdate);
-                String content = item.getString(TAG_CONTENT);
-                Log.d("제이슨",content);
-
-                String img0 = item.getString(TAG_IMG0);
-                Log.d("제이슨0",img0);
-                String img1 = item.getString(TAG_IMG1);
-                Log.d("제이슨1",img1);
-                String img2 = item.getString(TAG_IMG2);
-                Log.d("제이슨2",img2);
+                    JSONObject item = jsonArray.getJSONObject(i);
 
 
-                String img3 = item.getString(TAG_IMG3);
-                Log.d("제이슨3",img3);
-                String img4 = item.getString(TAG_IMG4);
-                Log.d("제이슨4",img4);
-                String img5 = item.getString(TAG_IMG5);
-                Log.d("제이슨5",img5);
+                    board_id = item.getString(TAG_BOARDID);
+                    Log.d("게시물 번호", board_id);
 
-                String img6 = item.getString(TAG_IMG6);
-                Log.d("제이슨6",img6);
-                String img7 = item.getString(TAG_IMG7);
-                Log.d("제이슨7",img7);
-                String img8 = item.getString(TAG_IMG8);
-                Log.d("제이슨8",img8);
+                    profile_image = item.getString(TAG_IMAGE);
+                    Log.d("프로필 이미지", profile_image);
+
+                    writer = item.getString(TAG_WRITER);
+                    Log.d("제이슨", writer);
+                    wdate = item.getString(TAG_WDATE);
+                    Log.d("제이슨", wdate);
+                    content = item.getString(TAG_CONTENT);
+                    Log.d("제이슨", content);
+
+                    img0 = item.getString(TAG_IMG0);
+                    Log.d("제이슨0", img0);
+                    img1 = item.getString(TAG_IMG1);
+                    Log.d("제이슨1", img1);
+                    img2 = item.getString(TAG_IMG2);
+                    Log.d("제이슨2", img2);
 
 
-                //가져온 이메일 값을 넣어서 프로필 이미지 가져오기
-                //String email = item.getString(TAG_EMAIL);
+                    img3 = item.getString(TAG_IMG3);
+                    Log.d("제이슨3", img3);
+                    img4 = item.getString(TAG_IMG4);
+                    Log.d("제이슨4", img4);
+                    img5 = item.getString(TAG_IMG5);
+                    Log.d("제이슨5", img5);
+
+                    img6 = item.getString(TAG_IMG6);
+                    Log.d("제이슨6", img6);
+                    img7 = item.getString(TAG_IMG7);
+                    Log.d("제이슨7", img7);
+                    img8 = item.getString(TAG_IMG8);
+                    Log.d("제이슨8", img8);
 
 
 
-                BoardData boardData = new  BoardData();
 
-                boardData.setprofile_image(profile_image);
+                    //가져온 이메일 값을 넣어서 프로필 이미지 가져오기
+                    //String email = item.getString(TAG_EMAIL);
 
-                boardData.setwriter(writer);
-                boardData.setwdate(wdate);
-                boardData.setcontent(content);
 
-                boardData.setimg0(img0);
-                boardData.setimg1(img1);
-                boardData.setimg2(img2);
+                    BoardData boardData = new BoardData();
 
-                boardData.setimg3(img3);
-                boardData.setimg4(img4);
-                boardData.setimg5(img5);
 
-                boardData.setimg6(img6);
-                boardData.setimg7(img7);
-                boardData.setimg8(img8);
+                    boardData.setboard_id(board_id);
 
-                bArrayList.add(boardData);
-                bAdapter.notifyDataSetChanged();
+                    boardData.setprofile_image(profile_image);
+
+                    boardData.setwriter(writer);
+                    boardData.setwdate(wdate);
+                    boardData.setcontent(content);
+
+                    boardData.setimg0(img0);
+                    boardData.setimg1(img1);
+                    boardData.setimg2(img2);
+
+                    boardData.setimg3(img3);
+                    boardData.setimg4(img4);
+                    boardData.setimg5(img5);
+
+                    boardData.setimg6(img6);
+                    boardData.setimg7(img7);
+                    boardData.setimg8(img8);
+
+
+                    bArrayList.add(boardData);
+
+                    bAdapter.notifyDataSetChanged();
+
+                    //bAdapter.addAll(itemList);
+
+                }
+
+
+            } catch (JSONException e) {
+
+                Log.d(TAG, "showResult : ", e);
             }
 
 
-
-        } catch (JSONException e) {
-
-            Log.d(TAG, "showResult : ", e);
-        }
 
     }
 

@@ -1,6 +1,7 @@
 package com.example.globaltalk;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -22,10 +24,26 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
     private Activity context = null;
 
 
+
     public BoardAdapter(Activity context, ArrayList<BoardData> list) {
         this.context = context;
         this.bList = list;
     }
+
+
+    //아이템 클릭시 실행 함수
+    private ItemClick itemClick;
+
+    public interface ItemClick {
+        public void onClick(View view,int position);
+    }
+
+    //아이템 클릭시 실행 함수 등록 함수
+    public void setItemClick(ItemClick itemClick) {
+
+        this.itemClick = itemClick;
+    }
+
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
@@ -46,6 +64,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         protected ImageView board_list_image6;
         protected ImageView board_list_image7;
         protected ImageView board_list_image8;
+
+        protected ImageView board_write_more;
 
 
 
@@ -69,6 +89,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             this.board_list_time = (TextView) view.findViewById(R.id.board_list_time);
             this.board_list_text = (TextView) view.findViewById(R.id.board_list_text);
 
+            this.board_write_more = (ImageView) view.findViewById(R.id.board_write_more);
+
+
         }
     }
 
@@ -82,10 +105,30 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomViewHolder viewholder, int position) {
+    public void onBindViewHolder(@NonNull CustomViewHolder viewholder, final int position) {
 
 
         Log.d("보드 포지션", String.valueOf(position));
+
+
+        viewholder.board_write_more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //접속한 사람과 게시물을 쓴 사람을 구분하기
+
+
+                Intent intent = new Intent(context, Board_editActivity.class);
+
+                intent.putExtra("board_id", bList.get(position).getboard_id());
+                //Log.d("포지션 값 넘기기", String.valueOf(Position));
+
+                context.startActivityForResult(intent, 1001);
+
+                Toast.makeText(context, bList.get(position).getboard_id(), Toast.LENGTH_LONG).show();
+            }
+        });
+
 
 
         Glide.with(context)
@@ -105,6 +148,11 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
         viewholder.board_list_text.setText(bList.get(position).getcontent());
         Log.d("보드 내용", bList.get(position).getcontent());
+
+
+
+
+
 
 
         //0
