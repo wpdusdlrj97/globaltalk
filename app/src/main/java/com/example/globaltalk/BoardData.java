@@ -2,11 +2,17 @@ package com.example.globaltalk;
 
 public class BoardData {
 
+    private String login_email;
+
     private String board_id;
 
     private String profile_image;
+    private String profile_teach;
+    private String profile_learn;
+
 
     private String writer;
+    private String email;
     private String wdate;
     private String content;
     private String img0;
@@ -22,12 +28,28 @@ public class BoardData {
     private String img8;
 
 
+    public String getlogin_email() {
+        return login_email;
+    }
+
+    public String getemail() {
+        return email;
+    }
+
     public String getboard_id() {
         return board_id;
     }
 
     public String getprofile_image() {
         return profile_image;
+    }
+
+    public String getprofile_teach() {
+        return profile_teach;
+    }
+
+    public String getprofile_learn() {
+        return profile_learn;
     }
 
     public String getwriter() {
@@ -81,12 +103,29 @@ public class BoardData {
 
 
 
+
+    public void setlogin_email(String login_email) {
+        this.login_email = login_email;
+    }
+
+    public void setemail(String email) {
+        this.email = email;
+    }
+
     public void setboard_id(String board_id) {
         this.board_id = board_id;
     }
 
     public void setprofile_image(String profile_image) {
         this.profile_image = profile_image;
+    }
+
+    public void setprofile_teach(String profile_teach) {
+        this.profile_teach = profile_teach;
+    }
+
+    public void setprofile_learn(String profile_learn) {
+        this.profile_learn = profile_learn;
     }
 
     public void setwriter(String writer) {

@@ -512,7 +512,7 @@ public class Board_writeActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //php로부터 로그인 성공이라는 메시지가 오면
-                if (httpResponseMsg.equalsIgnoreCase("자기소개 업로드 성공")) {
+                if (httpResponseMsg.equalsIgnoreCase("업로드 성공")) {
 
                     finish();
 

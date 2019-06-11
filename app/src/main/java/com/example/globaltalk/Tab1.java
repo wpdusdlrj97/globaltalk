@@ -37,7 +37,7 @@ import java.util.List;
  */
 
 //Our class extending fragment
-public class Tab1 extends Fragment {
+public class Tab1 extends Fragment  {
 
     private static String TAG = "phptest";
 
@@ -56,10 +56,15 @@ public class Tab1 extends Fragment {
 
 
     String profile_image;
+    String profile_teach;
+    String profile_learn;
 
     String wdate;
     String content;
     String writer;
+    String email;
+
+
     String img0;
     String img1;
     String img2;
@@ -81,7 +86,7 @@ public class Tab1 extends Fragment {
     //Overriden method onCreateView
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        Log.d("fragment 생명주기", "onCreateView");
         if (getArguments() != null) {
             EmailHolder = getArguments().getString("EmailHolder");
             Log.d("이메일 받아오기",EmailHolder);
@@ -124,6 +129,7 @@ public class Tab1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("fragment 생명주기", "resume");
 
         //swipeRefresh.setOnRefreshListener(this);
 
@@ -346,6 +352,8 @@ public class Tab1 extends Fragment {
 
         String TAG_JSON="webnautes";
 
+
+        String TAG_EMAIL ="email";
         String TAG_WRITER ="writer";
         String TAG_WDATE ="wdate";
         String TAG_CONTENT = "content";
@@ -363,6 +371,10 @@ public class Tab1 extends Fragment {
         String TAG_IMG8 ="img_file8";
 
         String TAG_IMAGE ="profile_image";
+        String TAG_TEACH ="profile_teach";
+        String TAG_LEARN ="profile_learn";
+
+
 
         String TAG_BOARDID ="board_id";
 
@@ -380,11 +392,26 @@ public class Tab1 extends Fragment {
                     board_id = item.getString(TAG_BOARDID);
                     Log.d("게시물 번호", board_id);
 
+
+
                     profile_image = item.getString(TAG_IMAGE);
                     Log.d("프로필 이미지", profile_image);
 
+                    profile_teach = item.getString(TAG_TEACH);
+                    Log.d("프로필 가르칠 언어", profile_teach);
+
+                    profile_learn = item.getString(TAG_LEARN);
+                    Log.d("프로필 학습 언어", profile_learn);
+
+
+
                     writer = item.getString(TAG_WRITER);
                     Log.d("제이슨", writer);
+
+                    email = item.getString(TAG_EMAIL);
+                    Log.d("제이슨", email);
+
+
                     wdate = item.getString(TAG_WDATE);
                     Log.d("제이슨", wdate);
                     content = item.getString(TAG_CONTENT);
@@ -422,9 +449,17 @@ public class Tab1 extends Fragment {
                     BoardData boardData = new BoardData();
 
 
+                    boardData.setlogin_email(EmailHolder);
+                    boardData.setemail(email);
+
+
                     boardData.setboard_id(board_id);
 
                     boardData.setprofile_image(profile_image);
+                    boardData.setprofile_teach(profile_teach);
+                    boardData.setprofile_learn(profile_learn);
+
+
 
                     boardData.setwriter(writer);
                     boardData.setwdate(wdate);
