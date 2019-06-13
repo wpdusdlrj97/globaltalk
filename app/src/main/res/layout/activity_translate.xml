@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="네이버 번역기 테스트"
+        android:text="KOR -> ENG"
         android:textSize="18dp"
         android:textColor="@color/colorAccent"
         android:id="@+id/textView2"
@@ -24,7 +24,7 @@
     <EditText
         android:id="@+id/et_source"
         android:scrollbars="vertical"
-        android:hint="번역할 원본을 입력해 주세요."
+        android:hint="번역할 내용을 입력하세요"
         android:gravity="top"
         android:background="#f4f5ba"
         android:layout_width="344dp"
@@ -47,7 +47,7 @@
         android:textColor="#000"
         android:background="#cee6ff"
         android:textSize="18dp"
-        android:hint="Result"
+        android:hint="번역 결과가 도출됩니다"
         android:layout_marginLeft="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="16dp"

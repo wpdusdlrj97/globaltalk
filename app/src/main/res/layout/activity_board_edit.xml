@@ -1,9 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Board_editActivity">
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <!--게시글 작성-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/board_edit_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/before" />
+
+
+        <TextView
+            android:layout_width="338dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="게시글 수정"
+            android:textColor="#050505"
+            android:textSize="24sp" />
+
+
+        <ImageView
+            android:id="@+id/board_edit_upload"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/upload" />
+
+    </LinearLayout>
+
+
+    <!--게시글-->
+    <EditText
+        android:id="@+id/board_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/black"
+        android:gravity="top"
+        android:hint=" 게시글을 수정하세요 :) " />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/edit_maximage"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="* 이미지는 최대 9장까지 첨부가능합니다 *"
+            android:textColor="#FF0000"
+            android:textSize="14sp" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/board_edit_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/image"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="338dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="이미지를 첨부하세요"
+            android:textColor="#050505"
+            android:textSize="24sp" />
+
+
+
+    </LinearLayout>
+
+
+
+
+
+
+</LinearLayout>

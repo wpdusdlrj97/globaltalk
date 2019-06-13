@@ -105,26 +105,15 @@ public class Tab4 extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 1));
 
 
-
-
-        return rootView;
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mArrayList.clear();
-        mAdapter.notifyDataSetChanged();
-
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
 
+
                 PersonalData personalData = mArrayList.get(position);
                 Toast.makeText(getActivity(), personalData.getMember_email(), Toast.LENGTH_LONG).show();
 
+                //getActivity().finish();
 
                 Intent intent = new Intent(getActivity(), Friends_Profile_Activity.class);
 
@@ -138,6 +127,18 @@ public class Tab4 extends Fragment {
             public void onLongClick(View view, int position) {
             }
         }));
+
+        return rootView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mArrayList.clear();
+        mAdapter.notifyDataSetChanged();
+
 
 
         //데이터 받아오기
