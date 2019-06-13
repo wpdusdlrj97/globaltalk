@@ -245,7 +245,7 @@ public class RegisterActivity extends AppCompatActivity {
                 {
 
                     Toast.makeText(RegisterActivity.this,"이메일을 입력해주세요",Toast.LENGTH_SHORT).show();
-
+                    register_email.requestFocus();
 
                 }else{//값이 있을 떄 토스트 출력
 
@@ -263,6 +263,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }else{ //이메일 형식이 아닐때
 
                         Toast.makeText(RegisterActivity.this,"이메일 형식이 아닙니다",Toast.LENGTH_SHORT).show();
+                        register_email.requestFocus();
                     }
                 }
 
@@ -349,11 +350,15 @@ public class RegisterActivity extends AppCompatActivity {
                                     // 불일치하면 토스트 띄워주기
                                     Toast.makeText(RegisterActivity.this, "비밀번호가 불일치합니다", Toast.LENGTH_LONG).show();
 
+                                    register_password.requestFocus();
+
                                 }
 
 
                             }else{//등록불가능한 이메일일 경우
                                 Toast.makeText(RegisterActivity.this, "이메일 중복체크를 확인해주세요", Toast.LENGTH_SHORT).show();
+
+                                register_email.requestFocus();
                             }
 
                         }

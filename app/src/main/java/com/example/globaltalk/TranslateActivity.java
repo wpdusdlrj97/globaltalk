@@ -5,8 +5,10 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +30,14 @@ public class TranslateActivity extends AppCompatActivity {
     EditText etSource;
     TextView tvResult;
 
+    String register_source;
+    String register_target;
 
     String clientId = "cv81DQOKSlPw4lX1hyEe";//애플리케이션 클라이언트 아이디값";
     String clientSecret = "s3Rf0jQDf0";//애플리케이션 클라이언트 시크릿값";
+
+    String sourceLang;
+    String targetLang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,8 @@ public class TranslateActivity extends AppCompatActivity {
         etSource = (EditText) findViewById(R.id.et_source);
         tvResult = (TextView) findViewById(R.id.tv_result);
         btTranslate = (Button) findViewById(R.id.bt_translate);
+
+
 
         //번역 실행버튼 클릭이벤트
         btTranslate.setOnClickListener(new View.OnClickListener() {
@@ -66,15 +75,98 @@ public class TranslateActivity extends AppCompatActivity {
         });
 
 
+        //번역 대상
+        Spinner spinner_teach =findViewById(R.id.spinner_source);
+
+        spinner_teach.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                register_source = (String) parent.getItemAtPosition(position);
+
+                //영어 일때
+                if(register_source.equals("English")){
+                    sourceLang="en";
+                }
+
+                //한국어 일때
+                if(register_source.equals("Korean")){
+                    sourceLang="ko";
+                }
+
+                //한국어 일때
+                if(register_source.equals("Japanese")){
+                    sourceLang="ja";
+                }
+
+                //한국어 일때
+                if(register_source.equals("Chinese")){
+                    sourceLang="zh-CN";
+                }
+
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        //번역 결과
+        Spinner spinner_learn =findViewById(R.id.spinner_target);
+
+        spinner_learn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                register_target = (String) parent.getItemAtPosition(position);
+
+                //영어 일때
+                if(register_target.equals("English")){
+                    targetLang="en";
+                }
+
+                //한국어 일때
+                if(register_target.equals("Korean")){
+                    targetLang="ko";
+                }
+
+                //한국어 일때
+                if(register_target.equals("Japanese")){
+                    targetLang="ja";
+                }
+
+                //한국어 일때
+                if(register_target.equals("Chinese")){
+                    targetLang="zh-CN";
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
 
     }
 
     class TranslateTask extends AsyncTask<String,Void,String>{
 
+        //언어선택도 나중에 사용자가 선택할 수 있게 옵션 처리해 주면 된다.
+
+        // 한국어(ko)-영어(en), 한국어(ko)-일본어(ja), 한국어(ko)-중국어 간체(zh-CN), 한국어(ko)-중국어 번체(zh-TW),
+        // 중국어 간체(zh-CN) - 일본어(ja), 중국어 번체(zh-TW) - 일본어(ja), 영어(en)-일본어(ja), 영어(en)-중국어 간체(zh-CN), 영어(en)-중국어 번체(zh-TW)
+
+
         @Override
         protected String doInBackground(String... strings) {
 
             String sourceText = strings[0];
+
 
             try {
                 //String text = URLEncoder.encode("만나서 반갑습니다.", "UTF-8");
@@ -86,7 +178,7 @@ public class TranslateActivity extends AppCompatActivity {
                 con.setRequestProperty("X-Naver-Client-Id", clientId);
                 con.setRequestProperty("X-Naver-Client-Secret", clientSecret);
                 // post request
-                String postParams = "source=ko&target=en&text=" + text;
+                String postParams = "source="+sourceLang+"&target="+targetLang+"&text=" + text;
                 con.setDoOutput(true);
                 DataOutputStream wr = new DataOutputStream(con.getOutputStream());
                 wr.writeBytes(postParams);
