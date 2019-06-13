@@ -196,17 +196,19 @@ public class Tab5 extends Fragment {
             }
         });
 
+
         button_logout4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), TranslateActivity.class);
+                Intent intent = new Intent(getActivity(), TTSActivity.class);
 
                 //intent.putExtra(UserEmail, EmailHolder);
                 //intent.putExtra(UserEmail, email);
                 startActivity(intent);
             }
         });
+
 
         mypage_image.setOnClickListener(new View.OnClickListener() {
             @Override
