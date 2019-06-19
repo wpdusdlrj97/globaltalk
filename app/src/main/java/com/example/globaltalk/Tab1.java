@@ -77,7 +77,7 @@ public class Tab1 extends Fragment  {
 
     String board_id;
 
-
+    int page_no;
 
 
 
@@ -131,28 +131,34 @@ public class Tab1 extends Fragment  {
         super.onResume();
         Log.d("fragment 생명주기", "resume");
 
-        //swipeRefresh.setOnRefreshListener(this);
-
-        /*
-        bRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager llManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (dy > 0 && llManager.findLastCompletelyVisibleItemPosition() == (bAdapter.getItemCount() - 2)) {
-                    bAdapter.showLoading();
-                }
-            }
-        });
-        */
 
         //리사이클러뷰 초기화후, 재정렬
         bArrayList.clear();
         bAdapter.notifyDataSetChanged();
 
+        page_no=0;
 
         GetData task = new GetData();
-        task.execute( "http://54.180.122.247/global_communication/board_list.php", "");
+        task.execute(String.valueOf(page_no));
+
+
+        bRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView bRecyclerView, int dx, int dy) {
+                super.onScrolled(bRecyclerView, dx, dy);
+
+                int lastVisibleItemPosition = ((LinearLayoutManager) bRecyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                int itemTotalCount = bRecyclerView.getAdapter().getItemCount() - 1;
+                if (lastVisibleItemPosition == itemTotalCount) {
+                    Toast.makeText(getContext(), "Last Position", Toast.LENGTH_SHORT).show();
+                    page_no=page_no+6;
+                    GetData task = new GetData();
+                    task.execute(String.valueOf(page_no));
+                    Log.d("페이지 번호", String.valueOf(page_no));
+
+                }
+            }
+        });
 
         // 게시물 쓰기 화면으로 이동
         write_button.setOnClickListener(new View.OnClickListener() {
@@ -169,69 +175,6 @@ public class Tab1 extends Fragment  {
 
 
     }
-
-
-
-    /*
-    @Override
-    public void onRefresh() {
-        Log.d("MainActivity_", "onRefresh");
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefresh.setRefreshing(false);
-                loadData();
-
-            }
-        }, 2000);
-    }
-    */
-
-
-    /*
-    @Override
-    public void onLoadMore() {
-        Log.d("MainActivity_", "onLoadMore");
-        new AsyncTask<Void, Void, List<BoardData>>() {
-            @Override
-            protected List<BoardData> doInBackground(Void... voids) {
-
-                 //   Delete everything what is below // and place your code logic
-
-                ///////////////////////////////////////////
-                int start = bAdapter.getItemCount() - 1;
-                int end = start + 15;
-                List<BoardData> list = new ArrayList<>();
-                if (end < 200) {
-                    for (int i = start + 1; i <= end; i++) {
-                        list.add(new BoardData());
-                    }
-                }
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                /////////////////////////////////////////////////
-                return list;
-
-            }
-
-
-
-            @Override
-            protected void onPostExecute(List<BoardData> items) {
-                super.onPostExecute(items);
-                bAdapter.dismissLoading();
-                bAdapter.addItemMore(items);
-                bAdapter.setMore(true);
-            }
-        }.execute();
-
-    }
-    */
-
-
 
 
 
@@ -280,14 +223,14 @@ public class Tab1 extends Fragment  {
             //String serverURL = params[0];
             //String postParameters = params[1];
 
-            //String searchKeyword1 = params[0];
-            //String searchKeyword2 = params[1];
+            String page_no = params[0];
+            //String page_size = params[1];
 
-            String serverURL = params[0];
-            String postParameters = params[1];
+            //String serverURL = params[0];
+            //String postParameters = params[1];
 
-            //String serverURL = "http://54.180.122.247/global_communication/board_list.php";
-            //String postParameters = "email=" + searchKeyword1 + "&name=" + searchKeyword2;
+            String serverURL = "http://54.180.122.247/global_communication/board_list.php";
+            String postParameters = "page_no=" + page_no;
 
 
             try {
@@ -454,6 +397,7 @@ public class Tab1 extends Fragment  {
 
 
                     boardData.setboard_id(board_id);
+                    Log.d("보드번호", board_id);
 
                     boardData.setprofile_image(profile_image);
                     boardData.setprofile_teach(profile_teach);
