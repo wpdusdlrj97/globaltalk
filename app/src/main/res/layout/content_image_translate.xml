@@ -12,27 +12,121 @@
     tools:context="com.example.globaltalk.ImageTranslateActivity">
     tools:showIn="@layout/activity_main">
 
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/image_details"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Use the floating action button to select an image."/>
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="376dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:text="이미지 번역"
+                    android:textColor="#050505"
+                    android:textSize="21sp" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/image_source"
+                    android:layout_width="130dp"
+                    android:layout_height="50dp"
+                    android:entries="@array/language" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/change" />
+
+                <Spinner
+                    android:id="@+id/image_target"
+                    android:layout_width="130dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:entries="@array/language" />
+
+                <Button
+                    android:id="@+id/image_translate_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="번역" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
 
             <ImageView
                 android:id="@+id/main_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="fitCenter"/>
+                android:background="#eeeeee"
+                android:scaleType="fitCenter" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
+
+
+            <TextView
+                android:id="@+id/image_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="사진을 삽입해주세요" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
+
+            <TextView
+                android:id="@+id/image_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="번역버튼을 누를 시 번역결과가 나타납니다" />
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

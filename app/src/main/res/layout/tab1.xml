@@ -39,12 +39,19 @@
         android:layout_height="3px" />
 
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/listView_board_list"
         android:layout_width="match_parent"
-        android:layout_height="620dp"
+        android:layout_height="679dp"
         android:layout_margin="5dp"
         android:padding="5dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 
 

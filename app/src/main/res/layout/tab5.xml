@@ -299,11 +299,7 @@
         android:id="@+id/button_logout1"
         android:text="프로필 수정하기"/>
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_logout4"
-        android:text="번역화면"/>
+
 
 
 

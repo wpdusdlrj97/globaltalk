@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,14 +38,16 @@ import java.util.List;
  */
 
 //Our class extending fragment
-public class Tab1 extends Fragment  {
+public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static String TAG = "phptest";
 
     private ArrayList<BoardData> bArrayList;
     private BoardAdapter bAdapter;
     private RecyclerView bRecyclerView;
+
     private SwipeRefreshLayout swipeRefresh;
+
 
     private String bJsonString;
 
@@ -99,6 +102,10 @@ public class Tab1 extends Fragment  {
 
         View rootView = inflater.inflate(R.layout.tab1, container, false);
 
+        swipeRefresh = rootView.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(this);
+
+
         bArrayList = new ArrayList<>();
 
         bRecyclerView = (RecyclerView) rootView.findViewById(R.id.listView_board_list);
@@ -142,15 +149,22 @@ public class Tab1 extends Fragment  {
         task.execute(String.valueOf(page_no));
 
 
+
         bRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView bRecyclerView, int dx, int dy) {
                 super.onScrolled(bRecyclerView, dx, dy);
 
                 int lastVisibleItemPosition = ((LinearLayoutManager) bRecyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+
                 int itemTotalCount = bRecyclerView.getAdapter().getItemCount() - 1;
+
+
+                // 스크롤 최하단 감지 시에 반응
                 if (lastVisibleItemPosition == itemTotalCount) {
-                    Toast.makeText(getContext(), "Last Position", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Last Position", Toast.LENGTH_SHORT).show();
+                    //bAdapter.notifyDataSetChanged();
+
                     page_no=page_no+6;
                     GetData task = new GetData();
                     task.execute(String.valueOf(page_no));
@@ -177,6 +191,28 @@ public class Tab1 extends Fragment  {
     }
 
 
+    @Override
+    public void onRefresh() {
+        Log.d("MainActivity_", "onRefresh");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //리사이클러뷰 초기화후, 재정렬
+                bArrayList.clear();
+                bAdapter.notifyDataSetChanged();
+
+                page_no=0;
+
+                GetData task = new GetData();
+                task.execute(String.valueOf(page_no));
+
+                swipeRefresh.setRefreshing(false);
+
+            }
+        }, 2000);
+    }
+
+
 
 
 
@@ -192,8 +228,7 @@ public class Tab1 extends Fragment  {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            progressDialog = ProgressDialog.show(getActivity(),
-                    "Please Wait", null, true, true);
+            progressDialog = ProgressDialog.show(getActivity(), "데이터 로드 중", null, true, true);
         }
 
 

@@ -121,7 +121,7 @@ public class Tab5 extends Fragment {
     public static final String UserEmail = "";
 
     Button button_logout1;
-    Button button_logout4;
+
 
     private ImageView pf_img1;
     private ImageView pf_img2;
@@ -145,7 +145,6 @@ public class Tab5 extends Fragment {
         mypage_image = (ImageView) rootView.findViewById(R.id.mypage_image);
 
         button_logout1 = (Button) rootView.findViewById(R.id.button_logout1);
-        button_logout4 = (Button) rootView.findViewById(R.id.button_logout4);
 
         mypage_name = (TextView) rootView.findViewById(R.id.mypage_name);
         mypage_age = (TextView) rootView.findViewById(R.id.mypage_age);
@@ -196,18 +195,6 @@ public class Tab5 extends Fragment {
             }
         });
 
-
-        button_logout4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(getActivity(), TTSActivity.class);
-
-                //intent.putExtra(UserEmail, EmailHolder);
-                //intent.putExtra(UserEmail, email);
-                startActivity(intent);
-            }
-        });
 
 
         mypage_image.setOnClickListener(new View.OnClickListener() {

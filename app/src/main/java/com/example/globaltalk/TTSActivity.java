@@ -67,6 +67,7 @@ public class TTSActivity extends AppCompatActivity {
                     //AsyncTask 실행
                     mNaverDetectionTask = new NaverDetectionTask();
                     mNaverDetectionTask.execute(mTextString);
+                    Log.d("TTS 실행",mText);
                 } else {
                     Toast.makeText(TTSActivity.this, "텍스트를 입력하세요.", Toast.LENGTH_SHORT).show();
                     return;
@@ -154,8 +155,8 @@ public class TTSActivity extends AppCompatActivity {
 
 
         public static void main(String[] args) {
-            String clientId = "";//애플리케이션 클라이언트 아이디값";
-            String clientSecret = "";//애플리케이션 클라이언트 시크릿값";
+            String clientId = "m651g3vgcv";//애플리케이션 클라이언트 아이디값";
+            String clientSecret = "pZIxomSQuCaOR41OcDYAg2jKxZZksv7sFo4z0RZu";//애플리케이션 클라이언트 시크릿값";
             try {
                 String text = URLEncoder.encode(args[0], "UTF-8"); // 13자
                 String apiURL = "https://naveropenapi.apigw.ntruss.com/voice/v1/tts";
@@ -228,8 +229,8 @@ public class TTSActivity extends AppCompatActivity {
         private static String TAG = "APIExamDetectLangs";
 
         public static void main(String[] args) {
-            String clientId = "";//애플리케이션 클라이언트 아이디값";
-            String clientSecret = "";//애플리케이션 클라이언트 시크릿값";
+            String clientId = "UJmZrs4vAjLiLJbPvbXP";//애플리케이션 클라이언트 아이디값";
+            String clientSecret = "9kyyMA9ZJq";//애플리케이션 클라이언트 시크릿값";
             try {
                 String query = URLEncoder.encode(args[0], "UTF-8");
                 String apiURL = "https://openapi.naver.com/v1/papago/detectLangs";
@@ -266,22 +267,22 @@ public class TTSActivity extends AppCompatActivity {
                 {
                     JSONObject jsonObject = new JSONObject(response.toString());
                     String language = jsonObject.getString("langCode");
-                    tv_title.setText(language);
+
 
                     if(language.equals("ko")){
-
+                        tv_title.setText("Korean");
                         speaker="mijin";
                     }
                     if(language.equals("en")){
-
+                        tv_title.setText("English");
                         speaker="clara";
                     }
                     if(language.equals("ja")){
-
+                        tv_title.setText("Japan");
                         speaker="yuri";
                     }
                     if(language.equals("zh-CN")){
-
+                        tv_title.setText("Chinese");
                         speaker="meimei";
                     }
 

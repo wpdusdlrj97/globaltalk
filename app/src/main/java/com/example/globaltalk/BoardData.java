@@ -28,6 +28,7 @@ public class BoardData {
     private String img8;
 
 
+
     public String getlogin_email() {
         return login_email;
     }

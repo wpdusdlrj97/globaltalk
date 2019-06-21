@@ -48,14 +48,11 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
     /*
     //아이템 클릭시 실행 함수
     private ItemClick itemClick;
-
     public interface ItemClick {
         public void onClick(View view,int position);
     }
-
     //아이템 클릭시 실행 함수 등록 함수
     public void setItemClick(ItemClick itemClick) {
-
         this.itemClick = itemClick;
     }
     */
@@ -213,6 +210,14 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 DeleteFunction(bList.get(position).getboard_id());
+                                                Log.d("포지션",bList.get(position).getboard_id());
+
+
+                                                // 배열에서 삭제 및 데이터 갱신
+                                                bList.remove(viewholder.getAdapterPosition());
+                                                notifyItemRemoved(viewholder.getAdapterPosition());
+                                                notifyItemRangeChanged(viewholder.getAdapterPosition(), bList.size());
+
 
 
                                             }
@@ -249,6 +254,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         Glide.with(context)
                 .load(bList.get(position).getprofile_image())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.gray)
                 .skipMemoryCache(true)
                 .thumbnail(0.1f)
                 .fitCenter()
@@ -287,6 +293,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg0())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -304,6 +311,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg1())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -320,6 +328,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg2())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -336,6 +345,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg3())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -352,6 +362,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg4())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -368,6 +379,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg5())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -384,6 +396,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg6())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -401,6 +414,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg7())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
@@ -417,6 +431,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             Glide.with(context)
                     .load(bList.get(position).getimg8())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.gray)
                     .skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()

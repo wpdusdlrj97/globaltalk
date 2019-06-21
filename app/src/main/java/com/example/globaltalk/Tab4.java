@@ -90,9 +90,11 @@ public class Tab4 extends Fragment {
         mRecyclerView = (RecyclerView)  rootView.findViewById(R.id.listView_main_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+
+
+
+
         //mTextViewResult.setMovementMethod(new ScrollingMovementMethod());
-
-
 
         mArrayList = new ArrayList<>();
 
@@ -138,6 +140,20 @@ public class Tab4 extends Fragment {
 
         mArrayList.clear();
         mAdapter.notifyDataSetChanged();
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView mRecyclerView, int dx, int dy) {
+                super.onScrolled(mRecyclerView, dx, dy);
+
+                int lastVisibleItemPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                int itemTotalCount = mRecyclerView.getAdapter().getItemCount() - 1;
+                if (lastVisibleItemPosition == itemTotalCount) {
+                    Toast.makeText(getContext(), "Last Position", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
 
 

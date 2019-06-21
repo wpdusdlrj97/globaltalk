@@ -79,7 +79,7 @@
         android:layout_height="150dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/black"
@@ -92,13 +92,12 @@
         android:layout_height="42dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
         android:src="@drawable/down" />
 
     <TextView
-        android:id="@+id/tv_result"
+        android:id="@+id/tv_result_image"
         android:layout_width="390dp"
-        android:layout_height="150dp"
+        android:layout_height="216dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
@@ -123,7 +122,6 @@
         android:id="@+id/bt_translate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:text="번역실행" />
 
     </LinearLayout>
@@ -141,8 +139,14 @@
         android:id="@+id/image_translate"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:text="이미지 번역" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_tts"
+        android:text="Text To Speech"/>
 
 
 </LinearLayout>
