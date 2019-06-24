@@ -214,7 +214,7 @@ public class Board_writeActivity extends AppCompatActivity {
             mSelected = Matisse.obtainResult(data);
 
             mAdapter.setData(mSelected);
-            //Log.d("마티세 선택 ", mSelected.toString());
+            Log.d("마티세 선택 ", mSelected.toString());
 
         }
     }
@@ -589,6 +589,9 @@ public class Board_writeActivity extends AppCompatActivity {
 
             Log.d("사진 URI", mUris.get(position).toString());
 
+
+
+            /*
             // 비트맵으로도 가져오기 (서버 업로드 용)
             try {
                 bitmap9 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), mUris.get(position));
@@ -597,6 +600,7 @@ public class Board_writeActivity extends AppCompatActivity {
             }
 
             //holder.mPath.setText(bitmap9.toString());
+            Log.d("비트맵9", String.valueOf(mUris.get(position)));
 
             Log.d("사진 비트맵", bitmap9.toString());
 
@@ -607,6 +611,8 @@ public class Board_writeActivity extends AppCompatActivity {
             //사진1, 사진2를 서버에 올릴 때마다 행을 추가해줄까?
 
             //아니면 비트맵을 다 쌓아두었다가 한꺼번에 올리기
+
+            */
 
         }
 

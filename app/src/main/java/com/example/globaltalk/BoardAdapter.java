@@ -253,9 +253,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
         Glide.with(context)
                 .load(bList.get(position).getprofile_image())
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .placeholder(R.drawable.gray)
-                .skipMemoryCache(true)
+                //.skipMemoryCache(true)
                 .thumbnail(0.1f)
                 .fitCenter()
                 .into(viewholder.board_list_pfimage);
@@ -292,9 +292,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image0.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg0())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image0);
@@ -310,9 +310,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image1.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg1())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image1);
@@ -327,9 +327,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image2.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg2())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image2);
@@ -344,9 +344,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image3.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg3())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image3);
@@ -361,9 +361,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image4.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg4())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image4);
@@ -378,9 +378,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image5.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg5())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image5);
@@ -395,9 +395,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image6.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg6())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image6);
@@ -413,9 +413,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image7.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg7())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image7);
@@ -430,9 +430,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             viewholder.board_list_image8.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(bList.get(position).getimg8())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .placeholder(R.drawable.gray)
-                    .skipMemoryCache(true)
+                    //.skipMemoryCache(true)
                     .thumbnail(0.1f)
                     .fitCenter()
                     .into(viewholder.board_list_image8);
