@@ -19,11 +19,13 @@
         <activity
             android:name=".ImageTranslateActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".Board_editActivity" />
+        <activity android:name=".Board_editActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".TranslateActivity" />
         <activity android:name=".Friends_Profile_Activity" />
         <activity android:name=".Profile_Image_Activity" />
-        <activity android:name=".Board_writeActivity" />
+        <activity android:name=".Board_writeActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".UserLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

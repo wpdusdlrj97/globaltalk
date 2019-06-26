@@ -223,7 +223,7 @@
         >
 
         <ImageView
-            android:id="@+id/board_list_heart"
+            android:id="@+id/board_write_heart"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/heart" />
@@ -243,11 +243,20 @@
             android:src="@drawable/translate" />
 
         <ImageView
+            android:id="@+id/board_write_sound"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:src="@drawable/volume" />
+
+        <ImageView
             android:id="@+id/board_write_more"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="190dp"
+            android:layout_marginLeft="135dp"
             android:src="@drawable/more" />
+
+
 
 
     </LinearLayout>

@@ -8,18 +8,22 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,6 +51,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +59,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class Board_editActivity extends AppCompatActivity {
+public class Board_editActivity extends AppCompatActivity implements StartDragListener {
 
     String BoardHolder;
 
@@ -111,6 +116,7 @@ public class Board_editActivity extends AppCompatActivity {
 
     private UriAdapter mAdapter;
 
+    ItemTouchHelper touchHelper;
 
 
     @Override
@@ -170,10 +176,20 @@ public class Board_editActivity extends AppCompatActivity {
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.edit_recyclerview);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        GridLayoutManager mLayoutManager = new GridLayoutManager(this,3);
         recyclerView.setLayoutManager(mLayoutManager);
-        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setAdapter(mAdapter = new UriAdapter(this));
+        //mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+
+        mAdapter = new UriAdapter(this,totalList, (StartDragListener) this);
+
+
+        ItemTouchHelper.Callback callback =
+                new ItemMoveCallback(mAdapter);
+        touchHelper  = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
+
+        recyclerView.setAdapter(mAdapter);
 
 
         //글이 있을 경우
@@ -344,6 +360,13 @@ public class Board_editActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void requestDrag(RecyclerView.ViewHolder viewHolder) {
+        touchHelper.startDrag(viewHolder);
+    }
+
+
 
     public void ShowPicker() {
         Matisse.from(Board_editActivity.this)
@@ -764,15 +787,19 @@ public class Board_editActivity extends AppCompatActivity {
 
 
     //URI 모음을 어댑터로 전달해 하나하나 Glide로 넣어준다
-    private class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
+    public class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> implements ItemMoveCallback.ItemTouchHelperContract {
 
         private final Activity context;
         private List<Uri> mUris;
+        private final StartDragListener mStartDragListener;
+
         //private List<String> mPaths;
 
 
-        public UriAdapter(Activity context) {
+        public UriAdapter(Activity context, List<Uri> uris, StartDragListener startDragListener) {
             this.context = context;
+            this.mUris = uris;
+            mStartDragListener = startDragListener;
             //this.mList = list;
         }
 
@@ -783,6 +810,22 @@ public class Board_editActivity extends AppCompatActivity {
             notifyDataSetChanged();
         }
 
+        class UriViewHolder extends RecyclerView.ViewHolder {
+
+            //public static View rowView;
+            private ImageView mUri;
+            private Button mButton;
+            View rowView;
+
+            UriViewHolder(View contentView) {
+                super(contentView);
+                rowView = contentView;
+                mUri = (ImageView) contentView.findViewById(R.id.edit_uri);
+                mButton = (Button) contentView.findViewById(R.id.delete_uri);
+                //mPath = (TextView) contentView.findViewById(R.id.path);
+            }
+        }
+
         @Override
         public UriViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new UriViewHolder(
@@ -791,6 +834,20 @@ public class Board_editActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(UriViewHolder holder, int position) {
+
+
+            holder.mUri.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() ==
+                            MotionEvent.ACTION_DOWN) {
+                        mStartDragListener.requestDrag(holder);
+                    }
+                    return false;
+                }
+            });
+
+
 
 
             // 가져온 URI Glide를 통해 ImageVIew에 삽입
@@ -842,19 +899,31 @@ public class Board_editActivity extends AppCompatActivity {
             return mUris == null ? 0 : mUris.size();
         }
 
-        class UriViewHolder extends RecyclerView.ViewHolder {
-
-            private ImageView mUri;
-            private Button mButton;
-
-
-            UriViewHolder(View contentView) {
-                super(contentView);
-                mUri = (ImageView) contentView.findViewById(R.id.edit_uri);
-                mButton = (Button) contentView.findViewById(R.id.delete_uri);
-                //mPath = (TextView) contentView.findViewById(R.id.path);
+        @Override
+        public void onRowMoved(int fromPosition, int toPosition) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(mUris, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(mUris, i, i - 1);
+                }
             }
+            notifyItemMoved(fromPosition, toPosition);
         }
+
+        @Override
+        public void onRowSelected(UriViewHolder myViewHolder) {
+            //UriViewHolder.rowView.setBackgroundColor(Color.GRAY);
+        }
+
+        @Override
+        public void onRowClear(UriViewHolder myViewHolder) {
+
+        }
+
+
 
 
     }

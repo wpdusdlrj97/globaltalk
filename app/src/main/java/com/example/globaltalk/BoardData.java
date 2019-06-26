@@ -3,6 +3,9 @@ package com.example.globaltalk;
 public class BoardData {
 
     private String login_email;
+    private String login_teach;
+    private String login_learn;
+
 
     private String board_id;
 
@@ -31,6 +34,14 @@ public class BoardData {
 
     public String getlogin_email() {
         return login_email;
+    }
+
+    public String getLogin_teach() {
+        return login_teach;
+    }
+
+    public String getlogin_learn() {
+        return login_learn;
     }
 
     public String getemail() {
@@ -107,6 +118,14 @@ public class BoardData {
 
     public void setlogin_email(String login_email) {
         this.login_email = login_email;
+    }
+
+    public void setlogin_teach(String login_teach) {
+        this.login_teach = login_teach;
+    }
+
+    public void setlogin_learn(String login_learn) {
+        this.login_learn = login_learn;
     }
 
     public void setemail(String email) {
