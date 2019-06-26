@@ -20,10 +20,21 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHolder> {
 
@@ -31,11 +42,23 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
     private ArrayList<BoardData> bList = null;
     private Activity context = null;
 
+    String clientId = "cv81DQOKSlPw4lX1hyEe";//애플리케이션 클라이언트 아이디값";
+    String clientSecret = "s3Rf0jQDf0";//애플리케이션 클라이언트 시크릿값";
+
+    String sourceLang="ko";
+    String targetLang="en";
+
+
     ProgressDialog progressDialog;
     String HttpURL = "http://54.180.122.247/global_communication/board_delete.php";
     HttpParse httpParse = new HttpParse();
     HashMap<String, String> hashMap = new HashMap<>();
     String finalResult;
+
+    int heart=0;
+
+
+    String TextHolder;
 
 
 
@@ -82,6 +105,13 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         protected ImageView board_list_image7;
         protected ImageView board_list_image8;
 
+
+        protected TextView board_target_translate;
+
+        protected ImageView board_write_heart;
+
+        protected ImageView board_write_translate;
+
         protected ImageView board_write_more;
 
 
@@ -110,6 +140,17 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             this.board_list_time = (TextView) view.findViewById(R.id.board_list_time);
             this.board_list_text = (TextView) view.findViewById(R.id.board_list_text);
 
+
+            //하트
+            this.board_write_heart = (ImageView) view.findViewById(R.id.board_write_heart);
+
+            //번역
+            this.board_write_translate = (ImageView) view.findViewById(R.id.board_write_translate);
+            //번역 후 텍스트
+            this.board_target_translate = (TextView) view.findViewById(R.id.board_target_translate);
+
+
+            //더보기란
             this.board_write_more = (ImageView) view.findViewById(R.id.board_write_more);
 
 
@@ -132,6 +173,75 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         Log.d("보드 포지션", String.valueOf(position));
 
 
+
+        // 하트 클릭 시
+        viewholder.board_write_heart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_LONG).show();
+                Log.d("뷰홀더 포지션", String.valueOf(viewholder.getAdapterPosition()));
+
+                // 하트 클릭이 안되어 있을 때
+                if(heart==0){
+                viewholder.board_write_heart.setImageResource(R.drawable.redheart);
+                heart=heart+1;
+                }else{
+                    viewholder.board_write_heart.setImageResource(R.drawable.heart);
+                    heart=heart-1;
+                }
+            }
+        });
+
+
+        viewholder.board_write_translate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TextHolder = bList.get(position).getcontent();
+                //Toast.makeText(context, TextHolder, Toast.LENGTH_LONG).show();
+                //viewholder.board_target_translate.setVisibility(View.VISIBLE);
+                //viewholder.board_target_translate.setText(bList.get(position).getcontent());
+                TranslateTask translateTask = new TranslateTask();
+                String sText = bList.get(position).getcontent();
+
+                //bitmap=new ConvertUrlToBitmap().execute(array[i]).get();
+
+                try {
+                    //데이터를 translateAsynctask로부터 가져온다
+                    String translate = translateTask.execute(sText).get();
+
+                    //JSON데이터를 자바객체로 변환해야 한다.
+                    //Gson을 사용할 것이다.
+                    Gson gson = new GsonBuilder().create();
+                    JsonParser parser = new JsonParser();
+                    JsonElement rootObj = parser.parse(translate)
+                            //원하는 데이터 까지 찾아 들어간다.
+                            .getAsJsonObject().get("message")
+                            .getAsJsonObject().get("result");
+                    //안드로이드 객체에 담기
+                    TranslatedItem items = gson.fromJson(rootObj.toString(), TranslatedItem.class);
+
+                    // 모든 처리 이후에 문자열 set
+                    viewholder.board_list_text.setText(items.getTranslatedText());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+
+            }
+        });
+
+
+
+
+
+        // 더보기란 클릭했을 때
         viewholder.board_write_more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -277,6 +387,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
         viewholder.board_list_text.setText(bList.get(position).getcontent());
         Log.d("보드 내용", bList.get(position).getcontent());
+
+        //일단은 GONE 처리
+        viewholder.board_target_translate.setVisibility(View.GONE);
 
 
 
@@ -451,6 +564,15 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
     }
 
+    //자바용 그릇
+    private class TranslatedItem {
+        String translatedText;
+
+        public String getTranslatedText() {
+            return translatedText;
+        }
+    }
+
     @Override
     public int getItemCount() {
         return (null != bList ? bList.size() : 0);
@@ -505,4 +627,76 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
         userLoginClass.execute(board_id);
     }
+
+
+
+    class TranslateTask extends AsyncTask<String,Void,String> {
+
+        //언어선택도 나중에 사용자가 선택할 수 있게 옵션 처리해 주면 된다.
+
+        // 한국어(ko)-영어(en), 한국어(ko)-일본어(ja), 한국어(ko)-중국어 간체(zh-CN), 한국어(ko)-중국어 번체(zh-TW),
+        // 중국어 간체(zh-CN) - 일본어(ja), 중국어 번체(zh-TW) - 일본어(ja), 영어(en)-일본어(ja), 영어(en)-중국어 간체(zh-CN), 영어(en)-중국어 번체(zh-TW)
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String sourceText = strings[0];
+
+
+            try {
+                //String text = URLEncoder.encode("만나서 반갑습니다.", "UTF-8");
+                String text = URLEncoder.encode(sourceText, "UTF-8");
+                String apiURL = "https://openapi.naver.com/v1/papago/n2mt";
+                URL url = new URL(apiURL);
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("X-Naver-Client-Id", clientId);
+                con.setRequestProperty("X-Naver-Client-Secret", clientSecret);
+                // post request
+                String postParams = "source="+sourceLang+"&target="+targetLang+"&text=" + text;
+                con.setDoOutput(true);
+                DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                wr.writeBytes(postParams);
+                wr.flush();
+                wr.close();
+                int responseCode = con.getResponseCode();
+                BufferedReader br;
+                if(responseCode==200) { // 정상 호출
+                    br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                } else {  // 에러 발생
+                    br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+                }
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                while ((inputLine = br.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                br.close();
+
+                return response.toString();
+
+            } catch (Exception e) {
+                System.out.println(e);
+                return null;
+            }
+
+
+        }
+
+        //번역된 결과를 받아서 처리
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //최종 결과 처리부
+            //Log.d("background result", s.toString()); //네이버에 보내주는 응답결과가 JSON 데이터이다.
+
+
+
+        }
+
+
+
+    }
+
 }
