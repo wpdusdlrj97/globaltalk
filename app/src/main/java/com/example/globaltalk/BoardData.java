@@ -9,9 +9,14 @@ public class BoardData {
 
     private String board_id;
 
+    private String heart_count;
+    private String heart_people;
+    private int heart_boolean;
+
     private String profile_image;
     private String profile_teach;
     private String profile_learn;
+
 
 
     private String writer;
@@ -51,6 +56,19 @@ public class BoardData {
     public String getboard_id() {
         return board_id;
     }
+
+    public String getheart_count() {
+        return heart_count;
+    }
+
+    public String getheart_people() {
+        return heart_people;
+    }
+
+    public int getheart_boolean() {
+        return heart_boolean;
+    }
+
 
     public String getprofile_image() {
         return profile_image;
@@ -134,6 +152,18 @@ public class BoardData {
 
     public void setboard_id(String board_id) {
         this.board_id = board_id;
+    }
+
+    public void setheart_count(String heart_count) {
+        this.heart_count = heart_count;
+    }
+
+    public void setheart_people(String heart_people) {
+        this.heart_people = heart_people;
+    }
+
+    public void setheart_boolean(int heart_boolean) {
+        this.heart_boolean = heart_boolean;
     }
 
     public void setprofile_image(String profile_image) {

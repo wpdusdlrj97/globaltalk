@@ -53,6 +53,8 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
     private String EmailHolder;
     private String NameHolder;
+    private String TeachHolder;
+    private String LearnHolder;
 
     public static final String UserEmail = "";
     public static final String UserName = "name";
@@ -79,6 +81,8 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     String img8;
 
     String board_id;
+    String heart_count;
+    String heart_people;
 
     int page_no;
 
@@ -95,6 +99,11 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             Log.d("이메일 받아오기",EmailHolder);
             NameHolder = getArguments().getString("NameHolder");
             Log.d("이름 받아오기",NameHolder);
+            TeachHolder = getArguments().getString("TeachHolder");
+            Log.d("가르칠 언어",TeachHolder );
+            LearnHolder = getArguments().getString("LearnHolder");
+            Log.d("배울언어 받아오기",LearnHolder);
+
         }
 
         //Returning the layout file after inflating
@@ -356,6 +365,10 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
         String TAG_BOARDID ="board_id";
 
+        String TAG_HEARTCOUNT ="heart_count";
+        String TAG_HEARTPEOPLE ="heart_people";
+
+
 
 
             try {
@@ -369,6 +382,12 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
                     board_id = item.getString(TAG_BOARDID);
                     Log.d("게시물 번호", board_id);
+
+                    heart_count = item.getString(TAG_HEARTCOUNT);
+                    Log.d("하트 개수", heart_count);
+
+                    heart_people = item.getString(TAG_HEARTPEOPLE);
+                    Log.d("하트 누른 사람", heart_people);
 
 
 
@@ -428,11 +447,23 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
 
                     boardData.setlogin_email(EmailHolder);
+                    boardData.setlogin_teach(TeachHolder);
+                    boardData.setlogin_learn(LearnHolder);
+
+
                     boardData.setemail(email);
 
 
                     boardData.setboard_id(board_id);
                     Log.d("보드번호", board_id);
+
+                    boardData.setheart_count(heart_count);
+                    Log.d("하트 개수", heart_count);
+                    boardData.setheart_people(heart_people);
+                    Log.d("하트 누른 사람", heart_people);
+                    boardData.setheart_boolean(0);
+
+
 
                     boardData.setprofile_image(profile_image);
                     boardData.setprofile_teach(profile_teach);

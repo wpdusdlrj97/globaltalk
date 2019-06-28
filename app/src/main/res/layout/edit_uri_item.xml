@@ -11,18 +11,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:orientation="horizontal">
+
+<ImageView
+    android:id="@+id/edit_uri"
+    android:layout_width="100dp"
+    android:layout_height="109dp"
+    android:layout_marginRight="3dp"
+    android:scaleType="centerCrop"/>
 
 
-    <ImageView
-        android:id="@+id/uri"
-        android:layout_width="100dp"
-        android:layout_height="109dp"
-        android:layout_marginRight="3dp"
-        android:scaleType="centerCrop"/>
+<Button android:id="@+id/delete_uri"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_alignEnd="@+id/edit_uri"
+    android:text="X"
+    />
 
-</LinearLayout>
+
+</RelativeLayout>

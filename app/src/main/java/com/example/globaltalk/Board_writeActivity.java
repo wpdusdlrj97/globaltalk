@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -112,9 +113,9 @@ public class Board_writeActivity extends AppCompatActivity {
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        GridLayoutManager mLayoutManager = new GridLayoutManager(this,3);
         recyclerView.setLayoutManager(mLayoutManager);
-        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        //mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setAdapter(mAdapter = new UriAdapter(this));
 
 

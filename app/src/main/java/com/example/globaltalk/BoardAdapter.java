@@ -6,7 +6,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -62,12 +65,13 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
 
     ProgressDialog progressDialog;
-    String HttpURL = "http://54.180.122.247/global_communication/board_delete.php";
+    //String HttpURL = "http://54.180.122.247/global_communication/board_delete.php";
     HttpParse httpParse = new HttpParse();
     HashMap<String, String> hashMap = new HashMap<>();
     String finalResult;
 
-    int heart=0;
+    //boolean heart;
+    int translate=0;
 
 
     private NaverDetectionTask mNaverDetectionTask;
@@ -76,6 +80,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
     //TTS 대상
     String[] mTextString;
     static String speaker;
+
+
+    String loginemail;
 
 
 
@@ -126,6 +133,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
         protected ImageView board_write_heart;
 
+        protected TextView board_heart_count;
+
         protected ImageView board_write_translate;
 
         protected ImageView board_write_more;
@@ -162,6 +171,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             //하트
             this.board_write_heart = (ImageView) view.findViewById(R.id.board_write_heart);
 
+            //하트 개수
+            this.board_heart_count = (TextView) view.findViewById(R.id.board_heart_count);
+
             //번역
             this.board_write_translate = (ImageView) view.findViewById(R.id.board_write_translate);
 
@@ -189,28 +201,62 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
     public void onBindViewHolder(@NonNull CustomViewHolder viewholder, final int position) {
 
 
-        Log.d("보드 포지션", String.valueOf(position));
+        loginemail=bList.get(position).getlogin_email();
+        //Log.d("하트-이메일 대조"+position,loginemail);
+        final int[] heart_button = {bList.get(position).getheart_boolean()};
 
+        final int[] heart_count = {Integer.parseInt(bList.get(position).getheart_count())};
+
+        if((bList.get(position).getheart_people()).contains(loginemail)){
+            heart_button[0] =1;
+            Log.d("하트버튼 1로"+position, String.valueOf(heart_button[0]));
+        }else{
+            heart_button[0] =0;
+            Log.d("하트버튼 0로"+position, String.valueOf(heart_button[0]));
+        }
 
 
         // 하트 클릭 시
+        final int[] finalHeart_button = {heart_button[0]};
         viewholder.board_write_heart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_LONG).show();
-                Log.d("뷰홀더 포지션", String.valueOf(viewholder.getAdapterPosition()));
+                if(finalHeart_button[0] ==1){//하트를 클릭한 기록이 있을 경우, 하트 해제
+                    Glide.with(context)
+                            .load(R.drawable.heart)
+                            .into(viewholder.board_write_heart);
+                    //하트 해제
+                    finalHeart_button[0] =0;
+                    //하트 수 -1 후에 viewholder에 set해주기
+                    heart_count[0] = heart_count[0] -1;
+                    viewholder.board_heart_count.setText(String.valueOf(heart_count[0]));
 
-                // 하트 클릭이 안되어 있을 때
-                if(heart==0){
-                viewholder.board_write_heart.setImageResource(R.drawable.redheart);
-                heart=heart+1;
+                    //서버,mysql에서 삭제
+                    UserHateFunction(bList.get(position).getboard_id(),bList.get(position).getlogin_email());
+
                 }else{
-                    viewholder.board_write_heart.setImageResource(R.drawable.heart);
-                    heart=heart-1;
+                    Glide.with(context)
+                            .load(R.drawable.redheart)
+                            .into(viewholder.board_write_heart);
+                    //하트 추가
+                    finalHeart_button[0] =1;
+
+                    //하트 수 +1 후에 viewholder에 set해주기
+                    heart_count[0] = heart_count[0] +1;
+                    viewholder.board_heart_count.setText(String.valueOf(heart_count[0]));
+
+                    //서버,mysql에서 추가
+                    UserLikeFunction(bList.get(position).getboard_id(),bList.get(position).getlogin_email());
+
                 }
+
+                //Toast.makeText(context, String.valueOf(finalHeart_button), Toast.LENGTH_LONG).show();
+
             }
         });
+
+
 
 
         // TTS
@@ -246,28 +292,40 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
                 //bitmap=new ConvertUrlToBitmap().execute(array[i]).get();
 
-                try {
-                    //데이터를 translateAsynctask로부터 가져온다
-                    String translate = translateTask.execute(sText).get();
 
-                    //JSON데이터를 자바객체로 변환해야 한다.
-                    //Gson을 사용할 것이다.
-                    Gson gson = new GsonBuilder().create();
-                    JsonParser parser = new JsonParser();
-                    JsonElement rootObj = parser.parse(translate)
-                            //원하는 데이터 까지 찾아 들어간다.
-                            .getAsJsonObject().get("message")
-                            .getAsJsonObject().get("result");
-                    //안드로이드 객체에 담기
-                    TranslatedItem items = gson.fromJson(rootObj.toString(), TranslatedItem.class);
+                // 하트 클릭이 안되어 있을 때
+                if(translate==0){
+                    try {
+                        //데이터를 translateAsynctask로부터 가져온다
+                        String translate = translateTask.execute(sText).get();
 
-                    // 모든 처리 이후에 문자열 set
-                    viewholder.board_list_text.setText(items.getTranslatedText());
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                        //JSON데이터를 자바객체로 변환해야 한다.
+                        //Gson을 사용할 것이다.
+                        Gson gson = new GsonBuilder().create();
+                        JsonParser parser = new JsonParser();
+                        JsonElement rootObj = parser.parse(translate)
+                                //원하는 데이터 까지 찾아 들어간다.
+                                .getAsJsonObject().get("message")
+                                .getAsJsonObject().get("result");
+                        //안드로이드 객체에 담기
+                        TranslatedItem items = gson.fromJson(rootObj.toString(), TranslatedItem.class);
+
+                        // 모든 처리 이후에 문자열 set
+                        viewholder.board_list_text.setText(items.getTranslatedText());
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    translate=translate+1;
+                }else{
+                    viewholder.board_list_text.setText(sText);
+                    translate=translate-1;
                 }
+
+
+
+
 
 
 
@@ -287,7 +345,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
                 //접속한 사람과 게시물을 쓴 사람을 구분하기
 
-                String loginemail;
+
                 String writeremail;
 
                 loginemail=bList.get(position).getlogin_email();
@@ -477,8 +535,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
 
 
-
-
         viewholder.board_list_name.setText(bList.get(position).getwriter());
         Log.d("보드 네임", bList.get(position).getwriter());
 
@@ -489,9 +545,19 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         Log.d("보드 내용", bList.get(position).getcontent());
 
 
+        if((bList.get(position).getheart_people()).contains(loginemail)){
+            Glide.with(context)
+                    .load(R.drawable.redheart)
+                    .into(viewholder.board_write_heart);
+        }else{
+            Glide.with(context)
+                    .load(R.drawable.heart)
+                    .into(viewholder.board_write_heart);
+        }
 
 
-
+        viewholder.board_heart_count.setText(bList.get(position).getheart_count());
+        //Log.d("보드 내용", bList.get(position).getcontent());
 
 
         //0
@@ -676,8 +742,95 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
     }
 
 
+    //게시물 좋아요 함수
+    public void UserLikeFunction(final String board_id, final String liker) {
 
-    //로그인 함수
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String httpResponseMsg) {
+
+                super.onPostExecute(httpResponseMsg);
+
+                //'좋아요를 누르셨습니다' 토스트
+                Toast.makeText(context, httpResponseMsg, Toast.LENGTH_LONG).show();
+
+
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("board_id", params[0]);
+
+                hashMap.put("liker", params[1]);
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/board_like_plus.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(board_id, liker);
+    }
+
+    //게시물 좋아요 취소 함수
+    public void UserHateFunction(final String board_id, final String liker) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String httpResponseMsg) {
+
+                super.onPostExecute(httpResponseMsg);
+
+                //'좋아요를 취소하셨습니다' 토스트
+                Toast.makeText(context, httpResponseMsg, Toast.LENGTH_LONG).show();
+
+
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("board_id", params[0]);
+
+                hashMap.put("liker", params[1]);
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/board_like_minus.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(board_id, liker);
+    }
+
+
+
+
+
+    //게시물 삭제 함수
     public void DeleteFunction(final String board_id) {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
@@ -714,7 +867,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
                 hashMap.put("board_id", params[0]);
 
-                finalResult = httpParse.postRequest(hashMap, HttpURL);
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/board_delete.php");
 
                 return finalResult;
             }
