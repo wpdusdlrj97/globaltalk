@@ -224,6 +224,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("러닝홀더",LearnHolder);
                 bundle.putString("NameHolder", NameHolder);
                 Log.d("이름홀더",NameHolder);
+                bundle.putString("ImageHolder", ImageHolder);
+                Log.d("사진홀더",ImageHolder);
 
 
 

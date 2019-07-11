@@ -45,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="238dp"
         android:hint=" 게시글을 작성하세요 :) "
+        android:padding="5dp"
         android:gravity="top"
         android:background="@drawable/black"/>
 

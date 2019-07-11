@@ -2,6 +2,7 @@ package com.example.globaltalk;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,6 +41,8 @@ import java.util.List;
 //Our class extending fragment
 public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    public static Tab1 mContext;
+
     private static String TAG = "phptest";
 
     private ArrayList<BoardData> bArrayList;
@@ -55,6 +58,7 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     private String NameHolder;
     private String TeachHolder;
     private String LearnHolder;
+    private String ImageHolder;
 
     public static final String UserEmail = "";
     public static final String UserName = "name";
@@ -83,6 +87,7 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     String board_id;
     String heart_count;
     String heart_people;
+    int comment_count;
 
     int page_no;
 
@@ -103,6 +108,9 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             Log.d("가르칠 언어",TeachHolder );
             LearnHolder = getArguments().getString("LearnHolder");
             Log.d("배울언어 받아오기",LearnHolder);
+            ImageHolder = getArguments().getString("ImageHolder");
+            Log.d("프로필사진 받아오기",ImageHolder);
+
 
         }
 
@@ -110,6 +118,9 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
         //Change R.layout.tab1 in you classes
 
         View rootView = inflater.inflate(R.layout.tab1, container, false);
+
+
+        mContext=this;
 
         swipeRefresh = rootView.findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
@@ -132,7 +143,6 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
 
         write_button = (ImageView) rootView.findViewById(R.id.write_button);
-
 
 
         return rootView;
@@ -183,6 +193,7 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             }
         });
 
+
         // 게시물 쓰기 화면으로 이동
         write_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,11 +232,47 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
         }, 2000);
     }
 
+    /*
+    //다른 액티비티나 프래그먼트 함수 호출(게시물 작성 반영해주기) -> board_write에서 작성한 것 반영해주기
+    public void onCreate() {
+
+        //리사이클러뷰 초기화후, 재정렬
+        bArrayList.clear();
+        bAdapter.notifyDataSetChanged();
+
+        page_no=0;
+
+        GetData task = new GetData();
+        task.execute(String.valueOf(page_no));
 
 
 
+        bRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView bRecyclerView, int dx, int dy) {
+                super.onScrolled(bRecyclerView, dx, dy);
+
+                int lastVisibleItemPosition = ((LinearLayoutManager) bRecyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+
+                int itemTotalCount = bRecyclerView.getAdapter().getItemCount() - 1;
 
 
+                // 스크롤 최하단 감지 시에 반응
+                if (lastVisibleItemPosition == itemTotalCount) {
+                    //Toast.makeText(getContext(), "Last Position", Toast.LENGTH_SHORT).show();
+                    //bAdapter.notifyDataSetChanged();
+
+                    page_no=page_no+6;
+                    GetData task = new GetData();
+                    task.execute(String.valueOf(page_no));
+                    Log.d("페이지 번호", String.valueOf(page_no));
+
+                }
+            }
+        });
+
+    }
+    */
 
 
     private class GetData extends AsyncTask<String, Void, String> {
@@ -367,6 +414,7 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
         String TAG_HEARTCOUNT ="heart_count";
         String TAG_HEARTPEOPLE ="heart_people";
+        String TAG_COMMENTCOUNT ="comment_count";
 
 
 
@@ -388,6 +436,9 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
                     heart_people = item.getString(TAG_HEARTPEOPLE);
                     Log.d("하트 누른 사람", heart_people);
+
+                    comment_count = Integer.parseInt(item.getString(TAG_COMMENTCOUNT));
+                    Log.d("댓글 개수", String.valueOf(comment_count));
 
 
 
@@ -447,9 +498,10 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
 
                     boardData.setlogin_email(EmailHolder);
+                    boardData.setlogin_name(NameHolder);
                     boardData.setlogin_teach(TeachHolder);
                     boardData.setlogin_learn(LearnHolder);
-
+                    boardData.setlogin_image(ImageHolder);
 
                     boardData.setemail(email);
 
@@ -462,6 +514,7 @@ public class Tab1 extends Fragment implements SwipeRefreshLayout.OnRefreshListen
                     boardData.setheart_people(heart_people);
                     Log.d("하트 누른 사람", heart_people);
                     boardData.setheart_boolean(0);
+                    boardData.setcomment_count(comment_count);
 
 
 

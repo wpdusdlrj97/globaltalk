@@ -34,7 +34,7 @@
             android:id="@+id/board_edit_upload"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/upload" />
+            android:src="@drawable/check" />
 
     </LinearLayout>
 
@@ -46,7 +46,9 @@
         android:layout_height="150dp"
         android:background="@drawable/black"
         android:gravity="top"
-        android:hint=" 게시글을 수정하세요 :) " />
+        android:padding="5dp"
+        android:hint=" 게시글을 수정하세요 :) "
+        android:cursorVisible="true"/>
 
 
     <LinearLayout

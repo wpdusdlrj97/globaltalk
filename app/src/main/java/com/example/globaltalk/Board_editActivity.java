@@ -27,6 +27,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,9 +78,10 @@ public class Board_editActivity extends AppCompatActivity implements StartDragLi
     String img7Holder;
     String img8Holder;
 
-    TextView board_edit_text;
+    EditText board_edit_text;
 
     ImageView board_edit_image;
+    ImageView board_edit_back;
     ImageView board_edit_upload;
 
     TextView edit_maximage;
@@ -163,11 +165,16 @@ public class Board_editActivity extends AppCompatActivity implements StartDragLi
         //게시글 수정란
         board_edit_text = findViewById(R.id.board_edit_text);
 
+
         //이미지 수정 및 추가
         edit_maximage = findViewById(R.id.edit_maximage);
 
         // 이미지 선택 버튼
         board_edit_image = (ImageView)findViewById(R.id.board_edit_image);
+
+
+        // 뒤로 가기
+        board_edit_back = (ImageView)findViewById(R.id.board_edit_back);
 
         // 수정 완료 버튼
         board_edit_upload = (ImageView)findViewById(R.id.board_edit_upload);
@@ -194,10 +201,11 @@ public class Board_editActivity extends AppCompatActivity implements StartDragLi
 
         //글이 있을 경우
         board_edit_text.setText(ContentHolder);
+        board_edit_text.setSelection(board_edit_text.length());
 
 
         if(img0Holder.equals("null")){
-
+            matisse_size=9;
         }else if(img1Holder.equals("null")){
             photos.add(Uri.parse(img0Holder));
 
@@ -299,6 +307,16 @@ public class Board_editActivity extends AppCompatActivity implements StartDragLi
 
             }
         });
+
+
+        board_edit_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                finish();
+            }
+        });
+
 
         board_edit_upload.setOnClickListener(new View.OnClickListener() {
             @Override

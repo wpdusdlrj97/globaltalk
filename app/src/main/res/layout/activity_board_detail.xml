@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="400dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"
+        android:fillViewport="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <!--게시글 작성-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/board_detail_back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/before" />
+
+
+                <TextView
+                    android:layout_width="360dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="게시글 상세"
+                    android:textColor="#050505"
+                    android:textSize="24sp" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="3dp">
+
+
+                <ImageView
+                    android:id="@+id/board_detail_pfimage"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="#eeeeee"
+                    android:foreground="@drawable/rounded_fg"
+                    android:scaleType="centerCrop" />
+
+
+                <LinearLayout
+                    android:layout_width="182dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/board_detail_name"
+                        android:layout_width="162dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="19dp"
+                        android:layout_marginTop="1dp"
+                        android:text="조제연"
+                        android:textColor="@android:color/black"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/board_detail_teach"
+                            android:layout_width="52dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:padding="5dp"
+                            android:text="Korean"
+                            android:textAlignment="textEnd"
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp" />
+
+                        <TextView
+                            android:id="@+id/board_detail_learn"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:text="English"
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/bar"
+                            android:layout_width="105dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:src="@drawable/bar10" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/board_detail_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="75dp"
+                    android:padding="5dp"
+                    android:text="2019.06.06"
+                    android:textAlignment="textStart"
+                    android:textColor="@android:color/black"
+                    android:textSize="10dp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="3dp">
+
+                <TextView
+                    android:id="@+id/board_detail_text"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="글을 작성해주세요"
+                    android:textAlignment="textStart"
+                    android:textColor="@android:color/black"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/board_detail_transtext"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="5"
+                    android:padding="5dp"
+                    android:textAlignment="textStart"
+                    android:textColor="@android:color/black"
+                    android:textSize="15dp" />
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="3dp">
+
+                    <ImageView
+                        android:id="@+id/board_detail_image0"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/board_detail_image1"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/board_detail_image2"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                </LinearLayout>
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="3dp">
+
+                    <ImageView
+                        android:id="@+id/board_detail_image3"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/board_detail_image4"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/board_detail_image5"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                </LinearLayout>
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="3dp">
+
+                    <ImageView
+                        android:id="@+id/board_detail_image6"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/board_detail_image7"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/board_detail_image8"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="#eeeeee"
+                        android:scaleType="centerCrop" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="3dp">
+
+                <ImageView
+                    android:id="@+id/board_detail_heart"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/heart" />
+
+                <TextView
+                    android:id="@+id/board_detail_count"
+                    android:layout_width="40dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="5dp"
+
+                    android:layout_marginTop="5dp"
+                    android:textColor="#000000"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/board_detail_comment"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/comment" />
+
+                <TextView
+                    android:id="@+id/board_detail_comment_count"
+                    android:layout_width="40dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="5dp"
+
+                    android:layout_marginTop="5dp"
+                    android:textColor="#000000"
+                    android:textSize="15dp" />
+
+
+                <ImageView
+                    android:id="@+id/board_detail_translate"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/translate" />
+
+                <ImageView
+                    android:id="@+id/board_detail_sound"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:src="@drawable/volume" />
+
+                <ImageView
+                    android:id="@+id/board_detail_more"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="99dp"
+                    android:src="@drawable/more" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
+
+
+            <LinearLayout
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+
+                <EditText
+                    android:id="@+id/comment_write_content"
+                    android:layout_width="332dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/black"
+                    android:hint="댓글을 적어주세요"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="21dp" />
+
+                <ImageView
+                    android:id="@+id/comment_write_send"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/send" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#000000" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/board_comment_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="3dp"
+                android:layout_weight="6"
+                android:padding="3dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

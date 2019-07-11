@@ -3,8 +3,10 @@ package com.example.globaltalk;
 public class BoardData {
 
     private String login_email;
+    private String login_name;
     private String login_teach;
     private String login_learn;
+    private String login_image;
 
 
     private String board_id;
@@ -12,6 +14,8 @@ public class BoardData {
     private String heart_count;
     private String heart_people;
     private int heart_boolean;
+
+    private int comment_count;
 
     private String profile_image;
     private String profile_teach;
@@ -41,12 +45,20 @@ public class BoardData {
         return login_email;
     }
 
+    public String getlogin_name() {
+        return login_name;
+    }
+
     public String getLogin_teach() {
         return login_teach;
     }
 
     public String getlogin_learn() {
         return login_learn;
+    }
+
+    public String getlogin_image() {
+        return login_image;
     }
 
     public String getemail() {
@@ -67,6 +79,10 @@ public class BoardData {
 
     public int getheart_boolean() {
         return heart_boolean;
+    }
+
+    public int getcomment_count() {
+        return comment_count;
     }
 
 
@@ -138,6 +154,10 @@ public class BoardData {
         this.login_email = login_email;
     }
 
+    public void setlogin_name(String login_name) {
+        this.login_name = login_name;
+    }
+
     public void setlogin_teach(String login_teach) {
         this.login_teach = login_teach;
     }
@@ -145,6 +165,11 @@ public class BoardData {
     public void setlogin_learn(String login_learn) {
         this.login_learn = login_learn;
     }
+
+    public void setlogin_image(String login_image) {
+        this.login_image = login_image;
+    }
+
 
     public void setemail(String email) {
         this.email = email;
@@ -164,6 +189,10 @@ public class BoardData {
 
     public void setheart_boolean(int heart_boolean) {
         this.heart_boolean = heart_boolean;
+    }
+
+    public void setcomment_count(int comment_count) {
+        this.comment_count = comment_count;
     }
 
     public void setprofile_image(String profile_image) {

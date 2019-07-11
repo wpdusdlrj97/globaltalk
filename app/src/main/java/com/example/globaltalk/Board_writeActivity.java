@@ -119,6 +119,9 @@ public class Board_writeActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter = new UriAdapter(this));
 
 
+
+
+
         // 뒤로가기, 업로드 버튼
         board_write_back = (ImageView)findViewById(R.id.board_write_back);
         board_write_upload = (ImageView)findViewById(R.id.board_write_upload);
@@ -158,8 +161,12 @@ public class Board_writeActivity extends AppCompatActivity {
                     if(mSelected!=null){  // 이미지가 있다면 업로드 후 finish
                         UploadFunction();
                         finish();
+                        //다른 액티비티나 프래그먼트 함수 호출(게시물 작성 반영해주기)
+                        //(Tab1.mContext).onCreate();
                     }else{  // 이미지가 없으면 바로 finish
                         finish();
+                        //다른 액티비티나 프래그먼트 함수 호출(게시물 작성 반영해주기)
+                        //(Tab1.mContext).onCreate();
                     }
                 }
 
