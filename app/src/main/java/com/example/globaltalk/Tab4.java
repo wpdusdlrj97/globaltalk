@@ -60,7 +60,7 @@ public class Tab4 extends Fragment {
     private String TeachHolder;
     private String LearnHolder;
 
-    public static final String FriendEmail = "";
+    //public static final String FriendEmail = "";
 
 
     //Overriden method onCreateView
@@ -119,7 +119,9 @@ public class Tab4 extends Fragment {
 
                 Intent intent = new Intent(getActivity(), Friends_Profile_Activity.class);
 
-                intent.putExtra(FriendEmail, personalData.getMember_email());
+                intent.putExtra("Friend_email", personalData.getMember_email());
+                intent.putExtra("Login_email",EmailHolder);
+
 
                 startActivity(intent);
 

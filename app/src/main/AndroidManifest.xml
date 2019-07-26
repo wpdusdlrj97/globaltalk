@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +17,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Board_detailActivity"></activity>
+        <activity android:name=".Follower_list_Activity"></activity>
+        <activity android:name=".Following_list_Activity"></activity>
+        <activity android:name=".Chat1"></activity>
+        <activity android:name=".Board_detailActivity" />
         <activity android:name=".Heart_peopleActivity" />
         <activity android:name=".TTSActivity" />
         <activity
@@ -26,6 +31,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".TranslateActivity" />
         <activity android:name=".Friends_Profile_Activity" />
+        <activity android:name=".My_Profile_Activity" />
         <activity android:name=".Profile_Image_Activity" />
         <activity
             android:name=".Board_writeActivity"

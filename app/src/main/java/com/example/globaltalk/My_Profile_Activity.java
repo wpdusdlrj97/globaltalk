@@ -1,70 +1,32 @@
 package com.example.globaltalk;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
-import android.util.Base64;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
-import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
-/**
- * Created by Belal on 2/3/2016.
- */
-
-//Our class extending fragment
-public class Tab5 extends Fragment {
+public class My_Profile_Activity extends AppCompatActivity {
 
     private static String TAG = "phpquerytest";
 
@@ -77,7 +39,9 @@ public class Tab5 extends Fragment {
     private static final String TAG_SEX = "sex";
     private static final String TAG_TEACH = "teach";
     private static final String TAG_LEARN = "learn";
+
     private static final String TAG_CONTENT = "content";
+
 
     private static final String TAG_IMAGE1 ="image1";
     private static final String TAG_IMAGE2 ="image2";
@@ -88,106 +52,81 @@ public class Tab5 extends Fragment {
     private static final String TAG_FOLLOWER_COUNT = "follower_count";
     private static final String TAG_FOLLOWING_COUNT = "following_count";
 
-
-
-    String Profile_image1 = "Profile_image1" ;
-    String Profile_image2 = "Profile_image2" ;
-    String Profile_image3 = "Profile_image3" ;
-
-    String Profile_email = "Profile_email" ;
-    String Profile_image = "Profile_image" ;
-    private static final int PICK_FROM_ALBUM = 1;
-    private static final int PICK_FROM_CAMERA = 2;
-    private File tempFile;
-    private Boolean isCamera = false;
-    Bitmap bitmap;
     ProgressDialog progressDialog ;
-    boolean check = true;
+    String mJsonString;
+
+    String EmailHolder;
 
     //프로필 사진
-    private ImageView mypage_image;
+    private ImageView friend_image;
 
     //이름
-    private TextView mypage_name;
+    private TextView friend_name;
     //나이
-    private TextView mypage_age;
-    //성별
-    private TextView pf_sex;
-    //이메일
-    private TextView pf_email;
+    private TextView friend_age;
+
     //가르칠 언어
-    private TextView mypage_teach;
+    private TextView friend_teach;
     //배울 언어
-    private TextView mypage_learn;
-    //자기소개
-    private TextView mypage_intro;
+    private TextView friend_learn;
 
-    private TextView mypage_following_number;
+    private TextView friends_intro;
 
-    private TextView mypage_follower_number;
+    private TextView friend_follower_number;
+    private TextView friend_following_number;
 
-
-    String mJsonString;
-    private String EmailHolder;
     public static final String UserEmail = "";
 
-    Button button_logout1;
+    private ImageView friend_img1;
+    private ImageView friend_img2;
+    private ImageView friend_img3;
 
+    private Button button_change;
 
-    private ImageView pf_img1;
-    private ImageView pf_img2;
-    private ImageView pf_img3;
+    String f_follower;
+    String f_following;
 
-
-    //Overriden method onCreateView
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_profile_);
 
-        if (getArguments() != null) {
-            EmailHolder = getArguments().getString("EmailHolder");
-        }
+        //로그인할 때 받아온 이메일 값
+        Intent intent = getIntent();
+        //친구의 이메일
+        EmailHolder = intent.getStringExtra("My_email");
         Log.d("이메일 받아오기",EmailHolder);
 
+        friend_image = (ImageView) findViewById(R.id.friend_image);
+
+        friend_name = (TextView) findViewById(R.id.friend_name);
+        friend_age = (TextView) findViewById(R.id.friend_age);
+
+        friends_intro = (TextView) findViewById(R.id.friends_intro);
+
+        button_change = findViewById(R.id.button_change);
 
 
 
-        View rootView = inflater.inflate(R.layout.tab5, container, false);
 
-        mypage_image = (ImageView) rootView.findViewById(R.id.mypage_image);
-
-        button_logout1 = (Button) rootView.findViewById(R.id.button_logout1);
-
-        mypage_name = (TextView) rootView.findViewById(R.id.mypage_name);
-        mypage_age = (TextView) rootView.findViewById(R.id.mypage_age);
         //pf_sex = (TextView)rootView.findViewById(R.id.pf_sex);
         //pf_email = (TextView)rootView.findViewById(R.id.pf_email);
-        mypage_teach = (TextView) rootView.findViewById(R.id.mypage_teach);
-        mypage_learn = (TextView) rootView.findViewById(R.id.mypage_learn);
+        friend_teach = (TextView) findViewById(R.id.friend_teach);
+        friend_learn = (TextView) findViewById(R.id.friend_learn);
 
-        mypage_following_number = (TextView) rootView.findViewById(R.id.mypage_following_number);
-        mypage_follower_number = (TextView) rootView.findViewById(R.id.mypage_follower_number);
-
-
-        mypage_intro = (TextView) rootView.findViewById(R.id.mypage_intro);
-
-        pf_img1 = (ImageView)rootView.findViewById(R.id.pf_img1);
-        pf_img2 = (ImageView)rootView.findViewById(R.id.pf_img2);
-        pf_img3 = (ImageView)rootView.findViewById(R.id.pf_img3);
-
-        //Returning the layout file after inflating
-        //Change R.layout.tab1 in you classes
+        friend_img1 = (ImageView)findViewById(R.id.friend_img1);
+        friend_img2 = (ImageView)findViewById(R.id.friend_img2);
+        friend_img3 = (ImageView)findViewById(R.id.friend_img3);
 
 
+        friend_following_number = (TextView) findViewById(R.id.friend_following_number);
+        friend_follower_number = (TextView) findViewById(R.id.friend_follower_number);
 
-
-        return rootView;
 
 
     }
 
 
-
-    //생명주기 활용 필요
 
     @Override
     public void onResume() {
@@ -196,13 +135,27 @@ public class Tab5 extends Fragment {
 
         GetData task = new GetData();
         //task.execute( mEditTextSearchKeyword1.getText().toString(), mEditTextSearchKeyword2.getText().toString());
-        task.execute("http://54.180.122.247/global_communication/mypage.php", "");
+        task.execute("http://54.180.122.247/global_communication/friendpage.php", "");
 
-        button_logout1.setOnClickListener(new View.OnClickListener() {
+        friend_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent5 = new Intent(getActivity(), MypageActivity.class);
+                Intent intent = new Intent(My_Profile_Activity.this, Profile_Image_Activity.class);
+
+                intent.putExtra(UserEmail, EmailHolder);
+                //intent.putExtra(UserEmail, email);
+                startActivity(intent);
+
+            }
+        });
+
+
+        button_change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent5 = new Intent(My_Profile_Activity.this, MypageActivity.class);
 
                 intent5.putExtra(UserEmail, EmailHolder);
                 //intent.putExtra(UserEmail, email);
@@ -211,27 +164,44 @@ public class Tab5 extends Fragment {
         });
 
 
-
-        mypage_image.setOnClickListener(new View.OnClickListener() {
+        //나를 팔로우 한사람 목록    following목록에 내가 포함된 리스트     select * from global where following목록 like %,나의이메일%
+        friend_follower_number.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), Profile_Image_Activity.class);
+                Intent intent5 = new Intent(My_Profile_Activity.this, Follower_list_Activity.class);
 
-                intent.putExtra(UserEmail, EmailHolder);
+
+                //이메일을 던지고 그에 해당하는 것들을 조건문으로 걸러낸 뒤에 recyclerview에 뿌려주기
+                intent5.putExtra("Email", EmailHolder);
                 //intent.putExtra(UserEmail, email);
-                startActivity(intent);
+                startActivity(intent5);
 
             }
         });
+
+
+        friend_following_number.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent19 = new Intent(My_Profile_Activity.this, Following_list_Activity.class);
+
+
+                //이메일을 던지고 그에 해당하는 것들을 조건문으로 걸러낸 뒤에 recyclerview에 뿌려주기
+                intent19.putExtra("Email", EmailHolder);
+                //intent.putExtra(UserEmail, email);
+                startActivity(intent19);
+
+            }
+        });
+
+
+
+
+
+
     }
-
-
-
-
-
-
-
 
 
     private class GetData extends AsyncTask<String, Void, String> {
@@ -243,7 +213,7 @@ public class Tab5 extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            progressDialog = ProgressDialog.show(getActivity(),
+            progressDialog = ProgressDialog.show(My_Profile_Activity.this,
                     "Please Wait", null, true, true);
         }
 
@@ -258,7 +228,7 @@ public class Tab5 extends Fragment {
 
             if (result == null) {
 
-                mypage_name.setText(errorString);
+                friend_name.setText(errorString);
             } else {
 
                 mJsonString = result;
@@ -273,7 +243,7 @@ public class Tab5 extends Fragment {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
 
-            String serverURL = "http://54.180.122.247/global_communication/mypage.php";
+            String serverURL = "http://54.180.122.247/global_communication/friendpage.php";
             String postParameters = "email=" + EmailHolder;
 
 
@@ -357,15 +327,18 @@ public class Tab5 extends Fragment {
 
                 String content = item.getString(TAG_CONTENT);
 
+
                 String image1 = item.getString(TAG_IMAGE1);
                 String image2 = item.getString(TAG_IMAGE2);
                 String image3 = item.getString(TAG_IMAGE3);
 
-
-                String f_follower = item.getString(TAG_FOLLOWER);
-                String f_following = item.getString(TAG_FOLLOWING);
+                f_follower = item.getString(TAG_FOLLOWER);
+                f_following = item.getString(TAG_FOLLOWING);
                 int f_follower_count = item.getInt(TAG_FOLLOWER_COUNT);
                 int f_following_count = item.getInt(TAG_FOLLOWING_COUNT);
+
+
+
 
 
                 Glide.with(this)
@@ -374,7 +347,7 @@ public class Tab5 extends Fragment {
                         .skipMemoryCache(true)
                         .thumbnail(0.1f)
                         .fitCenter()
-                        .into(mypage_image);
+                        .into(friend_image);
 
                 Glide.with(this)
                         .load(image1)
@@ -382,7 +355,7 @@ public class Tab5 extends Fragment {
                         .skipMemoryCache(true)
                         .thumbnail(0.1f)
                         .fitCenter()
-                        .into(pf_img1);
+                        .into(friend_img1);
 
                 Glide.with(this)
                         .load(image2)
@@ -390,7 +363,7 @@ public class Tab5 extends Fragment {
                         .skipMemoryCache(true)
                         .thumbnail(0.1f)
                         .fitCenter()
-                        .into(pf_img2);
+                        .into(friend_img2);
 
                 Glide.with(this)
                         .load(image3)
@@ -398,27 +371,23 @@ public class Tab5 extends Fragment {
                         .skipMemoryCache(true)
                         .thumbnail(0.1f)
                         .fitCenter()
-                        .into(pf_img3);
+                        .into(friend_img3);
 
                 //pf_email.setText(email);
-                mypage_name.setText(name);
-                mypage_age.setText(age);
+                friend_name.setText(name);
+                friend_age.setText(age);
                 //pf_sex.setText(sex);
-                mypage_teach.setText(teach);
-                mypage_learn.setText(learn);
+                friend_teach.setText(teach);
+                friend_learn.setText(learn);
 
-                mypage_following_number.setText(String.valueOf(f_following_count));
-                mypage_follower_number.setText(String.valueOf(f_follower_count));
+                friend_follower_number.setText(String.valueOf(f_follower_count));
+                friend_following_number.setText(String.valueOf(f_following_count));
 
                 if(content.equals("null")){
-                    mypage_intro.setText("");
+                    friends_intro.setText("");
                 }else{
-                    mypage_intro.setText(content);
+                    friends_intro.setText(content);
                 }
-
-
-
-
 
 
                 //mArrayList.add(hashMap);
@@ -431,9 +400,4 @@ public class Tab5 extends Fragment {
         }
 
     }
-
-
-
-
-
 }

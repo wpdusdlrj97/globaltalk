@@ -42,6 +42,7 @@ public class Pager extends FragmentStatePagerAdapter {
                 return tab2;
             case 2:
                 Tab3 tab3 = new Tab3();
+                tab3.setArguments(bundle);
                 return tab3;
             case 3:
                 Tab4 tab4 = new Tab4();
