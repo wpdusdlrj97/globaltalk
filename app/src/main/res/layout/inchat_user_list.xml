@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="3dp">
+
+    <ImageView
+        android:id="@+id/chat_user_list_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#eeeeee"
+        android:foreground="@drawable/rounded_fg"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/chat_user_list_name"
+        android:layout_width="125dp"
+        android:layout_height="42dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
+        android:text="조제연"
+        android:textColor="@android:color/black"
+        android:textSize="14dp"
+        android:textStyle="bold" />
+
+
+</LinearLayout>

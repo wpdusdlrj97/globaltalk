@@ -6,19 +6,36 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -28,11 +45,23 @@ public class Chat9 extends AppCompatActivity {
     HttpParse httpParse = new HttpParse();
     String finalResult;
 
+    private DrawerLayout drawerLayout;
+    private View drawerView;
+
+
+
+    private static String TAG = "phptest";
+    private String mJsonString;
+    private String mJsonString9;
+    private String mJsonString19;
+
     TextView friend_name;
 
     TextView txtMessage;
     Button btnSend;
     EditText editMessage;
+
+    ImageView chat_write_more;
 
     Handler msgHandler;
 
@@ -42,7 +71,7 @@ public class Chat9 extends AppCompatActivity {
     SendThread send;
 
 
-    String IP="192.168.0.2";
+    String IP="192.168.0.41";
     String PORT="9999";
 
     Socket socket;
@@ -51,11 +80,33 @@ public class Chat9 extends AppCompatActivity {
 
     String RoomHolder;
     String MyEmailHolder;
+    String FriendEmailHolder;
     String FriendNameHolder;
 
 
     String message;
     String formatDate;
+
+
+    String Servermessage;
+    int idx;
+    String chatuser_email;
+    String chat_content;
+
+
+    private ArrayList<InChatData> icArrayList;
+    private InChatAdapter icAdapter;
+    private RecyclerView icRecyclerView;
+
+    private ArrayList<InChatUserData> icuser_ArrayList;
+    private InChatUserAdapter icuser_Adapter;
+    private RecyclerView icuser_RecyclerView;
+
+
+
+    ArrayList<String> Userlist = new ArrayList<String>();
+
+    InputMethodManager imm;
 
 
     @Override
@@ -72,6 +123,11 @@ public class Chat9 extends AppCompatActivity {
         Log.d("나의 이메일 받아오기",MyEmailHolder);
 
         //친구의 이름
+        FriendEmailHolder = intent.getStringExtra("friend_email");
+        Log.d("친구의 이메일 받아오기",FriendEmailHolder);
+
+
+        //친구의 이름
         FriendNameHolder = intent.getStringExtra("friend_name");
         Log.d("친구의 이름 받아오기",FriendNameHolder);
 
@@ -84,15 +140,18 @@ public class Chat9 extends AppCompatActivity {
         // 현재시간을 date 변수에 저장한다.
         Date date = new Date(now);
         // 시간을 나타냇 포맷을 정한다 ( yyyy/MM/dd 같은 형태로 변형 가능 )
-        SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
         // nowDate 변수에 값을 저장한다.
         formatDate = sdfNow.format(date);
+
 
 
 
         context = this;
         editMessage = findViewById(R.id.editMessage);
         btnSend = findViewById(R.id.btnSend);
+
+        chat_write_more = findViewById(R.id.chat_write_more);
 
         txtMessage = findViewById(R.id.txtMessage);
         friend_name = findViewById(R.id.friend_name);
@@ -107,6 +166,119 @@ public class Chat9 extends AppCompatActivity {
          friend_name.setText(FriendNameHolder);
 
 
+        //mTextViewResult = (TextView) rootView.findViewById(R.id.textView_main_result);
+        icRecyclerView = (RecyclerView) findViewById(R.id.chat_bubble_list);
+        icRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+
+
+
+        //mTextViewResult.setMovementMethod(new ScrollingMovementMethod());
+
+        icArrayList = new ArrayList<>();
+
+        icAdapter = new InChatAdapter(this, icArrayList);
+        icRecyclerView.setAdapter(icAdapter);
+
+
+
+        //List의 orientation이 vertical 일때 DividerItemDecoration 생성자의 두번째 인자를 1로 세팅해주면되고,
+        //
+        //Horizontal 인 경우 0으로 설정해주면 됩니다.
+        //icRecyclerView.addItemDecoration(new DividerItemDecoration(this, 1));
+
+
+        //사용자 추가
+        Userlist.add(MyEmailHolder);
+        Userlist.add(FriendEmailHolder);
+
+
+
+        // 입력창 내리기
+        //imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE); // 키보드 객체 받아오기
+
+
+
+
+
+
+
+        // 드로우뷰
+        icuser_RecyclerView = (RecyclerView) findViewById(R.id.inchatroom_user_list);
+        icuser_RecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        //mTextViewResult.setMovementMethod(new ScrollingMovementMethod());
+
+        icuser_ArrayList = new ArrayList<>();
+
+        icuser_Adapter = new InChatUserAdapter(this, icuser_ArrayList);
+        icuser_RecyclerView.setAdapter(icuser_Adapter);
+        icuser_RecyclerView.addItemDecoration(new DividerItemDecoration(this, 1));
+
+
+        // 더보기란
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerView = (View)findViewById(R.id.drawer);
+
+
+
+
+    }
+
+
+
+   @Override
+    public void onResume() {
+        super.onResume();
+
+       // 해당 채팅방 번호로 chat_key의 user_list 불러오기, 하나하나 데이터 추가해주기기
+       icuser_ArrayList.clear();
+       icuser_Adapter.notifyDataSetChanged();
+
+       GetDrawer taskdrawer = new GetDrawer();
+       taskdrawer.execute(RoomHolder);
+       Log.d("드로워 실행", String.valueOf(taskdrawer));
+
+
+
+
+
+
+        //채팅한 대화내역 가져오기
+        icArrayList.clear();
+        icAdapter.notifyDataSetChanged();
+
+        GetData task = new GetData();
+        task.execute(RoomHolder);
+
+
+        //리사이클러뷰 가장 하단으로 이동
+        //icRecyclerView.scrollToPosition(icArrayList.size()-1);
+
+
+
+        // 더보기 클릭시 드로우뷰 튀어나오기
+        chat_write_more.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                drawerLayout.openDrawer(drawerView);
+
+            }
+
+        });
+
+        // 드로우뷰 들여보내기
+        ImageView buttonCloseDrawer = (ImageView) findViewById(R.id.closedrawer);
+        buttonCloseDrawer.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                drawerLayout.closeDrawers();
+            }
+        });
+
+
         //핸들러는 액티비티가 만들어질 때 여기서 동작한다
         //안드로이드에서 네트워크 작업을 할 시 백그라운드로 돌려야한다
         //백그라운드에서는 메인UI를 건드릴 수 없으므로 runOnUi를 쓰든지 핸들러를 써야한다
@@ -117,7 +289,32 @@ public class Chat9 extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 if(msg.what == 1111){ //1111은 식별자로 핸들러는 하나지만 핸들러를 호출하는 곳은 여러군데일 수 있다
                     //채팅 서버로부터 수신한 메시지를 텍스트뷰에 추가
-                    txtMessage.append(msg.obj.toString()+"\n");
+
+
+                    //서버로부터 받은 메시지형태 -> heungmin@naver.com : aaaaa
+                    //따라서 이메일과 aaaa를 구분한뒤 adapter에 넣어줘야 한다
+                    Servermessage = msg.obj.toString();
+
+                    idx = Servermessage.indexOf(":");
+
+                    chatuser_email = Servermessage.substring(0, idx);
+
+                    // 뒷부분을 추출
+                    // 아래 substring은 @ 바로 뒷부분인 n부터 추출된다.
+                    chat_content= Servermessage.substring(idx+1);
+
+
+                    //db에서 가져오는 것이 아닌
+                    //바로바로 TCP 통신을 할 때
+                    //상대방의 사진과 이름을 가져와야한다
+                    GetData9 task9 = new GetData9();
+                    task9.execute(chatuser_email);
+
+
+
+
+
+
                 }
             }
         };
@@ -134,15 +331,40 @@ public class Chat9 extends AppCompatActivity {
                 //사용자가 입력한 메시지
                 message=editMessage.getText().toString();
                 //입력한 메시지가 null도 아니고 빈값도 아닐 시
+                /*
                 if(message != null || !message.equals("")){
                     //send 쓰레드를 전송용 쓰레드를 만들어서 호출
-                    send=new SendThread(socket);
+
+                    send=new SendThread(message,socket);
                     send.start();
                     editMessage.setText("");
                 }
+                */
 
-                /////////DB 서버로 보내기/////////
-                ChatRoom_Function(RoomHolder, MyEmailHolder, message, formatDate);
+                if(!message.equals("")){
+                    //send 쓰레드를 전송용 쓰레드를 만들어서 호출
+
+                    send=new SendThread(message,socket);
+                    send.start();
+                    editMessage.setText("");
+
+                    String chatuserlist= String.valueOf(Userlist);
+                    chatuserlist = chatuserlist.replace("[",",");
+                    chatuserlist = chatuserlist.replace("]","");
+                    chatuserlist= chatuserlist.replace(" ", "");
+                    Log.d("채팅유저리스트",chatuserlist);
+
+                    //채팅방(chat_key)에 유저리스트 추가
+                    Chat_UserList_Function(RoomHolder, chatuserlist);
+
+
+                    /////////DB 서버로 보내기/////////
+                    ChatRoom_Function(RoomHolder, MyEmailHolder, message, formatDate);
+                }
+
+
+
+
 
 
 
@@ -152,20 +374,26 @@ public class Chat9 extends AppCompatActivity {
         });
 
 
-
-
     }
-
-
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onPause() {
+        super.onPause();
 
+        Log.d("채팅리스트 사이즈", String.valueOf(icArrayList.size()));
 
+        if(icArrayList.size()==0){ //채팅 친 내역이 없다는 얘기므로 삭제시키기
 
+            ChatRoom_destroy_Function(RoomHolder);
+
+        }
 
     }
+
+
+
+
+
 
 
 
@@ -202,6 +430,8 @@ public class Chat9 extends AppCompatActivity {
                 //식별자 -> 나의 이메일
                 output.writeUTF(MyEmailHolder);
                 Log.d("MyEmail",MyEmailHolder);
+
+
 
                 //식별자 -> 친구의 이메일
                 //output.writeUTF(FriendEmailHolder);
@@ -269,9 +499,10 @@ public class Chat9 extends AppCompatActivity {
     //내부 클래스
     class SendThread extends  Thread{
         Socket socket;
-        String sendmsg = editMessage.getText().toString();
+        String sendmsg;
         DataOutputStream output;
-        public SendThread(Socket socket){
+        public SendThread(String sendmsg,Socket socket){
+            this.sendmsg=sendmsg;
             this.socket = socket;
             try{
                 //채팅서버로 메시지를 보내기 위한  스트림 생성
@@ -342,6 +573,574 @@ public class Chat9 extends AppCompatActivity {
 
         userLoginClass.execute(chatroom_id, writer, content, date);
     }
+
+
+
+
+    private class GetData extends AsyncTask<String, Void, String> {
+
+
+        String errorString = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+
+            if (result == null){
+
+                // mTextViewResult.setText(errorString);
+            }
+            else {
+
+                mJsonString = result;
+                showResult();
+            }
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String searchKeyword1 = params[0];
+
+            String serverURL = "http://54.180.122.247/global_communication/getchat_content.php";
+            String postParameters = "chatroom_no=" + searchKeyword1;
+
+
+            try {
+
+                URL url = new URL(serverURL);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+
+                httpURLConnection.setReadTimeout(5000);
+                httpURLConnection.setConnectTimeout(5000);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.connect();
+
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+
+                int responseStatusCode = httpURLConnection.getResponseCode();
+                Log.d(TAG, "response code - " + responseStatusCode);
+
+                InputStream inputStream;
+                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = httpURLConnection.getInputStream();
+                }
+                else{
+                    inputStream = httpURLConnection.getErrorStream();
+                }
+
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while((line = bufferedReader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                return sb.toString().trim();
+
+
+            } catch (Exception e) {
+
+                Log.d(TAG, "GetData : Error ", e);
+                errorString = e.toString();
+
+                return null;
+            }
+
+        }
+    }
+
+
+    private void showResult(){
+
+        String TAG_JSON="webnautes";
+
+
+        try {
+            JSONObject jsonObject = new JSONObject(mJsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+            for(int i=0;i<jsonArray.length();i++){
+
+                JSONObject item = jsonArray.getJSONObject(i);
+
+                String writer = item.getString("writer");
+                Log.d("채팅 쓴 사람",writer);
+                String content = item.getString("content");
+                Log.d("채팅 내용",content);
+                String wdate = item.getString("wdate");
+                Log.d("채팅 날짜",wdate);
+                String chatuser_image = item.getString("chatuser_image");
+                Log.d("채팅 프로필 사진",chatuser_image);
+                String chatuser_name = item.getString("chatuser_name");
+                Log.d("채팅 프로필 이름",chatuser_name);
+
+
+
+
+
+                InChatData inchatData = new InChatData();
+
+                inchatData.setchat_email(writer);
+                inchatData.setchat_content(content);
+                inchatData.setmy_email(MyEmailHolder);
+                Log.d("이메일",MyEmailHolder);
+                inchatData.setchat_profile_image(chatuser_image);
+                inchatData.setchat_profile_name(chatuser_name);
+
+                wdate=wdate.substring(11,16);
+
+
+                inchatData.setchat_wdate(wdate);
+
+
+
+
+                icArrayList.add(inchatData);
+
+
+                // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
+                //icAdapter.notifyDataSetChanged();
+                icAdapter.notifyItemInserted(icArrayList.size());
+
+                icRecyclerView.smoothScrollToPosition(icAdapter.getItemCount()-1);
+
+
+
+                //방의 프로필사진, 대화자 목록 데이터 받아오기
+                //GetData9 task9 = new GetData9();
+                //task9.execute(Chatlist[1], chatroom_no);
+
+            }
+
+
+
+        } catch (JSONException e) {
+
+            Log.d(TAG, "showResult : ", e);
+        }
+
+    }
+
+
+
+    private class GetData9 extends AsyncTask<String, Void, String> {
+
+
+        String errorString = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+
+            if (result == null){
+
+                // mTextViewResult.setText(errorString);
+            }
+            else {
+
+                mJsonString9 = result;
+                showResult9();
+            }
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String searchKeyword1 = params[0];
+
+            String serverURL = "http://54.180.122.247/global_communication/chat_name_image.php";
+            String postParameters = "email=" + searchKeyword1;
+
+
+            try {
+
+                URL url = new URL(serverURL);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+
+                httpURLConnection.setReadTimeout(5000);
+                httpURLConnection.setConnectTimeout(5000);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.connect();
+
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+
+                int responseStatusCode = httpURLConnection.getResponseCode();
+                Log.d(TAG, "response code - " + responseStatusCode);
+
+                InputStream inputStream;
+                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = httpURLConnection.getInputStream();
+                }
+                else{
+                    inputStream = httpURLConnection.getErrorStream();
+                }
+
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while((line = bufferedReader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                return sb.toString().trim();
+
+
+            } catch (Exception e) {
+
+                Log.d(TAG, "GetData : Error ", e);
+                errorString = e.toString();
+
+                return null;
+            }
+
+        }
+    }
+
+
+    private void showResult9(){
+
+        String TAG_JSON="webnautes";
+
+
+        try {
+            JSONObject jsonObject = new JSONObject(mJsonString9);
+            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+            for(int i=0;i<jsonArray.length();i++){
+
+                JSONObject item = jsonArray.getJSONObject(i);
+
+
+                String chatuser_image = item.getString("image");
+                Log.d("채팅 프로필 사진",chatuser_image);
+                String chatuser_name = item.getString("name");
+                Log.d("채팅 프로필 이름",chatuser_name);
+
+
+
+
+
+
+                //txtMessage.append(msg.obj.toString()+"\n");
+                InChatData inchatData = new InChatData();
+
+                inchatData.setchat_email(chatuser_email);
+                inchatData.setchat_content(chat_content);
+                Log.d("핸들러",chat_content);
+                inchatData.setmy_email(MyEmailHolder);
+                Log.d("이메일",MyEmailHolder);
+
+                //프로필 사진, 이름
+                inchatData.setchat_profile_image(chatuser_image);
+                inchatData.setchat_profile_name(chatuser_name);
+                inchatData.setchat_wdate(formatDate);
+
+
+
+
+                icArrayList.add(inchatData);
+                // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
+                //icAdapter.notifyDataSetChanged();
+                icAdapter.notifyItemInserted(icArrayList.size());
+                icRecyclerView.smoothScrollToPosition(icAdapter.getItemCount()-1);
+
+
+
+            }
+
+
+
+        } catch (JSONException e) {
+
+            Log.d(TAG, "showResult : ", e);
+        }
+
+    }
+
+
+    // drawlayout의 리사이클러뷰 목록 가져오기
+
+    private class GetDrawer extends AsyncTask<String, Void, String> {
+
+
+        String errorString = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+
+            if (result == null){
+
+                // mTextViewResult.setText(errorString);
+            }
+            else {
+
+                mJsonString19 = result;
+                showResult19();
+            }
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String searchKeyword1 = params[0];
+
+            String serverURL = "http://54.180.122.247/global_communication/inchat_userlist.php";
+            String postParameters = "chatroom_no=" + searchKeyword1;
+
+
+            try {
+
+                URL url = new URL(serverURL);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+
+                httpURLConnection.setReadTimeout(5000);
+                httpURLConnection.setConnectTimeout(5000);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.connect();
+
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+
+                int responseStatusCode = httpURLConnection.getResponseCode();
+                Log.d(TAG, "response code - " + responseStatusCode);
+
+                InputStream inputStream;
+                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = httpURLConnection.getInputStream();
+                }
+                else{
+                    inputStream = httpURLConnection.getErrorStream();
+                }
+
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while((line = bufferedReader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                return sb.toString().trim();
+
+
+            } catch (Exception e) {
+
+                Log.d(TAG, "GetData : Error ", e);
+                errorString = e.toString();
+
+                return null;
+            }
+
+        }
+    }
+
+
+    private void showResult19(){
+
+        String TAG_JSON="webnautes";
+
+
+        try {
+            JSONObject jsonObject = new JSONObject(mJsonString19);
+            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+            for(int i=0;i<jsonArray.length();i++){
+
+                JSONObject item = jsonArray.getJSONObject(i);
+
+
+
+                String inchatuser_email = item.getString("email");
+                Log.d("in채팅 프로필 이메일",inchatuser_email);
+                String inchatuser_image = item.getString("image");
+                Log.d("in채팅 프로필 사진",inchatuser_image);
+                String inchatuser_name = item.getString("name");
+                Log.d("in채팅 프로필 이름",inchatuser_name);
+
+
+
+
+                //txtMessage.append(msg.obj.toString()+"\n");
+                InChatUserData inchatuserData = new InChatUserData();
+
+
+                inchatuserData.setchat_email(inchatuser_email);
+                inchatuserData.setchat_profile_image(inchatuser_image);
+                inchatuserData.setchat_profile_name(inchatuser_name);
+
+
+                icuser_ArrayList.add(inchatuserData);
+                icuser_Adapter.notifyDataSetChanged();
+
+
+            }
+
+
+
+        } catch (JSONException e) {
+
+            Log.d(TAG, "showResult : ", e);
+        }
+
+    }
+
+
+
+
+    // 메시지 보내기 DB값에 빈방 추가
+    public void Chat_UserList_Function(final String chatroom_id, final String userlist) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("chatroom_no", params[0]);
+
+                hashMap.put("userlist", params[1]);
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chat_add_userlist.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(chatroom_id, userlist);
+    }
+
+
+
+
+    // 메시지 보내기 DB값에 빈방 추가
+    public void ChatRoom_destroy_Function(final String chatroom_id) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("chatroom_no", params[0]);
+
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chatroom_destroy.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(chatroom_id);
+    }
+
+
+
+
+
 
 
 

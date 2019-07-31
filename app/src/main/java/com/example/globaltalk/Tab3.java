@@ -125,11 +125,13 @@ public class Tab3 extends Fragment {
 
                 //getActivity().finish();
 
-                Intent intent = new Intent(getActivity(), Chat1.class);
+                Intent intent = new Intent(getActivity(), Chat9.class);
 
                 intent.putExtra("room_id", chatlistData.getchatroom_no());
 
                 intent.putExtra("friend_name", chatlistData.getMember_name());
+
+                intent.putExtra("friend_email", chatlistData.getMember_email());
 
                 intent.putExtra("myemail",EmailHolder);
 

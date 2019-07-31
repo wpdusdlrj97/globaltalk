@@ -20,6 +20,7 @@
         <activity android:name=".Follower_list_Activity"></activity>
         <activity android:name=".Following_list_Activity"></activity>
         <activity android:name=".Chat1"></activity>
+        <activity android:name=".Chat9"></activity>
         <activity android:name=".Board_detailActivity" />
         <activity android:name=".Heart_peopleActivity" />
         <activity android:name=".TTSActivity" />
