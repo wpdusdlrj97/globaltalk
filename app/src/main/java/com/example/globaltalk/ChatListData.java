@@ -1,15 +1,26 @@
 package com.example.globaltalk;
 
 public class ChatListData {
+
+    private String myemail;
+
     private String member_email;
     private String member_image;
     private String member_name;
+
 
     private String chatroom_no;
     private String chatroom_image;
     private String userlist;
 
+    private String exit_person;
 
+
+
+
+    public String getMyemail() {
+        return myemail;
+    }
 
     public String getMember_email() {
         return member_email;
@@ -35,7 +46,17 @@ public class ChatListData {
         return userlist;
     }
 
+    public String getExit_person() {
+        return exit_person;
+    }
 
+
+
+
+
+    public void setMyemail(String myemail) {
+        this.myemail = myemail;
+    }
 
     public void setchatroom_no(String chatroom_no) {
         this.chatroom_no = chatroom_no;
@@ -59,6 +80,10 @@ public class ChatListData {
 
     public void setMember_name(String member_name) {
         this.member_name = member_name;
+    }
+
+    public void setExit_person(String exit_person) {
+        this.exit_person = exit_person;
     }
 
 }

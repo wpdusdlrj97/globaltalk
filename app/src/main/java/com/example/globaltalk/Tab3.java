@@ -112,7 +112,7 @@ public class Tab3 extends Fragment {
         //List의 orientation이 vertical 일때 DividerItemDecoration 생성자의 두번째 인자를 1로 세팅해주면되고,
         //
         //Horizontal 인 경우 0으로 설정해주면 됩니다.
-        cRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 1));
+        //cRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 1));
 
         cRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), cRecyclerView, new ClickListener() {
             @Override
@@ -167,6 +167,8 @@ public class Tab3 extends Fragment {
 
 
         //내 이름을 포함한 채팅방 리스트 가져오기
+        //단 해당 사람이 방을 나갈 경우
+        //chat_key 테이블의 exit_person에 표시되며 나간사람은 대화리스트를 받아올수 없다
         GetData task = new GetData();
         task.execute(EmailHolder);
 
@@ -341,21 +343,33 @@ public class Tab3 extends Fragment {
                 Log.d("채팅",chatuser_image);
                 String chatuser_name = item.getString("chatuser_name");
                 Log.d("채팅",chatuser_name);
+                String myemail = item.getString("myemail");
+                Log.d("채팅",myemail);
+                String exit_person = item.getString("exit_person");
+                Log.d("채팅",exit_person);
 
 
 
+                if(exit_person.contains(myemail)){
 
-                ChatListData chatlistData = new ChatListData();
+                }else{
+                    ChatListData chatlistData = new ChatListData();
 
-                chatlistData.setchatroom_no(chatroom_no);
-                chatlistData.setchatroom_image(chatuser_image);
-                chatlistData.setuserlist(userlist);
-                chatlistData.setMember_name(chatuser_name);
-                chatlistData.setMember_email(chatuser_email);
+                    chatlistData.setchatroom_no(chatroom_no);
+                    chatlistData.setchatroom_image(chatuser_image);
+                    chatlistData.setuserlist(userlist);
+                    chatlistData.setMember_name(chatuser_name);
+                    chatlistData.setMember_email(chatuser_email);
+                    chatlistData.setMyemail(myemail);
+                    chatlistData.setExit_person(exit_person);
 
 
-                cArrayList.add(chatlistData);
-                cAdapter.notifyDataSetChanged();
+                    cArrayList.add(chatlistData);
+                    cAdapter.notifyDataSetChanged();
+                }
+
+
+
 
 
                 //방의 프로필사진, 대화자 목록 데이터 받아오기

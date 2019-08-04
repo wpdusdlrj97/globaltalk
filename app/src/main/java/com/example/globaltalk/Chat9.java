@@ -71,7 +71,7 @@ public class Chat9 extends AppCompatActivity {
     SendThread send;
 
 
-    String IP="192.168.0.41";
+    String IP="192.168.0.168";
     String PORT="9999";
 
     Socket socket;
@@ -233,25 +233,13 @@ public class Chat9 extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-       // 해당 채팅방 번호로 chat_key의 user_list 불러오기, 하나하나 데이터 추가해주기기
-       icuser_ArrayList.clear();
-       icuser_Adapter.notifyDataSetChanged();
-
-       GetDrawer taskdrawer = new GetDrawer();
-       taskdrawer.execute(RoomHolder);
-       Log.d("드로워 실행", String.valueOf(taskdrawer));
-
-
-
-
-
 
         //채팅한 대화내역 가져오기
         icArrayList.clear();
         icAdapter.notifyDataSetChanged();
 
         GetData task = new GetData();
-        task.execute(RoomHolder);
+        task.execute(RoomHolder,MyEmailHolder);
 
 
         //리사이클러뷰 가장 하단으로 이동
@@ -265,6 +253,13 @@ public class Chat9 extends AppCompatActivity {
             public void onClick(View arg0) {
                 drawerLayout.openDrawer(drawerView);
 
+                // 해당 채팅방 번호로 chat_key의 user_list 불러오기, 하나하나 데이터 추가해주기기
+                icuser_ArrayList.clear();
+                icuser_Adapter.notifyDataSetChanged();
+
+                GetDrawer taskdrawer = new GetDrawer();
+                taskdrawer.execute(RoomHolder);
+                Log.d("드로워 실행", String.valueOf(taskdrawer));
             }
 
         });
@@ -277,6 +272,48 @@ public class Chat9 extends AppCompatActivity {
                 drawerLayout.closeDrawers();
             }
         });
+
+       ImageView chat_invite = (ImageView) findViewById(R.id.chat_invite);
+       //채팅방 초대하기
+       chat_invite.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+
+               //나의 이메일만 가지고 팔로우리스트 목록 가져오기
+               Intent intent19 = new Intent(Chat9.this, Chat_invite_Activity.class);
+
+
+               //이메일을 던지고 그에 해당하는 것들을 조건문으로 걸러낸 뒤에 recyclerview에 뿌려주기
+               intent19.putExtra("Email", MyEmailHolder);
+               //intent.putExtra(UserEmail, email);
+               startActivity(intent19);
+
+
+           }
+       });
+
+
+       ImageView chat_exit = (ImageView) findViewById(R.id.chat_exit);
+       //채팅방 나가기
+       chat_exit.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               //채팅방 목록 chat_key에 접근해서 해당방의 퇴장한 사람 리스트에 추가
+               //채팅방을 나갈시 현재 채팅방이 사라지고 채팅방 목록에서 현재 채팅방이 사라진다
+               //또한 chat_remember에 방번호, 나간유저 이메일, 채팅order(나중에 다시 들어왔을 때 필요)를 0으로 준다
+               ChatRoom_exit_Function(RoomHolder, MyEmailHolder);
+
+
+               ChatRoom_Exit_Remember_Function(RoomHolder,MyEmailHolder, String.valueOf(icArrayList.size()));
+
+               Log.d("어레이 리스트 사이즈", String.valueOf(icArrayList.size()));
+
+               finish();
+
+
+           }
+       });
+
 
 
         //핸들러는 액티비티가 만들어질 때 여기서 동작한다
@@ -307,10 +344,21 @@ public class Chat9 extends AppCompatActivity {
                     //db에서 가져오는 것이 아닌
                     //바로바로 TCP 통신을 할 때
                     //상대방의 사진과 이름을 가져와야한다
-                    GetData9 task9 = new GetData9();
-                    task9.execute(chatuser_email);
 
 
+
+
+                    //가져온 이메일과 나의 이메일이 다를 경우에만 반영
+                    //내가 보낸 건 이미 send 버튼 누를 때 어레이리스트에 반영했기 때문에
+                    //상대방이 보낸 것만 불러오면 된다
+                    if(chatuser_email.equals(MyEmailHolder)){
+                        Log.d("이메일 같을 때", "실행");
+                    }else{
+                        Log.d("이메일 다를 때", "실행");
+                        GetData9 task9 = new GetData9();
+                        task9.execute(chatuser_email);
+                        Log.d("2번", String.valueOf(task9));
+                    }
 
 
 
@@ -330,22 +378,27 @@ public class Chat9 extends AppCompatActivity {
                 /////////자바 서버로 보내기/////////
                 //사용자가 입력한 메시지
                 message=editMessage.getText().toString();
-                //입력한 메시지가 null도 아니고 빈값도 아닐 시
-                /*
-                if(message != null || !message.equals("")){
-                    //send 쓰레드를 전송용 쓰레드를 만들어서 호출
 
-                    send=new SendThread(message,socket);
-                    send.start();
-                    editMessage.setText("");
-                }
-                */
 
                 if(!message.equals("")){
-                    //send 쓰레드를 전송용 쓰레드를 만들어서 호출
 
-                    send=new SendThread(message,socket);
-                    send.start();
+                    //소켓에 보내기 전에 해당 클라이언트의 어레이리스트에 선 추가
+                    //txtMessage.append(msg.obj.toString()+"\n");
+                    InChatData inchatData = new InChatData();
+
+                    //어차피 내가 보낸거니까 chat_email이랑 my_email을 같게해서 보낸다
+                    inchatData.setchat_email(MyEmailHolder);
+                    inchatData.setchat_content(message);
+                    inchatData.setmy_email(MyEmailHolder);
+                    inchatData.setchat_wdate(formatDate);
+
+                    icArrayList.add(inchatData);
+                    Log.d("클라이언트 선 전달1", String.valueOf(inchatData));
+                    // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
+                    //icAdapter.notifyDataSetChanged();
+                    icAdapter.notifyItemInserted(icArrayList.size());
+                    icRecyclerView.smoothScrollToPosition(icAdapter.getItemCount()-1);
+
                     editMessage.setText("");
 
                     String chatuserlist= String.valueOf(Userlist);
@@ -355,20 +408,23 @@ public class Chat9 extends AppCompatActivity {
                     Log.d("채팅유저리스트",chatuserlist);
 
                     //채팅방(chat_key)에 유저리스트 추가
+                    //유저리스트만 계속 업데이트 시킨다
                     Chat_UserList_Function(RoomHolder, chatuserlist);
 
+                    //1대1 채팅하다가 퇴장한 사람의 경우 exit person 널값 주기
+                    ChatRoom_Exit_Person_Function(RoomHolder);
 
                     /////////DB 서버로 보내기/////////
                     ChatRoom_Function(RoomHolder, MyEmailHolder, message, formatDate);
+
+
+
+                    //서버로는 가장 나중에 보내준다
+                    //send 쓰레드를 전송용 쓰레드를 만들어서 호출
+                    send=new SendThread(message,socket);
+                    send.start();
+
                 }
-
-
-
-
-
-
-
-
 
             }
         });
@@ -610,9 +666,10 @@ public class Chat9 extends AppCompatActivity {
         protected String doInBackground(String... params) {
 
             String searchKeyword1 = params[0];
+            String searchKeyword2 = params[1];
 
             String serverURL = "http://54.180.122.247/global_communication/getchat_content.php";
-            String postParameters = "chatroom_no=" + searchKeyword1;
+            String postParameters = "chatroom_no=" + searchKeyword1 + "&email=" + searchKeyword2;
 
 
             try {
@@ -863,9 +920,6 @@ public class Chat9 extends AppCompatActivity {
 
 
 
-
-
-
                 //txtMessage.append(msg.obj.toString()+"\n");
                 InChatData inchatData = new InChatData();
 
@@ -881,9 +935,8 @@ public class Chat9 extends AppCompatActivity {
                 inchatData.setchat_wdate(formatDate);
 
 
-
-
                 icArrayList.add(inchatData);
+                Log.d("클라이언트 선 전달2", String.valueOf(inchatData));
                 // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
                 //icAdapter.notifyDataSetChanged();
                 icAdapter.notifyItemInserted(icArrayList.size());
@@ -1137,9 +1190,126 @@ public class Chat9 extends AppCompatActivity {
         userLoginClass.execute(chatroom_id);
     }
 
+    // 채팅방 나가기
+    public void ChatRoom_exit_Function(final String chatroom_id, final String exit_email) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
 
+            }
 
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("chatroom_no", params[0]);
+                hashMap.put("email", params[1]);
+
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chatroom_exit.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(chatroom_id, exit_email);
+    }
+
+
+    // 1대1 채팅방 나간사람과 다시 대화할시 exit_person 널값 주기
+    public void ChatRoom_Exit_Person_Function(final String chatroom_id) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("chatroom_no", params[0]);
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chatroom_exit_person.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(chatroom_id);
+    }
+
+    // 1대1 채팅방 나간사람과 다시 대화할때 필요한 대화사이즈 -> 나갔다가 들어오면 채팅 내역 삭제
+    public void ChatRoom_Exit_Remember_Function(final String chatroom_no,final String exit_email, final String remember_order) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("chatroom_no", params[0]);
+
+                hashMap.put("exit_email", params[1]);
+
+                hashMap.put("remember_order", params[2]);
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chatroom_exit_remember.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(chatroom_no,exit_email,remember_order);
+    }
 
 
 

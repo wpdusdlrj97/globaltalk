@@ -43,12 +43,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
     class CustomViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView name;
-
+        protected View line;
 
         public CustomViewHolder(View view) {
             super(view);
             this.image = (ImageView) view.findViewById(R.id.chat_list_image);
             this.name = (TextView) view.findViewById(R.id.chat_list_name);
+            this.line = (View) view.findViewById(R.id.chat_list_line);
 
         }
     }
@@ -66,16 +67,26 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
     public void onBindViewHolder(@NonNull CustomViewHolder viewholder, int position) {
 
 
-        Glide.with(context)
-                .load(cList.get(position).getchatroom_image())
-                //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .placeholder(R.drawable.gray)
-                //.skipMemoryCache(true)
-                .thumbnail(0.1f)
-                .fitCenter()
-                .into(viewholder.image);
+        //퇴장한 사람에 내 이메일이 포함되어 있을 경우
+        if(cList.get(position).getExit_person().contains(cList.get(position).getMyemail())){
+            viewholder.image.setVisibility(View.GONE);
+            viewholder.name.setVisibility(View.GONE);
+            viewholder.line.setVisibility(View.GONE);
+        }else{
+            Glide.with(context)
+                    .load(cList.get(position).getchatroom_image())
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .placeholder(R.drawable.gray)
+                    //.skipMemoryCache(true)
+                    .thumbnail(0.1f)
+                    .fitCenter()
+                    .into(viewholder.image);
 
-        viewholder.name.setText(cList.get(position).getMember_name());
+            viewholder.name.setText(cList.get(position).getMember_name());
+        }
+
+
+
 
 
 
