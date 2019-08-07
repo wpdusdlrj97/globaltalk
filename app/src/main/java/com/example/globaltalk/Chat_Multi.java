@@ -1,6 +1,5 @@
 package com.example.globaltalk;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,7 +12,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -40,17 +38,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class Chat9 extends AppCompatActivity {
-
-
-    public static Activity Chat9Activity;
+public class Chat_Multi extends AppCompatActivity {
 
     HashMap<String, String> hashMap = new HashMap<>();
     HttpParse httpParse = new HttpParse();
     String finalResult;
 
-    private DrawerLayout drawerLayout;
-    private View drawerView;
+    private DrawerLayout m_drawerLayout;
+    private View m_drawerView;
 
 
     private static String TAG = "phptest";
@@ -58,13 +53,13 @@ public class Chat9 extends AppCompatActivity {
     private String mJsonString9;
     private String mJsonString19;
 
-    TextView friend_name;
+    TextView m_friend_name;
 
-    TextView txtMessage;
-    Button btnSend;
-    EditText editMessage;
+    //TextView m_txtMessage;
+    Button m_btnSend;
+    EditText m_editMessage;
 
-    ImageView chat_write_more;
+    ImageView m_chat_write_more;
 
     Handler msgHandler;
 
@@ -101,9 +96,9 @@ public class Chat9 extends AppCompatActivity {
     private InChatAdapter icAdapter;
     private RecyclerView icRecyclerView;
 
-    private ArrayList<InChatUserData> icuser_ArrayList;
-    private InChatUserAdapter icuser_Adapter;
-    private RecyclerView icuser_RecyclerView;
+    private ArrayList<M_InChatUserData> m_icuser_ArrayList;
+    private M_InChatUserAdapter m_icuser_Adapter;
+    private RecyclerView m_icuser_RecyclerView;
 
 
     ArrayList<String> Userlist = new ArrayList<String>();
@@ -114,12 +109,9 @@ public class Chat9 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat9);
+        setContentView(R.layout.activity_chat_multi);
 
-        Chat9Activity = Chat9.this;
-
-
-        Log.d("채팅 싱글", "oncreate");
+        Log.d("채팅 멀티", "oncreate");
 
         //로그인할 때 받아온 이메일 값
         Intent intent = getIntent();
@@ -152,13 +144,15 @@ public class Chat9 extends AppCompatActivity {
 
 
         context = this;
-        editMessage = findViewById(R.id.editMessage);
-        btnSend = findViewById(R.id.btnSend);
 
-        chat_write_more = findViewById(R.id.chat_write_more);
+        m_editMessage = findViewById(R.id.m_editMessage);
 
-        txtMessage = findViewById(R.id.txtMessage);
-        friend_name = findViewById(R.id.friend_name);
+        m_btnSend = findViewById(R.id.m_btnSend);
+
+        m_chat_write_more = findViewById(R.id.m_chat_write_more);
+
+        //m_txtMessage = findViewById(R.id.m_txtMessage);
+        m_friend_name = findViewById(R.id.m_friend_name);
 
 
         client = new SocketClient(IP, PORT);
@@ -175,7 +169,7 @@ public class Chat9 extends AppCompatActivity {
 
 
         //대화 상대 이름
-        friend_name.setText(String.valueOf(Userlist.size()));
+        m_friend_name.setText("그룹채팅 "+String.valueOf(Userlist.size()));
 
 
         icRecyclerView = (RecyclerView) findViewById(R.id.chat_bubble_list);
@@ -191,22 +185,22 @@ public class Chat9 extends AppCompatActivity {
 
 
         // 드로우뷰
-        icuser_RecyclerView = (RecyclerView) findViewById(R.id.inchatroom_user_list);
-        icuser_RecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        m_icuser_RecyclerView = (RecyclerView) findViewById(R.id.m_inchatroom_user_list);
+        m_icuser_RecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         //mTextViewResult.setMovementMethod(new ScrollingMovementMethod());
 
-        icuser_ArrayList = new ArrayList<>();
+        m_icuser_ArrayList = new ArrayList<>();
 
-        icuser_Adapter = new InChatUserAdapter(this, icuser_ArrayList);
-        icuser_RecyclerView.setAdapter(icuser_Adapter);
-        icuser_RecyclerView.addItemDecoration(new DividerItemDecoration(this, 1));
+        m_icuser_Adapter = new M_InChatUserAdapter(this, m_icuser_ArrayList);
+        m_icuser_RecyclerView.setAdapter(m_icuser_Adapter);
+        m_icuser_RecyclerView.addItemDecoration(new DividerItemDecoration(this, 1));
 
 
         // 더보기란
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerView = (View) findViewById(R.id.drawer);
+        m_drawerLayout = (DrawerLayout) findViewById(R.id.m_drawer_layout);
+        m_drawerView = (View) findViewById(R.id.m_drawer);
 
 
     }
@@ -216,7 +210,7 @@ public class Chat9 extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        Log.d("채팅 싱글", "onresume");
+        Log.d("채팅 멀티", "onresume");
 
         //채팅한 대화내역 가져오기
         icArrayList.clear();
@@ -231,14 +225,14 @@ public class Chat9 extends AppCompatActivity {
 
 
         // 더보기 클릭시 드로우뷰 튀어나오기
-        chat_write_more.setOnClickListener(new View.OnClickListener() {
+        m_chat_write_more.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                drawerLayout.openDrawer(drawerView);
+                m_drawerLayout.openDrawer(m_drawerView);
 
                 // 해당 채팅방 번호로 chat_key의 user_list 불러오기, 하나하나 데이터 추가해주기기
-                icuser_ArrayList.clear();
-                icuser_Adapter.notifyDataSetChanged();
+                m_icuser_ArrayList.clear();
+                m_icuser_Adapter.notifyDataSetChanged();
 
                 GetDrawer taskdrawer = new GetDrawer();
                 taskdrawer.execute(RoomHolder);
@@ -248,51 +242,70 @@ public class Chat9 extends AppCompatActivity {
         });
 
         // 드로우뷰 들여보내기
-        ImageView buttonCloseDrawer = (ImageView) findViewById(R.id.closedrawer);
+        ImageView buttonCloseDrawer = (ImageView) findViewById(R.id.m_closedrawer);
         buttonCloseDrawer.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                drawerLayout.closeDrawers();
+                m_drawerLayout.closeDrawers();
             }
         });
 
-        ImageView chat_invite = (ImageView) findViewById(R.id.chat_invite);
+        ImageView m_chat_invite = (ImageView) findViewById(R.id.m_chat_invite);
+
+
         //채팅방 초대하기
-        chat_invite.setOnClickListener(new View.OnClickListener() {
+        //M_Chat_invite_Activity 재 생성
+        m_chat_invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //나의 이메일만 가지고 팔로우리스트 목록 가져오기
-                Intent intent19 = new Intent(Chat9.this, Chat_invite_Activity.class);
+                Intent intent19 = new Intent(Chat_Multi.this, M_Chat_invite_Activity.class);
 
 
                 //이메일을 던지고 그에 해당하는 것들을 조건문으로 걸러낸 뒤에 recyclerview에 뿌려주기
                 intent19.putExtra("Email", MyEmailHolder);
-                //intent.putExtra(UserEmail, email);
+                intent19.putExtra("Room_no", RoomHolder);
 
                 intent19.putExtra("ChatListHolder",UserListHolder);
 
                 startActivity(intent19);
 
+                finish();
+
 
             }
         });
 
 
-        ImageView chat_exit = (ImageView) findViewById(R.id.chat_exit);
+        ImageView m_chat_exit = (ImageView) findViewById(R.id.m_chat_exit);
         //채팅방 나가기
-        chat_exit.setOnClickListener(new View.OnClickListener() {
+        m_chat_exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //채팅방 목록 chat_key에 접근해서 해당방의 퇴장한 사람 리스트에 추가
+                //멀티 채팅의 경우
+                //채팅방 목록 chat_key에 접근해서 해당방의 유저리스트에서 제외
+
+                //채팅방에 남아있는 사람도 해당 사람이 나간 것을 알아야한다
+
                 //채팅방을 나갈시 현재 채팅방이 사라지고 채팅방 목록에서 현재 채팅방이 사라진다
                 //또한 chat_remember에 방번호, 나간유저 이메일, 채팅order(나중에 다시 들어왔을 때 필요)를 0으로 준다
-                ChatRoom_exit_Function(RoomHolder, MyEmailHolder);
+
+                // 1. 유저리스트에서 본인 이름 제외하기
+                M_ChatRoom_exit_Function(RoomHolder, MyEmailHolder);
 
 
-                ChatRoom_Exit_Remember_Function(RoomHolder, MyEmailHolder, String.valueOf(icArrayList.size()));
+                //해당유저가 나갔다고 공지해주기
 
-                Log.d("어레이 리스트 사이즈", String.valueOf(icArrayList.size()));
+
+                //해당 유저가 다시 들어올 시 나간 이후의 채팅은 못본다
+                //-----------OO님이 나갔습니다------------ 는 볼 수 없고
+                //-----------OO님이 초대되었습니다-------- 부터 볼 수 있다
+                //불러올 때 사이즈 계산
+                //PHP 딴에서 remember_order=remember_order+'$remember_order'가 아니라 사이즈가 다를 수도
+                M_ChatRoom_Exit_Remember_Function(RoomHolder, MyEmailHolder, String.valueOf(icArrayList.size()));
+
+                //Log.d("어레이 리스트 사이즈", String.valueOf(icArrayList.size()));
 
                 finish();
 
@@ -350,14 +363,14 @@ public class Chat9 extends AppCompatActivity {
 
 
         //서버에 메시지를 전송하는 버튼
-        btnSend.setOnClickListener(new View.OnClickListener() {
+        m_btnSend.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
                 /////////자바 서버로 보내기/////////
                 //사용자가 입력한 메시지
-                message = editMessage.getText().toString();
+                message = m_editMessage.getText().toString();
 
 
                 if (!message.equals("")) {
@@ -391,14 +404,15 @@ public class Chat9 extends AppCompatActivity {
 
                     //채팅방(chat_key)에 유저리스트 추가
                     //유저리스트만 계속 업데이트 시킨다
-                    Chat_UserList_Function(RoomHolder, chatuserlist, message, "single_chat");
-
-                    //1대1 채팅하다가 퇴장한 사람의 경우 exit person 널값 주기
-                    ChatRoom_Exit_Person_Function(RoomHolder);
+                    Chat_UserList_Function(RoomHolder, chatuserlist, message, "multi_chat");
 
 
+                    //이거는 초대했을 때 userlist에 추가하고 넣어주면 된다
+                    //멀티 채팅 퇴장한 사람의 경우 user_list에 이름 다시 넣어주기
+                    M_ChatRoom_Exit_Person_Function(RoomHolder,MyEmailHolder);
 
-                    editMessage.setText("");
+
+                    m_editMessage.setText("");
 
                     //서버로는 가장 나중에 보내준다
                     //send 쓰레드를 전송용 쓰레드를 만들어서 호출
@@ -495,8 +509,6 @@ public class Chat9 extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }
 
         public void run() {
@@ -573,7 +585,7 @@ public class Chat9 extends AppCompatActivity {
                 super.onPostExecute(chatResponseMsg);
 
                 // 채팅방 키 가져오기
-                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(Chat_Multi.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
 
             }
@@ -1028,16 +1040,16 @@ public class Chat9 extends AppCompatActivity {
 
 
                 //txtMessage.append(msg.obj.toString()+"\n");
-                InChatUserData inchatuserData = new InChatUserData();
+                M_InChatUserData m_inchatuserData = new M_InChatUserData();
 
 
-                inchatuserData.setchat_email(inchatuser_email);
-                inchatuserData.setchat_profile_image(inchatuser_image);
-                inchatuserData.setchat_profile_name(inchatuser_name);
+                m_inchatuserData.setchat_email(inchatuser_email);
+                m_inchatuserData.setchat_profile_image(inchatuser_image);
+                m_inchatuserData.setchat_profile_name(inchatuser_name);
 
 
-                icuser_ArrayList.add(inchatuserData);
-                icuser_Adapter.notifyDataSetChanged();
+                m_icuser_ArrayList.add(m_inchatuserData);
+                m_icuser_Adapter.notifyDataSetChanged();
 
 
             }
@@ -1068,7 +1080,7 @@ public class Chat9 extends AppCompatActivity {
                 super.onPostExecute(chatResponseMsg);
 
                 // 채팅방 키 가져오기
-                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(Chat_Multi.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
 
             }
@@ -1113,7 +1125,7 @@ public class Chat9 extends AppCompatActivity {
                 super.onPostExecute(chatResponseMsg);
 
                 // 채팅방 키 가져오기
-                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(Chat_Multi.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
 
             }
@@ -1136,7 +1148,9 @@ public class Chat9 extends AppCompatActivity {
     }
 
     // 채팅방 나가기
-    public void ChatRoom_exit_Function(final String chatroom_id, final String exit_email) {
+    public void M_ChatRoom_exit_Function(final String chatroom_id, final String exit_email) {
+
+        Log.d("멀티 채팅방 나가기","멀티 채팅방 나가기");
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -1152,7 +1166,7 @@ public class Chat9 extends AppCompatActivity {
                 super.onPostExecute(chatResponseMsg);
 
                 // 채팅방 키 가져오기
-                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(Chat_Multi.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
 
             }
@@ -1164,7 +1178,7 @@ public class Chat9 extends AppCompatActivity {
                 hashMap.put("email", params[1]);
 
 
-                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chatroom_exit.php");
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/m_chatroom_exit.php");
 
                 return finalResult;
             }
@@ -1176,8 +1190,8 @@ public class Chat9 extends AppCompatActivity {
     }
 
 
-    // 1대1 채팅방 나간사람과 다시 대화할시 exit_person 널값 주기
-    public void ChatRoom_Exit_Person_Function(final String chatroom_id) {
+    // 멀티 채팅방 나간사람과 다시 대화할시 user_list에 추가하기
+    public void M_ChatRoom_Exit_Person_Function(final String chatroom_id, final String email) {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -1193,7 +1207,7 @@ public class Chat9 extends AppCompatActivity {
                 super.onPostExecute(chatResponseMsg);
 
                 // 채팅방 키 가져오기
-                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(Chat_Multi.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
 
             }
@@ -1202,8 +1216,9 @@ public class Chat9 extends AppCompatActivity {
             protected String doInBackground(String... params) {
 
                 hashMap.put("chatroom_no", params[0]);
+                hashMap.put("email", params[1]);
 
-                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chatroom_exit_person.php");
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/m_chatroom_exit_person.php");
 
                 return finalResult;
             }
@@ -1211,11 +1226,11 @@ public class Chat9 extends AppCompatActivity {
 
         UserLoginClass userLoginClass = new UserLoginClass();
 
-        userLoginClass.execute(chatroom_id);
+        userLoginClass.execute(chatroom_id,email);
     }
 
-    // 1대1 채팅방 나간사람과 다시 대화할때 필요한 대화사이즈 -> 나갔다가 들어오면 채팅 내역 삭제
-    public void ChatRoom_Exit_Remember_Function(final String chatroom_no, final String exit_email, final String remember_order) {
+    // 멀티 채팅방 나간사람과 다시 대화할때 필요한 대화사이즈 -> 나갔다가 들어오면 채팅 내역 삭제
+    public void M_ChatRoom_Exit_Remember_Function(final String chatroom_no, final String exit_email, final String remember_order) {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -1231,7 +1246,7 @@ public class Chat9 extends AppCompatActivity {
                 super.onPostExecute(chatResponseMsg);
 
                 // 채팅방 키 가져오기
-                Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(Chat_Multi.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
 
             }
@@ -1245,7 +1260,7 @@ public class Chat9 extends AppCompatActivity {
 
                 hashMap.put("remember_order", params[2]);
 
-                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/chatroom_exit_remember.php");
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/m_chatroom_exit_remember.php");
 
                 return finalResult;
             }

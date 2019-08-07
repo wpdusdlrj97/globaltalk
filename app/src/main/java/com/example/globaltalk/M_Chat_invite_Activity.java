@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,15 +25,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Chat_invite_Activity extends AppCompatActivity {
-
-    Chat9 Chat9Activity = (Chat9)Chat9.Chat9Activity;
-
+public class M_Chat_invite_Activity extends AppCompatActivity {
 
 
     private static String TAG = "phptest";
 
     String EmailHolder;
+    String RoomHolder;
     String ChatListHolder;
 
     private String mJsonString;
@@ -55,11 +52,14 @@ public class Chat_invite_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_invite_);
+        setContentView(R.layout.m_activity_chat_invite_);
 
         Intent intent = getIntent();
         EmailHolder = intent.getStringExtra("Email");
         Log.d("이메일 받기", EmailHolder);
+
+        RoomHolder = intent.getStringExtra("Room_no");
+        Log.d("방번호 받기", RoomHolder);
 
         ChatListHolder = intent.getStringExtra("ChatListHolder");
         Log.d("ChatListHolder 받기", ChatListHolder);
@@ -145,19 +145,45 @@ public class Chat_invite_Activity extends AppCompatActivity {
                 if(list_invite.size()==0){//초대를 아무도 안했을 시
 
                     //그냥 종료하면 된다
-                    Toast.makeText(Chat_invite_Activity.this, "아무도 초대하지 않았습니다", Toast.LENGTH_LONG).show();
+                    Toast.makeText(M_Chat_invite_Activity.this, "아무도 초대하지 않았습니다", Toast.LENGTH_LONG).show();
+
+                    Intent intent9 = new Intent(M_Chat_invite_Activity.this, Chat_Multi.class);
+
+                    intent9.putExtra("room_id", RoomHolder);
+
+                    intent9.putExtra("user_list",ChatListHolder);
+
+                    intent9.putExtra("myemail", EmailHolder);
+
+                    startActivity(intent9);
+
                     finish();
 
                 }else{// 누군가 클릭했을 시
 
-                    //초대 리스트와 채팅리스트를 합쳐서 새로운 방을 생성 chat_multi로 이동하고 Chat9 대화방은 finish 시킨다
 
-                    //방만 만들고 아무말도 안할 수 있으니
-                    //방번호만 받아오고 채팅을 칠 때 모든 방이 만들어지게 한다
-                    Multi_ChatKey_Function();
+                    Intent intent9 = new Intent(M_Chat_invite_Activity.this, Chat_Multi.class);
+
+
+                    String chatuserlist = String.valueOf(list_invite);
+                    chatuserlist = chatuserlist.replace("[", ",");
+                    chatuserlist = chatuserlist.replace("]", "");
+                    chatuserlist = chatuserlist.replace(" ", "");
+
+                    String Total_Chat_userlist = ChatListHolder + chatuserlist;
+
+                    Log.d("토탈 유저리스트", Total_Chat_userlist);
+
+                    intent9.putExtra("room_id", RoomHolder);
+
+                    intent9.putExtra("user_list",Total_Chat_userlist);
+
+                    intent9.putExtra("myemail", EmailHolder);
+
+                    startActivity(intent9);
 
                     //Chat9 액티비티는 종료시키기
-                    Chat9Activity.finish();
+
                     finish();
 
 
@@ -327,9 +353,9 @@ public class Chat_invite_Activity extends AppCompatActivity {
 
 
 
-    // 메시지 보내기 DB값에 빈방 추가
-    // 빈방을 추가하기 전에 이미 있는 방인지 확인한다
-    public void Multi_ChatKey_Function() {
+    /*
+    // 그냥 해당방에 초대하는 것이다
+    public void M_Multi_ChatKey_Function() {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -345,10 +371,10 @@ public class Chat_invite_Activity extends AppCompatActivity {
                 super.onPostExecute(chatResponseMsg);
 
                 // 채팅방 키 가져오기
-                Toast.makeText(Chat_invite_Activity.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(M_Chat_invite_Activity.this, chatResponseMsg, Toast.LENGTH_LONG).show();
 
                 //인텐트로 던지기
-                Intent intent = new Intent(Chat_invite_Activity.this, Chat_Multi.class);
+                Intent intent = new Intent(M_Chat_invite_Activity.this, Chat_Multi.class);
 
                 intent.putExtra("room_id", chatResponseMsg );
                 intent.putExtra("myemail", EmailHolder );
@@ -393,6 +419,7 @@ public class Chat_invite_Activity extends AppCompatActivity {
 
         userLoginClass.execute();
     }
+    */
 
 
 

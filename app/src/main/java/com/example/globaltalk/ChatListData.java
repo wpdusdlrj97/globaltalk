@@ -9,9 +9,15 @@ public class ChatListData {
     private String member_name;
 
 
+
     private String chatroom_no;
     private String chatroom_image;
     private String userlist;
+
+    private String count;
+    private String message;
+    private String date;
+    private String chatroom_type;
 
     private String exit_person;
 
@@ -50,6 +56,21 @@ public class ChatListData {
         return exit_person;
     }
 
+    public String getcount() {
+        return count;
+    }
+
+    public String getmessage() {
+        return message;
+    }
+
+    public String getdate() {
+        return date;
+    }
+
+    public String getchatroom_type() {
+        return chatroom_type;
+    }
 
 
 
@@ -85,5 +106,23 @@ public class ChatListData {
     public void setExit_person(String exit_person) {
         this.exit_person = exit_person;
     }
+
+    public void setcount(String count) {
+        this.count = count;
+    }
+
+    public void setmessage(String message) {
+        this.message = message;
+    }
+
+    public void setdate(String date) {
+        this.date = date;
+    }
+
+    public void setchatroom_type(String chatroom_type) {
+        this.chatroom_type = chatroom_type;
+    }
+
+
 
 }

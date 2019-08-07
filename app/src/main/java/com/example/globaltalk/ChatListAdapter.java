@@ -2,6 +2,7 @@ package com.example.globaltalk;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +33,15 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
 
     private ArrayList<ChatListData> cList = null;
     private Activity context = null;
+    private OnItemClickListener mListener;
 
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
 
     public ChatListAdapter(Activity context, ArrayList<ChatListData> list) {
@@ -43,13 +52,38 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
     class CustomViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView name;
+        protected TextView count;
+        protected TextView message;
+        protected TextView date;
         protected View line;
 
-        public CustomViewHolder(View view) {
+        public CustomViewHolder(View view, OnItemClickListener listener) {
             super(view);
             this.image = (ImageView) view.findViewById(R.id.chat_list_image);
             this.name = (TextView) view.findViewById(R.id.chat_list_name);
+            this.count = (TextView) view.findViewById(R.id.chat_list_count);
+            this.message = (TextView) view.findViewById(R.id.chat_list_message);
+            this.date = (TextView) view.findViewById(R.id.chat_list_date);
             this.line = (View) view.findViewById(R.id.chat_list_line);
+
+
+            //체크박스를 클릭할 시에 해당 이메일 토스트
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+
+
+                        }
+                    }
+
+
+                }
+            });
 
         }
     }
@@ -58,7 +92,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.chat_list, null);
-        CustomViewHolder viewHolder = new CustomViewHolder(view);
+        CustomViewHolder viewHolder = new CustomViewHolder(view, mListener);
 
         return viewHolder;
     }
@@ -68,11 +102,17 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
 
 
         //퇴장한 사람에 내 이메일이 포함되어 있을 경우
-        if(cList.get(position).getExit_person().contains(cList.get(position).getMyemail())){
+        if (cList.get(position).getExit_person().contains(cList.get(position).getMyemail())) {
             viewholder.image.setVisibility(View.GONE);
             viewholder.name.setVisibility(View.GONE);
+            viewholder.count.setVisibility(View.GONE);
+            viewholder.message.setVisibility(View.GONE);
+            viewholder.date.setVisibility(View.GONE);
             viewholder.line.setVisibility(View.GONE);
-        }else{
+
+
+        } else {
+
             Glide.with(context)
                     .load(cList.get(position).getchatroom_image())
                     //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
@@ -83,11 +123,12 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
                     .into(viewholder.image);
 
             viewholder.name.setText(cList.get(position).getMember_name());
+            viewholder.count.setText(cList.get(position).getcount());
+            viewholder.message.setText(cList.get(position).getmessage());
+            viewholder.date.setText(cList.get(position).getdate());
+
+
         }
-
-
-
-
 
 
     }
@@ -96,8 +137,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Custom
     public int getItemCount() {
         return (null != cList ? cList.size() : 0);
     }
-
-
 
 
 }

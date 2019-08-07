@@ -46,7 +46,7 @@ public class Chat1 extends AppCompatActivity {
     SendThread send;
 
 
-    String IP="192.168.0.2";
+    String IP="192.168.0.93";
     String PORT="9999";
 
     Socket socket;
