@@ -31,8 +31,11 @@ public class InChatAdapter extends RecyclerView.Adapter<InChatAdapter.CustomView
     @Override
     public int getItemViewType(int position) {
 
-        //채팅에서 온 이메일이랑 나의 이메일이랑 같으면 1번 뷰에
-        if (icList.get(position).getchat_email().equals(icList.get(position).getmy_email())){
+
+        if(icList.get(position).getchat_email().equals("notice@naver.com")){//공지일 경우 return 3
+            return 3;
+        }//채팅에서 온 이메일이랑 나의 이메일이랑 같으면 1번 뷰에
+        else if (icList.get(position).getchat_email().equals(icList.get(position).getmy_email())){
             return 1;
 
         } else { // 다르면 2번 뷰에 뿌려준다
@@ -73,8 +76,10 @@ public class InChatAdapter extends RecyclerView.Adapter<InChatAdapter.CustomView
         View view;
         if(viewType ==1){
             view= LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.my_chat_item, null);
-        } else{
+        } else if(viewType ==2){
             view= LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.other_chat_item, null);
+        }else{
+            view= LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.notice_chat_item, null);
         }
 
         CustomViewHolder viewHolder = new CustomViewHolder(view);
@@ -86,8 +91,12 @@ public class InChatAdapter extends RecyclerView.Adapter<InChatAdapter.CustomView
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder viewholder, int position) {
 
-        //채팅에서 온 이메일이랑 나의 이메일이랑 같으면 1번 뷰에
-        if (icList.get(position).getchat_email().equals(icList.get(position).getmy_email())){
+
+        if(icList.get(position).getchat_email().equals("notice@naver.com")){//공지일 경우 return 3
+            viewholder.mTextView.setText(icList.get(position).getchat_content());
+            Log.d("공지일 경우","리턴 3");
+
+        } else if (icList.get(position).getchat_email().equals(icList.get(position).getmy_email())){ //채팅에서 온 이메일이랑 나의 이메일이랑 같으면 1번 뷰에
             viewholder.mTextView.setText(icList.get(position).getchat_content());
             Log.d("이메일 같을 때","리턴 1");
 

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/m_drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/m_chat_write_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/before" />
+
+
+        <TextView
+            android:id="@+id/m_friend_name"
+            android:layout_width="338dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="대화자"
+            android:textColor="#050505"
+            android:textSize="24sp" />
+
+
+        <ImageView
+            android:id="@+id/m_chat_write_more"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/reorder" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#000000" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/chat_bubble_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="3dp"
+            android:layout_weight="6"
+            android:padding="3dp" />
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/m_editMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:ems="10"
+            android:hint="메시지를 작성해주세요"/>
+
+        <Button
+            android:id="@+id/m_btnSend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="전송"/>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+    <include
+        layout="@layout/m_activity_drawer" />
+
+</android.support.v4.widget.DrawerLayout>

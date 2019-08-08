@@ -352,6 +352,8 @@ public class Chat_invite_Activity extends AppCompatActivity {
 
                 intent.putExtra("room_id", chatResponseMsg );
                 intent.putExtra("myemail", EmailHolder );
+
+
                 //intent.putExtra("friend_email", FriendEmailHolder );
 
                 //초대된 배열을 쪼갠뒤에 chat_list에 붙인다 ,a,b,c 형식으로
@@ -373,6 +375,10 @@ public class Chat_invite_Activity extends AppCompatActivity {
                 Log.d("토탈 유저리스트", Total_Chat_userlist);
 
                 intent.putExtra("user_list", Total_Chat_userlist);
+
+                String Invite_Chat_userlist = Total_Chat_userlist.replace(","+EmailHolder,"");
+
+                intent.putExtra("invite_message", EmailHolder+"님이 "+ Invite_Chat_userlist+"을 초대하였습니다");
 
                 startActivity(intent);
 

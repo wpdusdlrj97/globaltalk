@@ -69,7 +69,7 @@ public class Chat_Multi extends AppCompatActivity {
     SendThread send;
 
 
-    String IP = "192.168.0.7";
+    String IP = "192.168.0.5";
     String PORT = "9999";
 
     Socket socket;
@@ -80,7 +80,9 @@ public class Chat_Multi extends AppCompatActivity {
     String MyEmailHolder;
     String FriendEmailHolder;
     String UserListHolder;
+    String Invite_message_Holder;
 
+    String chatuserlist;
 
     String message;
     String formatDate;
@@ -132,6 +134,8 @@ public class Chat_Multi extends AppCompatActivity {
         RoomHolder = intent.getStringExtra("room_id");
         Log.d("방번호 받아오기", RoomHolder);
 
+        Invite_message_Holder = intent.getStringExtra("invite_message");
+
 
         // 현재시간을 msec 으로 구한다.
         long now = System.currentTimeMillis();
@@ -169,7 +173,7 @@ public class Chat_Multi extends AppCompatActivity {
 
 
         //대화 상대 이름
-        m_friend_name.setText("그룹채팅 "+String.valueOf(Userlist.size()));
+        m_friend_name.setText("그룹채팅 " + String.valueOf(Userlist.size()));
 
 
         icRecyclerView = (RecyclerView) findViewById(R.id.chat_bubble_list);
@@ -180,8 +184,6 @@ public class Chat_Multi extends AppCompatActivity {
 
         icAdapter = new InChatAdapter(this, icArrayList);
         icRecyclerView.setAdapter(icAdapter);
-
-
 
 
         // 드로우뷰
@@ -203,12 +205,55 @@ public class Chat_Multi extends AppCompatActivity {
         m_drawerView = (View) findViewById(R.id.m_drawer);
 
 
+//초대할 시에는 초대 메시지가 날라와야한다, 어레이리스트에만 추가해준다
+        if (Invite_message_Holder != null) {
+
+            Log.d("초대메시지 받아오기", Invite_message_Holder);
+
+            //소켓에 보내기 전에 해당 클라이언트의 어레이리스트에 선 추가
+            //txtMessage.append(msg.obj.toString()+"\n");
+            InChatData inchatData = new InChatData();
+
+            //어차피 내가 보낸거니까 chat_email이랑 my_email을 같게해서 보낸다
+            inchatData.setchat_email("notice@naver.com");
+            inchatData.setchat_content(Invite_message_Holder);
+            inchatData.setmy_email(MyEmailHolder);
+            inchatData.setchat_wdate(formatDate);
+
+            icArrayList.add(inchatData);
+            Log.d("클라이언트 선 전달1", String.valueOf(inchatData));
+            // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
+            //icAdapter.notifyDataSetChanged();
+            icAdapter.notifyItemInserted(icArrayList.size());
+            Log.d("초대후 채팅사이즈", String.valueOf(icArrayList.size()));
+
+            icRecyclerView.smoothScrollToPosition(icAdapter.getItemCount() - 1);
+
+
+            //방이 안터질경우를 대비해 DB에 저장해둔다
+            /////////DB 서버로 보내기/////////
+            ChatRoom_Function(RoomHolder, "notice@naver.com", Invite_message_Holder, formatDate);
+            //안터진다면 DB에서 불러올것이고
+            //터진다면 그냥 사라지는 것이므로 DB에 남아있어도 된다
+
+
+        } else { //초대하지 않고 그냥 채팅방에 들어갔을 때는 초대공지 X
+
+
+        }
+        //리사이클러뷰 가장 하단으로 이동
+        //icRecyclerView.scrollToPosition(icArrayList.size()-1);
+
+
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+
+        //초대시 필요요
+        chatuserlist = UserListHolder;
 
         Log.d("채팅 멀티", "onresume");
 
@@ -218,10 +263,8 @@ public class Chat_Multi extends AppCompatActivity {
 
         GetData task = new GetData();
         task.execute(RoomHolder, MyEmailHolder);
-
-
-        //리사이클러뷰 가장 하단으로 이동
-        //icRecyclerView.scrollToPosition(icArrayList.size()-1);
+        Log.d("초대메시지 받아오기 전", String.valueOf(task));
+        Log.d("초대전 채팅사이즈", String.valueOf(icArrayList.size()));
 
 
         // 더보기 클릭시 드로우뷰 튀어나오기
@@ -259,6 +302,8 @@ public class Chat_Multi extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Log.d("초대버튼 클릭 시 채팅사이즈", String.valueOf(icArrayList.size()));
+
                 //나의 이메일만 가지고 팔로우리스트 목록 가져오기
                 Intent intent19 = new Intent(Chat_Multi.this, M_Chat_invite_Activity.class);
 
@@ -266,13 +311,16 @@ public class Chat_Multi extends AppCompatActivity {
                 //이메일을 던지고 그에 해당하는 것들을 조건문으로 걸러낸 뒤에 recyclerview에 뿌려주기
                 intent19.putExtra("Email", MyEmailHolder);
                 intent19.putExtra("Room_no", RoomHolder);
+                //intent19.putExtra("ChatSizeHolder", String.valueOf(icArrayList.size()));
+                intent19.putExtra("ChatListHolder", UserListHolder);
 
-                intent19.putExtra("ChatListHolder",UserListHolder);
+                //M_Chat_invite Acitivity로부터 값을 받아오기
+                startActivityForResult(intent19, 3000);
 
-                startActivity(intent19);
+                //finish();
 
-                finish();
-
+                //초대창 닫기
+                m_drawerLayout.closeDrawers();
 
             }
         });
@@ -295,7 +343,23 @@ public class Chat_Multi extends AppCompatActivity {
                 M_ChatRoom_exit_Function(RoomHolder, MyEmailHolder);
 
 
+
                 //해당유저가 나갔다고 공지해주기
+                String exit_message=MyEmailHolder+"님이 나갔습니다";
+
+                //유저리스트에서도 나의 이메일 지워주기
+                Userlist.remove(MyEmailHolder);
+
+
+                // 2. DB에 "OO님이 나갔습니다" 저장해주기
+                ChatRoom_Function(RoomHolder, "notice@naver.com", exit_message, formatDate);
+
+
+
+                send = new SendThread(exit_message, socket);
+                send.start();
+
+
 
 
                 //해당 유저가 다시 들어올 시 나간 이후의 채팅은 못본다
@@ -303,7 +367,7 @@ public class Chat_Multi extends AppCompatActivity {
                 //-----------OO님이 초대되었습니다-------- 부터 볼 수 있다
                 //불러올 때 사이즈 계산
                 //PHP 딴에서 remember_order=remember_order+'$remember_order'가 아니라 사이즈가 다를 수도
-                M_ChatRoom_Exit_Remember_Function(RoomHolder, MyEmailHolder, String.valueOf(icArrayList.size()));
+                //M_ChatRoom_Exit_Remember_Function(RoomHolder, MyEmailHolder, String.valueOf(icArrayList.size()));
 
                 //Log.d("어레이 리스트 사이즈", String.valueOf(icArrayList.size()));
 
@@ -347,13 +411,103 @@ public class Chat_Multi extends AppCompatActivity {
                     //가져온 이메일과 나의 이메일이 다를 경우에만 반영
                     //내가 보낸 건 이미 send 버튼 누를 때 어레이리스트에 반영했기 때문에
                     //상대방이 보낸 것만 불러오면 된다
+
+
                     if (chatuser_email.equals(MyEmailHolder)) {
                         Log.d("이메일 같을 때", "실행");
+
                     } else {
-                        Log.d("이메일 다를 때", "실행");
-                        GetData9 task9 = new GetData9();
-                        task9.execute(chatuser_email);
-                        Log.d("2번", String.valueOf(task9));
+
+                        if (Servermessage.contains("을 초대하였습니다")) {
+                            Log.d("서버 초대 메시지", "초대 메시지");
+                            chatuser_email = "notice@naver.com";
+                            GetData9 task9 = new GetData9();
+                            task9.execute(chatuser_email);
+
+                            Servermessage = Servermessage.replace(MyEmailHolder + "님이", "");
+                            Servermessage = Servermessage.replace("을 초대하였습니다", "");
+                            Servermessage = Servermessage.replaceAll(" ", "");
+
+                            //사용자 추가
+                            String[] Servermessage_splitStr = Servermessage.split(",");
+
+
+                            //그룹 채팅의 숫자 증가시키기
+                            m_friend_name.setText("그룹채팅 " + String.valueOf(Userlist.size() + Servermessage_splitStr.length - 1));
+
+                            //여기서 유저리스트도 반영해줘야한다
+                            //Userlist
+
+                            //                    chatuserlist = String.valueOf(Userlist);
+                            //                    chatuserlist = chatuserlist.replace("[", ",");
+                            //                    chatuserlist = chatuserlist.replace("]", "");
+                            //                    chatuserlist = chatuserlist.replace(" ", "");
+                            //                    Log.d("채팅유저리스트", chatuserlist);
+
+
+                            String result = Servermessage.substring(Servermessage.lastIndexOf("이") + 1);
+                            Log.d("초대된 이메일만 보내기", result);
+
+                            if (Userlist.contains(result)) {//포함하면 무시
+
+
+                            } else {//포함 안하면 추가해준다
+
+                                //사용자 추가
+                                String[] result_get_splitStr = result.split(",");
+
+                                for (int i = 1; i < result_get_splitStr.length; i++) {
+                                    Userlist.add(result_get_splitStr[i]);
+                                    Log.d("유저리스트 추가", String.valueOf(Userlist));
+                                }
+
+                                Log.d("9배열 채팅유저리스트 수신", String.valueOf(Userlist));
+
+                                chatuserlist = String.valueOf(Userlist);
+                                chatuserlist = chatuserlist.replace("[", ",");
+                                chatuserlist = chatuserlist.replace("]", "");
+                                chatuserlist = chatuserlist.replace(" ", "");
+                                Log.d("채팅유저리스트", chatuserlist);
+                                Chat_UserList_Function(RoomHolder, chatuserlist, chat_content, "multi_chat");
+                            }
+
+
+                        }else if(Servermessage.contains("님이 나갔습니다")){
+
+                            Log.d("서버 퇴장 메시지", "퇴장 메시지");
+                            chatuser_email = "notice@naver.com";
+                            GetData9 task9 = new GetData9();
+                            task9.execute(chatuser_email);
+
+                            Servermessage = Servermessage.substring(Servermessage.lastIndexOf(":") + 1);
+                            Servermessage = Servermessage.replace("님이 나갔습니다", "");
+                            Servermessage = Servermessage.replaceAll(" ", "");
+                            Log.d("서버 퇴장한 유저", Servermessage);
+
+                            //퇴장한 유저를 유저리스트에서 제외시키기
+                            Userlist.remove(Servermessage);
+                            Log.d("9퇴장 배열 채팅유저리스트 수신", String.valueOf(Userlist));
+
+                            //퇴장한 유저 수 반영하기
+                            m_friend_name.setText("그룹채팅 " + String.valueOf(Userlist.size()));
+
+                            //DB에 퇴장한 유저리스트 반영하기
+                            chatuserlist = String.valueOf(Userlist);
+                            chatuserlist = chatuserlist.replace("[", ",");
+                            chatuserlist = chatuserlist.replace("]", "");
+                            chatuserlist = chatuserlist.replace(" ", "");
+                            Log.d("DB 채팅유저리스트", chatuserlist);
+                            Chat_UserList_Function(RoomHolder, chatuserlist, chat_content, "multi_chat");
+
+
+
+                        }else {
+                            Log.d("이메일 다를 때", "실행");
+                            GetData9 task9 = new GetData9();
+                            task9.execute(chatuser_email);
+                            Log.d("2번", String.valueOf(task9));
+
+                        }
                     }
 
 
@@ -367,6 +521,7 @@ public class Chat_Multi extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
 
                 /////////자바 서버로 보내기/////////
                 //사용자가 입력한 메시지
@@ -392,8 +547,9 @@ public class Chat_Multi extends AppCompatActivity {
                     icAdapter.notifyItemInserted(icArrayList.size());
                     icRecyclerView.smoothScrollToPosition(icAdapter.getItemCount() - 1);
 
+                    Log.d("9배열 채팅유저리스트 입력", String.valueOf(Userlist));
 
-                    String chatuserlist = String.valueOf(Userlist);
+                    chatuserlist = String.valueOf(Userlist);
                     chatuserlist = chatuserlist.replace("[", ",");
                     chatuserlist = chatuserlist.replace("]", "");
                     chatuserlist = chatuserlist.replace(" ", "");
@@ -405,11 +561,11 @@ public class Chat_Multi extends AppCompatActivity {
                     //채팅방(chat_key)에 유저리스트 추가
                     //유저리스트만 계속 업데이트 시킨다
                     Chat_UserList_Function(RoomHolder, chatuserlist, message, "multi_chat");
-
+                    Log.d("왜2", chatuserlist);
 
                     //이거는 초대했을 때 userlist에 추가하고 넣어주면 된다
                     //멀티 채팅 퇴장한 사람의 경우 user_list에 이름 다시 넣어주기
-                    M_ChatRoom_Exit_Person_Function(RoomHolder,MyEmailHolder);
+                    //M_ChatRoom_Exit_Person_Function(RoomHolder, MyEmailHolder);
 
 
                     m_editMessage.setText("");
@@ -433,12 +589,102 @@ public class Chat_Multi extends AppCompatActivity {
 
         Log.d("채팅리스트 사이즈", String.valueOf(icArrayList.size()));
 
-        if (icArrayList.size() == 0) { //채팅 친 내역이 없다는 얘기므로 삭제시키기
+        if (icArrayList.size() == 1) { //채팅 친 내역이 없다는 얘기므로 삭제시키기
 
             ChatRoom_destroy_Function(RoomHolder);
 
         }
 
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 3000:
+                    String get_room_id = data.getStringExtra("room_id");
+                    Log.d("가져온 방번호", get_room_id);
+
+                    String get_user_list = data.getStringExtra("user_list");
+                    Log.d("가져온 유저리스트", get_user_list);
+
+                    String get_myemail = data.getStringExtra("myemail");
+                    Log.d("가져온 내 이메일", get_myemail);
+
+                    String get_invite_message = data.getStringExtra("invite_message");
+                    Log.d("가져온 초대 메시지", get_invite_message);
+
+
+                    //반영해줘야할 부분 -> 초대메시지 띄우기, 채팅방 숫자 증가, 초대창 반영
+
+
+                    //초대 메시지
+                    Log.d("초대메시지 받아오기", get_invite_message);
+
+                    //소켓에 보내기 전에 해당 클라이언트의 어레이리스트에 선 추가
+                    //txtMessage.append(msg.obj.toString()+"\n");
+                    InChatData inchatData = new InChatData();
+
+                    //어차피 내가 보낸거니까 chat_email이랑 my_email을 같게해서 보낸다
+                    inchatData.setchat_email("notice@naver.com");
+                    inchatData.setchat_content(get_invite_message);
+                    inchatData.setmy_email(MyEmailHolder);
+                    inchatData.setchat_wdate(formatDate);
+
+                    icArrayList.add(inchatData);
+                    Log.d("클라이언트 선 전달1", String.valueOf(inchatData));
+                    // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
+                    //icAdapter.notifyDataSetChanged();
+                    icAdapter.notifyItemInserted(icArrayList.size());
+                    Log.d("초대후 채팅사이즈", String.valueOf(icArrayList.size()));
+
+                    icRecyclerView.smoothScrollToPosition(icAdapter.getItemCount() - 1);
+
+                    //가져온 유저리스트를 String chatuserlist에 저장해준다
+
+
+                    chatuserlist = get_user_list;
+                    Log.d("왜1", chatuserlist);
+
+
+                    //방이 안터질경우를 대비해 DB에 저장해둔다
+                    /////////DB 서버로 보내기/////////
+                    ChatRoom_Function(RoomHolder, "notice@naver.com", get_invite_message, formatDate);
+                    //안터진다면 DB에서 불러올것이고
+                    //터진다면 그냥 사라지는 것이므로 DB에 남아있어도 된다
+
+
+                    //소켓에 반영해주기
+
+                    //서버로는 가장 나중에 보내준다
+                    //send 쓰레드를 전송용 쓰레드를 만들어서 호출
+                    send = new SendThread(get_invite_message, socket);
+                    send.start();
+
+
+                    //유저리스트에 반영
+                    get_invite_message = get_invite_message.replace(MyEmailHolder + "님이", "");
+                    get_invite_message = get_invite_message.replace("을 초대하였습니다", "");
+                    get_invite_message = get_invite_message.replaceAll(" ", "");
+
+
+                    //사용자 추가
+                    String[] get_splitStr = get_invite_message.split(",");
+
+                    for (int i = 1; i < get_splitStr.length; i++) {
+                        Userlist.add(get_splitStr[i]);
+                        Log.d("유저리스트 추가", String.valueOf(Userlist));
+                    }
+
+
+                    // 채팅방 숫자 증가
+                    m_friend_name.setText("그룹채팅 " + String.valueOf(Userlist.size()));
+
+
+                    break;
+            }
+        }
     }
 
 
@@ -891,6 +1137,7 @@ public class Chat_Multi extends AppCompatActivity {
                 InChatData inchatData = new InChatData();
 
                 inchatData.setchat_email(chatuser_email);
+                Log.d("채팅 이메일", chatuser_email);
                 inchatData.setchat_content(chat_content);
                 Log.d("핸들러", chat_content);
                 inchatData.setmy_email(MyEmailHolder);
@@ -1043,10 +1290,11 @@ public class Chat_Multi extends AppCompatActivity {
                 M_InChatUserData m_inchatuserData = new M_InChatUserData();
 
 
+
                 m_inchatuserData.setchat_email(inchatuser_email);
                 m_inchatuserData.setchat_profile_image(inchatuser_image);
                 m_inchatuserData.setchat_profile_name(inchatuser_name);
-
+                m_inchatuserData.setmy_email(MyEmailHolder);
 
                 m_icuser_ArrayList.add(m_inchatuserData);
                 m_icuser_Adapter.notifyDataSetChanged();
@@ -1150,7 +1398,7 @@ public class Chat_Multi extends AppCompatActivity {
     // 채팅방 나가기
     public void M_ChatRoom_exit_Function(final String chatroom_id, final String exit_email) {
 
-        Log.d("멀티 채팅방 나가기","멀티 채팅방 나가기");
+        Log.d("멀티 채팅방 나가기", "멀티 채팅방 나가기");
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -1226,7 +1474,7 @@ public class Chat_Multi extends AppCompatActivity {
 
         UserLoginClass userLoginClass = new UserLoginClass();
 
-        userLoginClass.execute(chatroom_id,email);
+        userLoginClass.execute(chatroom_id, email);
     }
 
     // 멀티 채팅방 나간사람과 다시 대화할때 필요한 대화사이즈 -> 나갔다가 들어오면 채팅 내역 삭제

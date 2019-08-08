@@ -29,7 +29,7 @@ public class M_InChatUserAdapter extends RecyclerView.Adapter<M_InChatUserAdapte
     class CustomViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView name;
-
+        protected TextView myemail;
 
 
 
@@ -37,6 +37,7 @@ public class M_InChatUserAdapter extends RecyclerView.Adapter<M_InChatUserAdapte
             super(view);
             this.image = (ImageView) view.findViewById(R.id.m_chat_user_list_image);
             this.name = (TextView) view.findViewById(R.id.m_chat_user_list_name);
+            this.myemail = (TextView) view.findViewById(R.id.m_chat_user_myemail);
 
 
 
@@ -56,17 +57,32 @@ public class M_InChatUserAdapter extends RecyclerView.Adapter<M_InChatUserAdapte
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder viewholder, int position) {
 
+        if(m_icuser_List.get(position).getchat_email().equals(m_icuser_List.get(position).getmy_email())){ // 나의 이메일과 같을 경우 나라고 표시하기
+            Glide.with(context)
+                    .load(m_icuser_List.get(position).getchat_profile_image())
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .placeholder(R.drawable.gray)
+                    //.skipMemoryCache(true)
+                    .thumbnail(0.1f)
+                    .fitCenter()
+                    .into(viewholder.image);
+            viewholder.name.setText(m_icuser_List.get(position).getchat_profile_name());
+            viewholder.myemail.setVisibility(View.VISIBLE);
+        }else{ // 나의 이메일과 다를 경우 GONE
+            Glide.with(context)
+                    .load(m_icuser_List.get(position).getchat_profile_image())
+                    //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .placeholder(R.drawable.gray)
+                    //.skipMemoryCache(true)
+                    .thumbnail(0.1f)
+                    .fitCenter()
+                    .into(viewholder.image);
 
-        Glide.with(context)
-                .load(m_icuser_List.get(position).getchat_profile_image())
-                //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .placeholder(R.drawable.gray)
-                //.skipMemoryCache(true)
-                .thumbnail(0.1f)
-                .fitCenter()
-                .into(viewholder.image);
+            viewholder.name.setText(m_icuser_List.get(position).getchat_profile_name());
+            viewholder.myemail.setVisibility(View.GONE);
+        }
 
-        viewholder.name.setText(m_icuser_List.get(position).getchat_profile_name());
+
 
     }
 

@@ -68,22 +68,21 @@ public class Tab3 extends Fragment {
     String place;
 
 
-
     //Overriden method onCreateView
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         if (getArguments() != null) {
             EmailHolder = getArguments().getString("EmailHolder");
-            Log.d("이메일 받아오기",EmailHolder);
+            Log.d("이메일 받아오기", EmailHolder);
             NameHolder = getArguments().getString("NameHolder");
-            Log.d("이름 받아오기",NameHolder);
+            Log.d("이름 받아오기", NameHolder);
             TeachHolder = getArguments().getString("TeachHolder");
-            Log.d("가르칠 언어",TeachHolder );
+            Log.d("가르칠 언어", TeachHolder);
             LearnHolder = getArguments().getString("LearnHolder");
-            Log.d("배울언어 받아오기",LearnHolder);
+            Log.d("배울언어 받아오기", LearnHolder);
             ImageHolder = getArguments().getString("ImageHolder");
-            Log.d("프로필사진 받아오기",ImageHolder);
+            Log.d("프로필사진 받아오기", ImageHolder);
 
 
         }
@@ -95,11 +94,8 @@ public class Tab3 extends Fragment {
 
         context = getActivity();
 
-        cRecyclerView = (RecyclerView)  rootView.findViewById(R.id.listView_chat_list);
+        cRecyclerView = (RecyclerView) rootView.findViewById(R.id.listView_chat_list);
         cRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-
-
 
 
         //mTextViewResult.setMovementMethod(new ScrollingMovementMethod());
@@ -114,46 +110,10 @@ public class Tab3 extends Fragment {
         //Horizontal 인 경우 0으로 설정해주면 됩니다.
         //cRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 1));
 
-        cRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), cRecyclerView, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-
-
-                ChatListData chatlistData = cArrayList.get(position);
-
-                Toast.makeText(getActivity(), chatlistData.getchatroom_no(), Toast.LENGTH_LONG).show();
-
-                //getActivity().finish();
-
-                Intent intent = new Intent(getActivity(), Chat9.class);
-
-                intent.putExtra("room_id", chatlistData.getchatroom_no());
-
-                intent.putExtra("friend_name", chatlistData.getMember_name());
-
-                intent.putExtra("friend_email", chatlistData.getMember_email());
-
-                intent.putExtra("myemail",EmailHolder);
-
-
-                startActivity(intent);
-
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-            }
-        }));
-
-
-
-
         return rootView;
 
 
-
     }
-
 
 
     @Override
@@ -164,64 +124,60 @@ public class Tab3 extends Fragment {
         cAdapter.notifyDataSetChanged();
 
 
-
-
         //내 이름을 포함한 채팅방 리스트 가져오기
         //단 해당 사람이 방을 나갈 경우
         //chat_key 테이블의 exit_person에 표시되며 나간사람은 대화리스트를 받아올수 없다
         GetData task = new GetData();
         task.execute(EmailHolder);
 
-    }
 
-    // RecyclerView 클릭 이벤트
-    public interface ClickListener {
-        void onClick(View view, int position);
+        // 아이템을 클릭했을 때
+        cAdapter.setOnItemClickListener(new ChatListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
 
-        void onLongClick(View view, int position);
-    }
+                ChatListData chatlistData = cArrayList.get(position);
 
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+                Toast.makeText(getActivity(), chatlistData.getchatroom_no(), Toast.LENGTH_LONG).show();
 
-        private GestureDetector gestureDetector;
-        private ClickListener clickListener;
+                //getActivity().finish();
 
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
-            this.clickListener = clickListener;
-            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
+                if (chatlistData.getchatroom_type().equals("single_chat")) { //만약 대화가 1대1채팅이라면 chat9으로 이동하라
+
+                    Intent intent = new Intent(getActivity(), Chat9.class);
+
+                    intent.putExtra("room_id", chatlistData.getchatroom_no());
+
+                    intent.putExtra("user_list", chatlistData.getuserlist());
+
+                    intent.putExtra("myemail", EmailHolder);
+
+                    intent.putExtra("friend_name", chatlistData.getMember_name());
+
+                    startActivity(intent);
+
+                    Log.d("채팅-싱글", String.valueOf(intent));
+
+
+                } else { //대화가 1:n 채팅이라면 chat19로 이동하라
+
+                    Intent intent9 = new Intent(getActivity(), Chat_Multi.class);
+
+                    intent9.putExtra("room_id", chatlistData.getchatroom_no());
+
+                    intent9.putExtra("user_list", chatlistData.getuserlist());
+
+                    intent9.putExtra("myemail", EmailHolder);
+
+                    startActivity(intent9);
+                    Log.d("채팅-멀티", String.valueOf(intent9));
                 }
 
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && clickListener != null) {
-                        clickListener.onLongClick(child, recyclerView.getChildAdapterPosition(child));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(child, rv.getChildAdapterPosition(child));
             }
-            return false;
-        }
+        });
 
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        }
 
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        }
     }
-
 
 
     private class GetData extends AsyncTask<String, Void, String> {
@@ -241,11 +197,10 @@ public class Tab3 extends Fragment {
             super.onPostExecute(result);
 
 
-            if (result == null){
+            if (result == null) {
 
                 // mTextViewResult.setText(errorString);
-            }
-            else {
+            } else {
 
                 mJsonString = result;
                 showResult();
@@ -285,10 +240,9 @@ public class Tab3 extends Fragment {
                 Log.d(TAG, "response code - " + responseStatusCode);
 
                 InputStream inputStream;
-                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                if (responseStatusCode == HttpURLConnection.HTTP_OK) {
                     inputStream = httpURLConnection.getInputStream();
-                }
-                else{
+                } else {
                     inputStream = httpURLConnection.getErrorStream();
                 }
 
@@ -299,7 +253,7 @@ public class Tab3 extends Fragment {
                 StringBuilder sb = new StringBuilder();
                 String line;
 
-                while((line = bufferedReader.readLine()) != null){
+                while ((line = bufferedReader.readLine()) != null) {
                     sb.append(line);
                 }
 
@@ -320,39 +274,44 @@ public class Tab3 extends Fragment {
     }
 
 
-    private void showResult(){
+    private void showResult() {
 
-        String TAG_JSON="webnautes";
+        String TAG_JSON = "webnautes";
 
 
         try {
             JSONObject jsonObject = new JSONObject(mJsonString);
             JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
 
-            for(int i=0;i<jsonArray.length();i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
 
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String chatroom_no = item.getString("chatroom_no");
-                Log.d("채팅",chatroom_no);
+                Log.d("채팅", chatroom_no);
                 String userlist = item.getString("user_list");
-                Log.d("채팅",userlist);
+                Log.d("채팅", userlist);
                 String chatuser_email = item.getString("chatuser_email");
-                Log.d("채팅",chatuser_email);
+                Log.d("채팅", chatuser_email);
                 String chatuser_image = item.getString("chatuser_image");
-                Log.d("채팅",chatuser_image);
+                Log.d("채팅", chatuser_image);
                 String chatuser_name = item.getString("chatuser_name");
-                Log.d("채팅",chatuser_name);
+                Log.d("채팅", chatuser_name);
                 String myemail = item.getString("myemail");
-                Log.d("채팅",myemail);
+                Log.d("채팅", myemail);
                 String exit_person = item.getString("exit_person");
-                Log.d("채팅",exit_person);
+                Log.d("채팅", exit_person);
+                String last_message = item.getString("last_message");
+                Log.d("채팅", last_message);
+                String last_time = item.getString("last_time");
+                Log.d("채팅", last_time);
+                String chatroom_type = item.getString("chatroom_type");
+                Log.d("채팅", chatroom_type);
 
 
+                if (exit_person.contains(myemail)) { //퇴장한 사람 중에 내 이름이 들어있으면 put X
 
-                if(exit_person.contains(myemail)){
-
-                }else{
+                } else {
                     ChatListData chatlistData = new ChatListData();
 
                     chatlistData.setchatroom_no(chatroom_no);
@@ -363,13 +322,18 @@ public class Tab3 extends Fragment {
                     chatlistData.setMyemail(myemail);
                     chatlistData.setExit_person(exit_person);
 
+                    //userlist를 ,로 쪼개 배열에 담는다 -> 여기서 -1 해주기
+                    String[] userlist_array = userlist.split(",");
+
+                    chatlistData.setcount(String.valueOf(userlist_array.length-1));
+                    chatlistData.setmessage(last_message);
+                    chatlistData.setdate(last_time);
+                    chatlistData.setchatroom_type(chatroom_type);
+
 
                     cArrayList.add(chatlistData);
                     cAdapter.notifyDataSetChanged();
                 }
-
-
-
 
 
                 //방의 프로필사진, 대화자 목록 데이터 받아오기
@@ -379,22 +343,12 @@ public class Tab3 extends Fragment {
             }
 
 
-
         } catch (JSONException e) {
 
             Log.d(TAG, "showResult : ", e);
         }
 
     }
-
-
-
-
-
-
-
-
-
 
 
 }

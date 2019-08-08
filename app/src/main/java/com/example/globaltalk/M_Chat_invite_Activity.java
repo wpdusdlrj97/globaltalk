@@ -33,6 +33,7 @@ public class M_Chat_invite_Activity extends AppCompatActivity {
     String EmailHolder;
     String RoomHolder;
     String ChatListHolder;
+    String ChatSizeHolder;
 
     private String mJsonString;
 
@@ -63,6 +64,10 @@ public class M_Chat_invite_Activity extends AppCompatActivity {
 
         ChatListHolder = intent.getStringExtra("ChatListHolder");
         Log.d("ChatListHolder 받기", ChatListHolder);
+
+        //ChatSizeHolder = intent.getStringExtra("ChatSizeHolder");
+        //Log.d("ChatSizeHolder 받기", ChatSizeHolder);
+
 
         //초대하기 완료 버튼
         chat_invite_finish=findViewById(R.id.chat_invite_finish);
@@ -147,23 +152,22 @@ public class M_Chat_invite_Activity extends AppCompatActivity {
                     //그냥 종료하면 된다
                     Toast.makeText(M_Chat_invite_Activity.this, "아무도 초대하지 않았습니다", Toast.LENGTH_LONG).show();
 
-                    Intent intent9 = new Intent(M_Chat_invite_Activity.this, Chat_Multi.class);
+                    //Intent intent9 = new Intent(M_Chat_invite_Activity.this, Chat_Multi.class);
 
-                    intent9.putExtra("room_id", RoomHolder);
+                    //intent9.putExtra("room_id", RoomHolder);
 
-                    intent9.putExtra("user_list",ChatListHolder);
+                    //intent9.putExtra("user_list",ChatListHolder);
 
-                    intent9.putExtra("myemail", EmailHolder);
+                    //intent9.putExtra("myemail", EmailHolder);
 
-                    startActivity(intent9);
+                    //startActivity(intent9);
 
                     finish();
 
                 }else{// 누군가 클릭했을 시
 
 
-                    Intent intent9 = new Intent(M_Chat_invite_Activity.this, Chat_Multi.class);
-
+                    Intent intent9 = new Intent();
 
                     String chatuserlist = String.valueOf(list_invite);
                     chatuserlist = chatuserlist.replace("[", ",");
@@ -180,10 +184,11 @@ public class M_Chat_invite_Activity extends AppCompatActivity {
 
                     intent9.putExtra("myemail", EmailHolder);
 
-                    startActivity(intent9);
+                    //String Invite_Chat_userlist = Total_Chat_userlist.replace(","+EmailHolder,"");
 
-                    //Chat9 액티비티는 종료시키기
+                    intent9.putExtra("invite_message", EmailHolder+"님이 "+ chatuserlist+"을 초대하였습니다");
 
+                    setResult(RESULT_OK, intent9);
                     finish();
 
 

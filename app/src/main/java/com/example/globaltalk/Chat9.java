@@ -74,7 +74,7 @@ public class Chat9 extends AppCompatActivity {
     SendThread send;
 
 
-    String IP = "192.168.0.7";
+    String IP = "192.168.0.5";
     String PORT = "9999";
 
     Socket socket;
@@ -83,7 +83,7 @@ public class Chat9 extends AppCompatActivity {
 
     String RoomHolder;
     String MyEmailHolder;
-    String FriendEmailHolder;
+    String FriendNameHolder;
     String UserListHolder;
 
 
@@ -128,9 +128,11 @@ public class Chat9 extends AppCompatActivity {
         MyEmailHolder = intent.getStringExtra("myemail");
         Log.d("나의 이메일 받아오기", MyEmailHolder);
 
-        //친구의 이메일
-        //FriendEmailHolder = intent.getStringExtra("friend_email");
-        //Log.d("친구의 이메일 받아오기",FriendEmailHolder);
+        //친구의 이름
+        FriendNameHolder = intent.getStringExtra("friend_name");
+        Log.d("친구의 이름 받아오기",FriendNameHolder);
+
+
 
 
         //채팅 유저리스트
@@ -175,7 +177,7 @@ public class Chat9 extends AppCompatActivity {
 
 
         //대화 상대 이름
-        friend_name.setText(String.valueOf(Userlist.size()));
+        friend_name.setText(FriendNameHolder);
 
 
         icRecyclerView = (RecyclerView) findViewById(R.id.chat_bubble_list);
@@ -1031,9 +1033,11 @@ public class Chat9 extends AppCompatActivity {
                 InChatUserData inchatuserData = new InChatUserData();
 
 
+
                 inchatuserData.setchat_email(inchatuser_email);
                 inchatuserData.setchat_profile_image(inchatuser_image);
                 inchatuserData.setchat_profile_name(inchatuser_name);
+                inchatuserData.setmy_email(MyEmailHolder);
 
 
                 icuser_ArrayList.add(inchatuserData);

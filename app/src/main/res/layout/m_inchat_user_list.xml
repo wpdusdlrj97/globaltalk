@@ -7,7 +7,7 @@
     android:padding="3dp">
 
     <ImageView
-        android:id="@+id/chat_user_list_image"
+        android:id="@+id/m_chat_user_list_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="#eeeeee"
@@ -15,7 +15,7 @@
         android:scaleType="centerCrop" />
 
     <TextView
-        android:id="@+id/chat_user_list_name"
+        android:id="@+id/m_chat_user_list_name"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_marginLeft="30dp"
@@ -27,7 +27,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/chat_user_myemail"
+        android:id="@+id/m_chat_user_myemail"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_marginTop="5dp"
