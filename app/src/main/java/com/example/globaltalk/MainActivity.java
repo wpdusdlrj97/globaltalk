@@ -80,26 +80,26 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         EmailHolder = intent.getStringExtra(UserLoginActivity.UserEmail);
 
-        GetData task = new GetData();
+        GetData91 task91 = new GetData91();
         //task.execute( mEditTextSearchKeyword1.getText().toString(), mEditTextSearchKeyword2.getText().toString());
-        task.execute("http://54.180.122.247/global_communication/mypage.php", "");
+        task91.execute("http://54.180.122.247/global_communication/mypage.php", "");
 
 
     }
 
 
 
-    class GetData extends AsyncTask<String, Void, String> {
+    class GetData91 extends AsyncTask<String, Void, String> {
 
-        ProgressDialog progressDialog;
+        //ProgressDialog progressDialog;
         String errorString = null;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
-            progressDialog = ProgressDialog.show(MainActivity.this,
-                    "Please Wait", null, true, true);
+            //progressDialog = ProgressDialog.show(MainActivity.this,
+            //        "Please Wait", null, true, true);
         }
 
 
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
             //mTextViewResult.setText(result);
             Log.d(TAG, "response - " + result);
 

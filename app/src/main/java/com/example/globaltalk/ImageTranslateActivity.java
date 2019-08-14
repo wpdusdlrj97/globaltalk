@@ -17,7 +17,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,14 +39,24 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.soundcloud.android.crop.Crop;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,7 +65,7 @@ import java.util.Locale;
 
 
 public class ImageTranslateActivity extends AppCompatActivity {
-    private static final String CLOUD_VISION_API_KEY = "API_KEY";
+    private static final String CLOUD_VISION_API_KEY = "";
     public static final String FILE_NAME = "temp.jpg";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
@@ -59,12 +73,9 @@ public class ImageTranslateActivity extends AppCompatActivity {
     private static final int MAX_DIMENSION = 1200;
 
     private static final String TAG = ImageTranslateActivity.class.getSimpleName();
-    private static final int GALLERY_PERMISSIONS_REQUEST = 0;
-    private static final int GALLERY_IMAGE_REQUEST = 1;
-    public static final int CAMERA_PERMISSIONS_REQUEST = 2;
-    public static final int CAMERA_IMAGE_REQUEST = 3;
 
     private TextView mImageDetails;
+    private TextView mImageResults;
     private ImageView mMainImage;
 
 
@@ -74,15 +85,29 @@ public class ImageTranslateActivity extends AppCompatActivity {
 
     private File tempFile;
 
+    Spinner spinner_source;
+    Spinner spinner_target;
 
+    // 스피너에서 선택된 언어
+    String register_source;
+    String register_target;
 
+    //번역할 언어와 번역된 언어
+    String sourceLang;
+    String targetLang;
+
+    Button image_translate_button;
+    String text_recognition;
+
+    //사진 비트맵
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_translate);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
@@ -92,14 +117,144 @@ public class ImageTranslateActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.dialog_select_gallery, (dialog, which) -> goToAlbum())
                     .setNegativeButton(R.string.dialog_select_camera, (dialog, which) -> takePhoto());
             builder.create().show();
+
+            mImageResults.setText("");
         });
 
+
         mImageDetails = findViewById(R.id.image_details);
+        mImageResults = findViewById(R.id.image_result);
+
         mMainImage = findViewById(R.id.main_image);
+
+
+        //번역 대상
+        spinner_source =findViewById(R.id.image_source);
+
+        //번역 결과
+        spinner_target =findViewById(R.id.image_target);
+
+        //번역 버튼
+        image_translate_button=findViewById(R.id.image_translate_button);
+
+
 
         tedPermission();
 
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Toast.makeText(this, "onResume 호출 됨",Toast.LENGTH_LONG).show();
+
+        spinner_source.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                register_source = (String) parent.getItemAtPosition(position);
+
+                //영어 일때
+                if(register_source.equals("English")){
+                    sourceLang="en";
+                }
+
+                //한국어 일때
+                if(register_source.equals("Korean")){
+                    sourceLang="ko";
+                }
+
+                //한국어 일때
+                if(register_source.equals("Japanese")){
+                    sourceLang="ja";
+                }
+
+                //한국어 일때
+                if(register_source.equals("Chinese")){
+                    sourceLang="zh-CN";
+                }
+
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        spinner_target.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                register_target = (String) parent.getItemAtPosition(position);
+
+                //영어 일때
+                if(register_target.equals("English")){
+                    targetLang="en";
+                }
+
+                //한국어 일때
+                if(register_target.equals("Korean")){
+                    targetLang="ko";
+                }
+
+                //한국어 일때
+                if(register_target.equals("Japanese")){
+                    targetLang="ja";
+                }
+
+                //한국어 일때
+                if(register_target.equals("Chinese")){
+                    targetLang="zh-CN";
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        //번역 버튼
+        image_translate_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //소스에 입력된 내용이 있는지 체크하고 넘어가자.
+                if(bitmap == null) {
+                    Toast.makeText(ImageTranslateActivity.this, "번역할 사진을 삽입하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                if(text_recognition.length() == 0) {
+                    Toast.makeText(ImageTranslateActivity.this, "번역할 사진을 삽입하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(register_source.equals(register_target)){
+                    Toast.makeText(ImageTranslateActivity.this, "같은 언어로 번역할 수 없습니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                TranslateTask translateTask = new TranslateTask();
+                translateTask.execute(text_recognition);
+
+            }
+        });
+
+
+    }
+
+
+
+
+
 
     private void tedPermission() {
 
@@ -233,7 +388,7 @@ public class ImageTranslateActivity extends AppCompatActivity {
         if (uri != null) {
             try {
                 // scale the image to save on bandwidth
-                Bitmap bitmap =
+                bitmap =
                         scaleBitmapDown(
                                 MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                                 MAX_DIMENSION);
@@ -321,7 +476,7 @@ public class ImageTranslateActivity extends AppCompatActivity {
         return annotateRequest;
     }
 
-    private static class LableDetectionTask extends AsyncTask<Object, Void, String> {
+    private class LableDetectionTask extends AsyncTask<Object, Void, String> {
         private final WeakReference<ImageTranslateActivity> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
 
@@ -349,8 +504,14 @@ public class ImageTranslateActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             ImageTranslateActivity activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
+                // 문자인식된 결과를 넣는 곳
                 TextView imageDetail = activity.findViewById(R.id.image_details);
                 imageDetail.setText(result);
+                Log.d("문자인식 결과",result);
+
+                text_recognition = result;
+
+
             }
         }
     }
@@ -392,7 +553,7 @@ public class ImageTranslateActivity extends AppCompatActivity {
     }
 
     private static String convertResponseToString(BatchAnnotateImagesResponse response) {
-        StringBuilder message = new StringBuilder("I found these things:\n\n");
+        StringBuilder message = new StringBuilder("인식결과:\n\n");
 
         List<EntityAnnotation> labels = response.getResponses().get(0).getTextAnnotations();
         if (labels != null) {
@@ -404,9 +565,102 @@ public class ImageTranslateActivity extends AppCompatActivity {
             }
             */
         } else {
-            message.append("nothing");
+            message.append("텍스트가 포함된 이미지가 아닙니다");
         }
 
         return message.toString();
+    }
+
+
+    class TranslateTask extends AsyncTask<String,Void,String> {
+
+        //언어선택도 나중에 사용자가 선택할 수 있게 옵션 처리해 주면 된다.
+
+        // 한국어(ko)-영어(en), 한국어(ko)-일본어(ja), 한국어(ko)-중국어 간체(zh-CN), 한국어(ko)-중국어 번체(zh-TW),
+        // 중국어 간체(zh-CN) - 일본어(ja), 중국어 번체(zh-TW) - 일본어(ja), 영어(en)-일본어(ja), 영어(en)-중국어 간체(zh-CN), 영어(en)-중국어 번체(zh-TW)
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String sourceText = strings[0];
+
+
+            try {
+                //String text = URLEncoder.encode("만나서 반갑습니다.", "UTF-8");
+                String text = URLEncoder.encode(sourceText, "UTF-8");
+                String apiURL = "https://openapi.naver.com/v1/papago/n2mt";
+                URL url = new URL(apiURL);
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("X-Naver-Client-Id", "");
+                con.setRequestProperty("X-Naver-Client-Secret", "");
+                // post request
+                String postParams = "source="+sourceLang+"&target="+targetLang+"&text=" + text;
+                con.setDoOutput(true);
+                DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                wr.writeBytes(postParams);
+                wr.flush();
+                wr.close();
+                int responseCode = con.getResponseCode();
+                BufferedReader br;
+                if(responseCode==200) { // 정상 호출
+                    br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                } else {  // 에러 발생
+                    br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+                }
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                while ((inputLine = br.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                br.close();
+
+                return response.toString();
+
+            } catch (Exception e) {
+                System.out.println(e);
+                return null;
+            }
+
+
+        }
+
+        //번역된 결과를 받아서 처리
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //최종 결과 처리부
+            //Log.d("background result", s.toString()); //네이버에 보내주는 응답결과가 JSON 데이터이다.
+
+            //JSON데이터를 자바객체로 변환해야 한다.
+            //Gson을 사용할 것이다.
+
+
+            Gson gson = new GsonBuilder().create();
+            JsonParser parser = new JsonParser();
+            JsonElement rootObj = parser.parse(s)
+                    //원하는 데이터 까지 찾아 들어간다.
+                    .getAsJsonObject().get("message")
+                    .getAsJsonObject().get("result");
+            //안드로이드 객체에 담기
+            TranslatedItem items = gson.fromJson(rootObj.toString(), TranslatedItem.class);
+            //Log.d("result", items.getTranslatedText());
+            //번역결과를 텍스트뷰에 넣는다.
+            mImageResults.setText(items.getTranslatedText());
+
+        }
+
+
+        //자바용 그릇
+        private class TranslatedItem {
+            String translatedText;
+
+            public String getTranslatedText() {
+                return translatedText;
+            }
+        }
+
+
     }
 }

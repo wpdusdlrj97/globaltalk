@@ -65,8 +65,8 @@ public class M_Chat_invite_Activity extends AppCompatActivity {
         ChatListHolder = intent.getStringExtra("ChatListHolder");
         Log.d("ChatListHolder 받기", ChatListHolder);
 
-        //ChatSizeHolder = intent.getStringExtra("ChatSizeHolder");
-        //Log.d("ChatSizeHolder 받기", ChatSizeHolder);
+        ChatSizeHolder = intent.getStringExtra("ChatSizeHolder");
+        Log.d("ChatSizeHolder 받기", ChatSizeHolder);
 
 
         //초대하기 완료 버튼
@@ -188,7 +188,21 @@ public class M_Chat_invite_Activity extends AppCompatActivity {
 
                     intent9.putExtra("invite_message", EmailHolder+"님이 "+ chatuserlist+"을 초대하였습니다");
 
+                    intent9.putExtra("invite_people", chatuserlist);
+
                     setResult(RESULT_OK, intent9);
+
+                    //DB에 초대된 사람의 가져올 채팅 order 저장하기 하나하나 저장하기
+
+                    /*
+                    for(int i=0; i<list_invite.size(); i++){
+
+                        M_ChatRoom_Invite_Remember_Function(RoomHolder, String.valueOf(list_invite.get(i)), ChatSizeHolder);
+                        Log.d("초대된 사람 리스트", String.valueOf(list_invite.get(i)));
+                    }
+                    */
+
+
                     finish();
 
 
@@ -203,6 +217,52 @@ public class M_Chat_invite_Activity extends AppCompatActivity {
 
 
     }
+
+    // 멀티 채팅방 초대시  필요한 대화사이즈 -> 나갔다가 들어오면 채팅 내역 삭제
+    public void M_ChatRoom_Invite_Remember_Function(final String chatroom_no, final String exit_email, final String remember_order) {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                //Toast.makeText(M_Chat_invite_Activity.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                hashMap.put("chatroom_no", params[0]);
+
+                hashMap.put("exit_email", params[1]);
+
+                hashMap.put("remember_order", params[2]);
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/m_chatroom_invite_remember.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute(chatroom_no, exit_email, remember_order);
+    }
+
+
+
+
 
 
 

@@ -1,15 +1,19 @@
 package com.example.globaltalk;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +25,11 @@ import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -37,11 +45,10 @@ public class Tab2 extends Fragment {
     EditText etSource;
     TextView tvResult;
 
-    String register_source;
-    String register_target;
+    static String register_source;
+    static String register_target;
 
-    String clientId = "cv81DQOKSlPw4lX1hyEe";//애플리케이션 클라이언트 아이디값";
-    String clientSecret = "s3Rf0jQDf0";//애플리케이션 클라이언트 시크릿값";
+
 
     String sourceLang;
     String targetLang;
@@ -53,6 +60,15 @@ public class Tab2 extends Fragment {
 
 
     Button image_translate;
+    Button button_tts;
+
+    String[] mTextString;
+    String[] rTextString;
+
+    private NaverTTSTask mNaverTTSTask;
+
+    static String speaker;
+
 
     //Overriden method onCreateView
     @Override
@@ -65,7 +81,7 @@ public class Tab2 extends Fragment {
         View rootView = inflater.inflate(R.layout.tab2, container, false);
 
         etSource = (EditText) rootView.findViewById(R.id.et_source);
-        tvResult = (TextView) rootView.findViewById(R.id.tv_result);
+        tvResult = (TextView) rootView.findViewById(R.id.tv_result_image);
         btTranslate = (Button) rootView.findViewById(R.id.bt_translate);
 
         //번역 대상
@@ -74,7 +90,12 @@ public class Tab2 extends Fragment {
         //번역 결과
         spinner_target = rootView.findViewById(R.id.spinner_target);
 
+        //번역 버튼
         image_translate = (Button) rootView.findViewById(R.id.image_translate);
+
+        //TTS 화면 버튼
+        button_tts = (Button) rootView.findViewById(R.id.button_tts);
+
 
 
         return rootView;
@@ -86,6 +107,9 @@ public class Tab2 extends Fragment {
         super.onResume();
         //Toast.makeText(this, "onResume 호출 됨",Toast.LENGTH_LONG).show();
 
+
+        etSource.setText("");
+        tvResult.setText("");
 
         //번역 실행버튼 클릭이벤트
         btTranslate.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +140,63 @@ public class Tab2 extends Fragment {
         });
 
 
+        /*
+        //번역대상 TTS
+        source_speak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //사용자가 입력한 텍스트를 이 배열변수에 담는다.
+                String mText;
+                if (etSource.getText().length() > 0) { //한글자 이상 1
+                    mText = etSource.getText().toString();
+                    mTextString = new String[]{mText};
+
+                    //AsyncTask 실행
+                    mNaverTTSTask = new NaverTTSTask();
+                    mNaverTTSTask.execute(mTextString);
+                    Log.d("TTS 실행",mText);
+                } else {
+                    Toast.makeText(getActivity(), "텍스트를 입력하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+
+
+            }
+        });
+        */
+
+
+        /*
+        //번역대상 TTS
+        target_speak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //사용자가 입력한 텍스트를 이 배열변수에 담는다.
+                String rText;
+                if (tvResult.getText().length() > 0) { //한글자 이상 1
+                    rText = tvResult.getText().toString();
+                    rTextString = new String[]{rText};
+
+                    //AsyncTask 실행
+                    mNaverTTSTask = new NaverTTSTask();
+                    mNaverTTSTask.execute(rTextString);
+                    Log.d("TTS 실행",rText);
+                } else {
+                    Toast.makeText(getActivity(), "텍스트를 입력하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+
+            }
+        });
+        */
+
+
+
 
         spinner_source.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -125,21 +206,26 @@ public class Tab2 extends Fragment {
                 //영어 일때
                 if(register_source.equals("English")){
                     sourceLang="en";
+                    speaker="clara";
+
                 }
 
                 //한국어 일때
                 if(register_source.equals("Korean")){
                     sourceLang="ko";
+                    speaker="mijin";
                 }
 
                 //한국어 일때
                 if(register_source.equals("Japanese")){
                     sourceLang="ja";
+                    speaker="yuri";
                 }
 
                 //한국어 일때
                 if(register_source.equals("Chinese")){
                     sourceLang="zh-CN";
+                    speaker="meimei";
                 }
 
 
@@ -161,21 +247,25 @@ public class Tab2 extends Fragment {
                 //영어 일때
                 if(register_target.equals("English")){
                     targetLang="en";
+
                 }
 
                 //한국어 일때
                 if(register_target.equals("Korean")){
                     targetLang="ko";
+
                 }
 
                 //한국어 일때
                 if(register_target.equals("Japanese")){
                     targetLang="ja";
+
                 }
 
                 //한국어 일때
                 if(register_target.equals("Chinese")){
                     targetLang="zh-CN";
+
                 }
 
 
@@ -205,7 +295,159 @@ public class Tab2 extends Fragment {
         });
 
 
+
+        button_tts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getActivity(), TTSActivity.class);
+
+                //intent.putExtra(UserEmail, EmailHolder);
+                //intent.putExtra(UserEmail, email);
+                startActivity(intent);
+            }
+        });
+
+
     }
+
+    //번역 대상 TTS
+    private class NaverTTSTask extends AsyncTask<String[], Void, String> {
+
+        @Override
+        protected String doInBackground(String[]... strings) {
+            //여기서 서버에 요청
+            APIExamTTS.main(mTextString);
+
+            //APIExamDetectLangs.main(mTextString);
+
+            //영어 일때
+            if(register_source.equals("English")){
+                speaker="clara";
+
+            }
+
+            //한국어 일때
+            if(register_source.equals("Korean")){
+                speaker="mijin";
+            }
+
+            //한국어 일때
+            if(register_source.equals("Japanese")){
+                speaker="yuri";
+            }
+
+            //한국어 일때
+            if(register_source.equals("Chinese")){
+                speaker="meimei";
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            speaker="";
+
+            //tv_title.setText(result);
+
+            //방금 받은 파일명의 mp3가 있으면 플레이 시키자. 맞나 여기서 하는거?
+            //아닌가 파일을 만들고 바로 실행되게 해야 하나? AsyncTask 백그라운드 작업중에...?
+
+        }
+    }
+
+    // 번역 대상 텍스트 읽기 API
+    public static class APIExamTTS {
+
+        private static String TAG = "APIExamTTS";
+
+
+        public static void main(String[] args) {
+
+            try {
+                String text = URLEncoder.encode(args[0], "UTF-8"); // 13자
+                String apiURL = "https://naveropenapi.apigw.ntruss.com/voice/v1/tts";
+                URL url = new URL(apiURL);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("X-NCP-APIGW-API-KEY-ID", clientId);
+                con.setRequestProperty("X-NCP-APIGW-API-KEY", clientSecret);
+                // post request
+                String postParams = "speaker=clara&speed=0&text=" + text;
+                con.setDoOutput(true);
+                con.setDoInput(true);
+                DataOutputStream wr = new DataOutputStream(con.getOutputStream());///여기서 에러 난다?
+                Log.d(TAG, String.valueOf(wr));
+                wr.writeBytes(postParams);
+                wr.flush();
+                wr.close();
+                int responseCode = con.getResponseCode();
+                BufferedReader br;
+                if(responseCode==200) { // 정상 호출
+                    InputStream is = con.getInputStream();
+                    int read = 0;
+                    byte[] bytes = new byte[1024];
+                    //폴더를 만들어 줘야 겠다. 없으면 새로 생성하도록 해야 한다. 일단 Naver폴더에 저장하도록 하자.
+                    File dir = new File(Environment.getExternalStorageDirectory()+"/", "Naver");
+                    if(!dir.exists()){
+                        dir.mkdirs();
+                    }
+                    // 랜덤한 이름으로 mp3 파일 생성
+                    //String tempname = Long.valueOf(new Date().getTime()).toString();
+                    String tempname = "naverttstemp"; //하나의 파일명으로 덮어쓰기 하자.
+                    File f = new File(Environment.getExternalStorageDirectory() + File.separator + "Naver/" + tempname + ".mp3");
+                    f.createNewFile();
+                    OutputStream outputStream = new FileOutputStream(f);
+                    while ((read =is.read(bytes)) != -1) {
+                        outputStream.write(bytes, 0, read);
+                    }
+                    is.close();
+
+                    //여기서 바로 재생하도록 하자. mp3파일 재생 어떻게 하지? 구글링!
+                    String Path_to_file = Environment.getExternalStorageDirectory()+ File.separator+"Naver/"+tempname+".mp3";
+                    MediaPlayer audioPlay = new MediaPlayer();
+                    audioPlay.setDataSource(Path_to_file);
+                    audioPlay.prepare();//이걸 해줘야 하는군. 없으면 에러난다.
+                    audioPlay.start();
+                    //재생하고 나서 파일을 지워줘야 하나? 이거참 고민이네... if문으로 분기 시켜야 하나?
+                    //아니면 유니크한 파일로 만들지 말고 하나의 파일명으로 저장하게 할수도 있을듯...
+
+
+
+                } else {  // 에러 발생
+                    br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+                    String inputLine;
+                    StringBuffer response = new StringBuffer();
+                    while ((inputLine = br.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    br.close();
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     class TranslateTask extends AsyncTask<String,Void,String> {

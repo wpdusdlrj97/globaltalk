@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="71dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/chat_list_image1"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="#eeeeee"
+                android:foreground="@drawable/rounded_fg"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/chat_list_image2"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="35dp"
+                android:background="#eeeeee"
+                android:foreground="@drawable/rounded_fg"
+                android:scaleType="centerCrop" />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/chat_list_roomname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
+                android:text="조제연sssssssssaaaaaaaaaaaa"
+                android:maxLines="1"
+                android:maxWidth="140dp"
+                android:ellipsize="end"
+                android:textColor="@android:color/black"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/chat_list_count"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:text="3"
+                android:layout_marginStart="5dp"
+                android:textColor="@android:color/black"
+                android:textSize="14dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/chat_list_message"
+                android:layout_width="179dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:ellipsize="end"
+                android:layout_marginTop="3dp"
+                android:maxLines="1"
+                android:padding="5dp"
+                android:text="마지막 메시지aaaaaaaaaaaaaaaaaaaa"
+                android:textColor="@android:color/black"
+                android:textSize="14dp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/chat_list_date"
+            android:layout_width="77dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:text="2018-08-15 17:14:13"
+            android:textColor="@android:color/black"
+            android:textSize="10dp" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/chat_list_line"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="#000000" />
+
+
+</LinearLayout>

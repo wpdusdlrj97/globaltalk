@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -48,14 +49,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHolder> {
 
 
     private ArrayList<BoardData> bList = null;
     private Activity context = null;
 
-    String clientId = "";//애플리케이션 클라이언트 아이디값";
-    String clientSecret = "";//애플리케이션 클라이언트 시크릿값";
+
 
     String sourceHolder;
     String targetHolder;
@@ -83,6 +85,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
 
     String loginemail;
+    String email_check;
 
 
 
@@ -112,6 +115,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         protected TextView board_list_name;
         protected TextView board_list_time;
         protected TextView board_list_text;
+        protected TextView board_list_transtext;
 
 
         protected TextView board_list_teach;
@@ -134,6 +138,10 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         protected ImageView board_write_heart;
 
         protected TextView board_heart_count;
+
+        protected ImageView board_write_comment;
+
+        protected TextView board_comment_count;
 
         protected ImageView board_write_translate;
 
@@ -166,6 +174,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             this.board_list_name = (TextView) view.findViewById(R.id.board_list_name);
             this.board_list_time = (TextView) view.findViewById(R.id.board_list_time);
             this.board_list_text = (TextView) view.findViewById(R.id.board_list_text);
+            this.board_list_transtext = (TextView) view.findViewById(R.id.board_list_transtext);
 
 
             //하트
@@ -173,6 +182,12 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
             //하트 개수
             this.board_heart_count = (TextView) view.findViewById(R.id.board_heart_count);
+
+            //댓글
+            this.board_write_comment = (ImageView) view.findViewById(R.id.board_write_comment);
+
+            //댓글 개수
+            this.board_comment_count = (TextView) view.findViewById(R.id.board_comment_count);
 
             //번역
             this.board_write_translate = (ImageView) view.findViewById(R.id.board_write_translate);
@@ -194,12 +209,14 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.board_list, null);
         CustomViewHolder viewHolder = new CustomViewHolder(view);
 
+
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder viewholder, final int position) {
 
+        BoardData boardData = new BoardData();
 
         loginemail=bList.get(position).getlogin_email();
         //Log.d("하트-이메일 대조"+position,loginemail);
@@ -207,13 +224,80 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
         final int[] heart_count = {Integer.parseInt(bList.get(position).getheart_count())};
 
-        if((bList.get(position).getheart_people()).contains(loginemail)){
+        email_check=bList.get(position).getheart_people();
+        Log.d("하트버튼 누른사람 처음"+position,email_check);
+
+
+        if(email_check.contains(loginemail)){
+            Glide.with(context)
+                    .load(R.drawable.redheart)
+                    .into(viewholder.board_write_heart);
             heart_button[0] =1;
+
             Log.d("하트버튼 1로"+position, String.valueOf(heart_button[0]));
         }else{
+            Glide.with(context)
+                    .load(R.drawable.heart)
+                    .into(viewholder.board_write_heart);
             heart_button[0] =0;
             Log.d("하트버튼 0로"+position, String.valueOf(heart_button[0]));
         }
+
+
+        viewholder.board_list_pfimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                if(bList.get(position).getlogin_email().equals(bList.get(position).getemail())){//나의 게시물을 조회했을 때
+
+                    Intent intent = new Intent(context, My_Profile_Activity.class);
+
+                    intent.putExtra("My_email", bList.get(position).getemail());
+
+                    context.startActivity(intent);
+
+                }else{ // 상대방의 게시물을 조회했을 때
+
+                    Intent intent = new Intent(context, Friends_Profile_Activity.class);
+
+                    intent.putExtra("Friend_email", bList.get(position).getemail());
+
+                    intent.putExtra("Login_email", bList.get(position).getlogin_email());
+
+                    context.startActivity(intent);
+                }
+
+
+            }
+        });
+
+
+
+
+        // 게시물 텍스트 클릭 시 게시물 디테일 액티비티로 이동
+        viewholder.board_list_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent9 = new Intent(context, Board_detailActivity.class);
+
+                // Board_ID 넘기기 (서버에서 수정할 시 board_id 필요)
+                intent9.putExtra("board_id", bList.get(position).getboard_id());
+
+                intent9.putExtra("learnHolder", bList.get(position).getlogin_learn());
+                intent9.putExtra("teachHolder", bList.get(position).getLogin_teach());
+
+                intent9.putExtra("login_email", bList.get(position).getlogin_email());
+                intent9.putExtra("login_image", bList.get(position).getlogin_image());
+                Log.d("로그인한 프로필사진",bList.get(position).getlogin_image());
+
+                context.startActivity(intent9);
+
+            }
+        });
+
+
 
 
         // 하트 클릭 시
@@ -232,8 +316,19 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
                     heart_count[0] = heart_count[0] -1;
                     viewholder.board_heart_count.setText(String.valueOf(heart_count[0]));
 
+                    Log.d("하트버튼 누른사람 전"+position,email_check);
+                    //특정 문자열 제거해주기
+                    email_check=email_check.replace(loginemail,"");
+                    Log.d("하트버튼 누른사람 후"+position,email_check);
+
+
+                    //리사이클러뷰에 적용
+                    //boardData.setheart_people(email_check);
+                    //bList.add(boardData);
+
                     //서버,mysql에서 삭제
                     UserHateFunction(bList.get(position).getboard_id(),bList.get(position).getlogin_email());
+
 
                 }else{
                     Glide.with(context)
@@ -246,12 +341,112 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
                     heart_count[0] = heart_count[0] +1;
                     viewholder.board_heart_count.setText(String.valueOf(heart_count[0]));
 
+                    Log.d("하트버튼 누른사람 전"+position,email_check);
+                    //특정 문자열 추가해주기
+                    email_check=email_check.concat(loginemail);
+                    Log.d("하트버튼 누른사람 후"+position,email_check);
+
+                    //boardData.setheart_people(email_check);
+                    //bList.add(boardData);
+
                     //서버,mysql에서 추가
                     UserLikeFunction(bList.get(position).getboard_id(),bList.get(position).getlogin_email());
 
                 }
 
                 //Toast.makeText(context, String.valueOf(finalHeart_button), Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        //하트 개수 클릭 시 해당 게시글 액티비티로 이동
+        viewholder.board_heart_count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent9 = new Intent(context, Board_detailActivity.class);
+
+                // Board_ID 넘기기 (서버에서 수정할 시 board_id 필요)
+                intent9.putExtra("board_id", bList.get(position).getboard_id());
+
+                intent9.putExtra("learnHolder", bList.get(position).getlogin_learn());
+                intent9.putExtra("teachHolder", bList.get(position).getLogin_teach());
+
+                intent9.putExtra("login_email", bList.get(position).getlogin_email());
+                intent9.putExtra("login_name", bList.get(position).getlogin_name());
+
+                intent9.putExtra("login_image", bList.get(position).getlogin_image());
+
+
+                Log.d("댓글 보드 번호 전송",bList.get(position).getboard_id());
+
+                context.startActivity(intent9);
+
+                /*
+                Intent intent9 = new Intent(context, Heart_peopleActivity.class);
+
+                // Board_ID 넘기기 (서버에서 수정할 시 board_id 필요)
+                intent9.putExtra("board_id", bList.get(position).getboard_id());
+                Log.d("하트 보드 번호 전송",bList.get(position).getboard_id());
+
+                // 하트 누른 사람
+                intent9.putExtra("heart_people", bList.get(position).getheart_people());
+                Log.d("하트 보드 리스트 전송",bList.get(position).getheart_people());
+
+                context.startActivity(intent9);
+                */
+
+            }
+        });
+
+
+
+        //댓글 클릭 시 해당 게시글 액티비티로 이동
+        viewholder.board_write_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent9 = new Intent(context, Board_detailActivity.class);
+
+                // Board_ID 넘기기 (서버에서 수정할 시 board_id 필요)
+                intent9.putExtra("board_id", bList.get(position).getboard_id());
+
+                intent9.putExtra("learnHolder", bList.get(position).getlogin_learn());
+                intent9.putExtra("teachHolder", bList.get(position).getLogin_teach());
+
+                intent9.putExtra("login_email", bList.get(position).getlogin_email());
+                intent9.putExtra("login_name", bList.get(position).getlogin_name());
+                Log.d("댓글 보드 번호 전송",bList.get(position).getboard_id());
+
+                intent9.putExtra("login_image", bList.get(position).getlogin_image());
+                Log.d("로그인한 프로필사진",bList.get(position).getlogin_image());
+
+                context.startActivity(intent9);
+
+
+            }
+        });
+
+        viewholder.board_comment_count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent9 = new Intent(context, Board_detailActivity.class);
+
+                // Board_ID 넘기기 (서버에서 수정할 시 board_id 필요)
+                intent9.putExtra("board_id", bList.get(position).getboard_id());
+
+                intent9.putExtra("learnHolder", bList.get(position).getlogin_learn());
+                intent9.putExtra("teachHolder", bList.get(position).getLogin_teach());
+
+                intent9.putExtra("login_email", bList.get(position).getlogin_email());
+                intent9.putExtra("login_name", bList.get(position).getlogin_name());
+                Log.d("댓글 보드 번호 전송",bList.get(position).getboard_id());
+
+                intent9.putExtra("login_image", bList.get(position).getlogin_image());
+                Log.d("로그인한 프로필사진",bList.get(position).getlogin_image());
+
+                context.startActivity(intent9);
 
             }
         });
@@ -276,12 +471,15 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         });
 
 
-
+        viewholder.board_list_transtext.setVisibility(View.GONE);
 
         // 번역 버튼
         viewholder.board_write_translate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // 번역 텍스트란 visible
+                viewholder.board_list_transtext.setVisibility(View.VISIBLE);
 
                 //TextHolder = bList.get(position).getcontent();
                 //Toast.makeText(context, TextHolder, Toast.LENGTH_LONG).show();
@@ -311,7 +509,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
                         TranslatedItem items = gson.fromJson(rootObj.toString(), TranslatedItem.class);
 
                         // 모든 처리 이후에 문자열 set
-                        viewholder.board_list_text.setText(items.getTranslatedText());
+                        viewholder.board_list_transtext.setText(items.getTranslatedText());
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -319,7 +517,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
                     }
                     translate=translate+1;
                 }else{
-                    viewholder.board_list_text.setText(sText);
+                    viewholder.board_list_transtext.setVisibility(View.GONE);
                     translate=translate-1;
                 }
 
@@ -545,19 +743,18 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         Log.d("보드 내용", bList.get(position).getcontent());
 
 
-        if((bList.get(position).getheart_people()).contains(loginemail)){
-            Glide.with(context)
-                    .load(R.drawable.redheart)
-                    .into(viewholder.board_write_heart);
-        }else{
-            Glide.with(context)
-                    .load(R.drawable.heart)
-                    .into(viewholder.board_write_heart);
-        }
+
+
 
 
         viewholder.board_heart_count.setText(bList.get(position).getheart_count());
         //Log.d("보드 내용", bList.get(position).getcontent());
+
+        // int형인 comment_count를 string으로 바꾼 뒤에 setText
+        viewholder.board_comment_count.setText(String.valueOf(bList.get(position).getcomment_count()));
+
+
+
 
 
         //0
@@ -727,6 +924,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
     }
 
+
+
     //자바용 그릇
     private class TranslatedItem {
         String translatedText;
@@ -735,6 +934,15 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
             return translatedText;
         }
     }
+
+
+    //리사이클러뷰 뷰들을
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
 
     @Override
     public int getItemCount() {
@@ -1020,8 +1228,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
 
 
         public static void main(String[] args) {
-            String clientId = "";//애플리케이션 클라이언트 아이디값";
-            String clientSecret = "";//애플리케이션 클라이언트 시크릿값";
+
             try {
                 String text = URLEncoder.encode(args[0], "UTF-8"); // 13자
                 String apiURL = "https://naveropenapi.apigw.ntruss.com/voice/v1/tts";
@@ -1094,8 +1301,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.CustomViewHo
         private static String TAG = "APIExamDetectLangs";
 
         public static void main(String[] args) {
-            String clientId = "";//애플리케이션 클라이언트 아이디값";
-            String clientSecret = "";//애플리케이션 클라이언트 시크릿값";
+            String clientId = "UJmZrs4vAjLiLJbPvbXP";//애플리케이션 클라이언트 아이디값";
+            String clientSecret = "9kyyMA9ZJq";//애플리케이션 클라이언트 시크릿값";
             try {
                 String query = URLEncoder.encode(args[0], "UTF-8");
                 String apiURL = "https://openapi.naver.com/v1/papago/detectLangs";
