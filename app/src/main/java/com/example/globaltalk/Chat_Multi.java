@@ -69,7 +69,7 @@ public class Chat_Multi extends AppCompatActivity {
     SendThread send;
 
 
-    String IP = "192.168.0.172";
+    String IP = "192.168.0.41";
     String PORT = "9999";
 
     Socket socket;
@@ -81,6 +81,9 @@ public class Chat_Multi extends AppCompatActivity {
     String FriendEmailHolder;
     String UserListHolder;
     String Invite_message_Holder;
+
+    private String TeachHolder;
+    private String LearnHolder;
 
     String chatuserlist;
 
@@ -135,6 +138,16 @@ public class Chat_Multi extends AppCompatActivity {
         Log.d("방번호 받아오기", RoomHolder);
 
         Invite_message_Holder = intent.getStringExtra("invite_message");
+
+        //가르칠 언어
+        TeachHolder = intent.getStringExtra("TeachHolder");
+        Log.d("멀티가르칠 언어 받아오기", TeachHolder);
+
+        //배울 언어
+        LearnHolder = intent.getStringExtra("LearnHolder");
+        Log.d("멀티배울 언어 받아오기", LearnHolder);
+
+
 
 
         // 현재시간을 msec 으로 구한다.
@@ -221,9 +234,11 @@ public class Chat_Multi extends AppCompatActivity {
 
             inchatData.setchat_content(Invite_message_Holder_add);
 
-
             inchatData.setmy_email(MyEmailHolder);
             inchatData.setchat_wdate(formatDate);
+
+            inchatData.setteach_login(TeachHolder);
+            inchatData.setlearn_login(LearnHolder);
 
             icArrayList.add(inchatData);
             Log.d("클라이언트 선 전달1", String.valueOf(inchatData));
@@ -554,6 +569,9 @@ public class Chat_Multi extends AppCompatActivity {
                     inchatData.setmy_email(MyEmailHolder);
                     inchatData.setchat_wdate(formatDate);
 
+                    inchatData.setteach_login(TeachHolder);
+                    inchatData.setlearn_login(LearnHolder);
+
                     icArrayList.add(inchatData);
                     Log.d("클라이언트 선 전달1", String.valueOf(inchatData));
                     // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
@@ -648,13 +666,16 @@ public class Chat_Multi extends AppCompatActivity {
                     //txtMessage.append(msg.obj.toString()+"\n");
                     InChatData inchatData = new InChatData();
 
-                    //어차피 내가 보낸거니까 chat_email이랑 my_email을 같게해서 보낸다
+
                     inchatData.setchat_email("notice@naver.com");
 
                     inchatData.setchat_content(get_invite_message_add);
 
                     inchatData.setmy_email(MyEmailHolder);
                     inchatData.setchat_wdate(formatDate);
+
+                    inchatData.setteach_login(TeachHolder);
+                    inchatData.setlearn_login(LearnHolder);
 
                     icArrayList.add(inchatData);
                     Log.d("클라이언트 선 전달1", String.valueOf(inchatData));
@@ -1032,6 +1053,9 @@ public class Chat_Multi extends AppCompatActivity {
 
                 inchatData.setchat_wdate(wdate);
 
+                inchatData.setteach_login(TeachHolder);
+                inchatData.setlearn_login(LearnHolder);
+
 
                 icArrayList.add(inchatData);
 
@@ -1190,6 +1214,9 @@ public class Chat_Multi extends AppCompatActivity {
                 inchatData.setchat_profile_image(chatuser_image);
                 inchatData.setchat_profile_name(chatuser_name);
                 inchatData.setchat_wdate(formatDate);
+
+                inchatData.setteach_login(TeachHolder);
+                inchatData.setlearn_login(LearnHolder);
 
 
                 icArrayList.add(inchatData);

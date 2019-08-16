@@ -36,6 +36,9 @@ public class Chat_invite_Activity extends AppCompatActivity {
 
     String EmailHolder;
     String ChatListHolder;
+    private String TeachHolder;
+    private String LearnHolder;
+
 
     private String mJsonString;
 
@@ -63,6 +66,16 @@ public class Chat_invite_Activity extends AppCompatActivity {
 
         ChatListHolder = intent.getStringExtra("ChatListHolder");
         Log.d("ChatListHolder 받기", ChatListHolder);
+
+
+        //가르칠 언어
+        TeachHolder = intent.getStringExtra("TeachHolder");
+        Log.d("싱글가르칠 언어 받아오기", TeachHolder);
+
+        //배울 언어
+        LearnHolder = intent.getStringExtra("LearnHolder");
+        Log.d("싱글배울 언어 받아오기", LearnHolder);
+
 
         //초대하기 완료 버튼
         chat_invite_finish=findViewById(R.id.chat_invite_finish);
@@ -354,6 +367,7 @@ public class Chat_invite_Activity extends AppCompatActivity {
                 intent.putExtra("myemail", EmailHolder );
 
 
+
                 //intent.putExtra("friend_email", FriendEmailHolder );
 
                 //초대된 배열을 쪼갠뒤에 chat_list에 붙인다 ,a,b,c 형식으로
@@ -379,6 +393,12 @@ public class Chat_invite_Activity extends AppCompatActivity {
                 String Invite_Chat_userlist = Total_Chat_userlist.replace(","+EmailHolder,"");
 
                 intent.putExtra("invite_message", EmailHolder+"님이 "+ Invite_Chat_userlist+"을 초대하였습니다");
+
+                //내가 가르칠 언어
+                intent.putExtra("TeachHolder", TeachHolder);
+                //내가 배울 언어
+                intent.putExtra("LearnHolder", LearnHolder);
+
 
                 startActivity(intent);
 

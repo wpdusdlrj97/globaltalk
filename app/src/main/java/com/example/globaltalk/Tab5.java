@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -132,6 +133,7 @@ public class Tab5 extends Fragment {
     public static final String UserEmail = "";
 
     Button button_logout1;
+    Button button_streaming;
 
 
     private ImageView pf_img1;
@@ -224,6 +226,7 @@ public class Tab5 extends Fragment {
 
             }
         });
+
     }
 
 

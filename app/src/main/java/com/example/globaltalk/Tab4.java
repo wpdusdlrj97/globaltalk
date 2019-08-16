@@ -122,6 +122,8 @@ public class Tab4 extends Fragment {
                 intent.putExtra("Friend_email", personalData.getMember_email());
                 intent.putExtra("Login_email",EmailHolder);
 
+                intent.putExtra("TeachHolder",TeachHolder);
+                intent.putExtra("LearnHolder",LearnHolder);
 
                 startActivity(intent);
 

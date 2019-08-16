@@ -76,7 +76,7 @@
     <EditText
         android:id="@+id/et_source"
         android:layout_width="390dp"
-        android:layout_height="150dp"
+        android:layout_height="126dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="10dp"
@@ -97,7 +97,7 @@
     <TextView
         android:id="@+id/tv_result_image"
         android:layout_width="390dp"
-        android:layout_height="216dp"
+        android:layout_height="125dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"

@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/streaming_black" android:state_selected="true"/>
+    <item android:drawable="@drawable/streaming_white" android:state_selected="false"/> <!-- default -->
+</selector>

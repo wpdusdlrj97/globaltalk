@@ -114,7 +114,7 @@ public class Chat9 extends AppCompatActivity {
     String num;
     String uploadimg;
 
-    String IP = "192.168.0.172";
+    String IP = "192.168.0.41";
     String PORT = "9999";
 
     Socket socket;
@@ -125,6 +125,9 @@ public class Chat9 extends AppCompatActivity {
     String MyEmailHolder;
     String FriendNameHolder;
     String UserListHolder;
+
+    private String TeachHolder;
+    private String LearnHolder;
 
 
     String message;
@@ -174,15 +177,23 @@ public class Chat9 extends AppCompatActivity {
         FriendNameHolder = intent.getStringExtra("friend_name");
         Log.d("친구의 이름 받아오기",FriendNameHolder);
 
-
-
-
         //채팅 유저리스트
         UserListHolder = intent.getStringExtra("user_list");
         Log.d("유저리스트 받아오기", UserListHolder);
 
         RoomHolder = intent.getStringExtra("room_id");
         Log.d("방번호 받아오기", RoomHolder);
+
+
+        //가르칠 언어
+        TeachHolder = intent.getStringExtra("TeachHolder");
+        Log.d("싱글가르칠 언어 받아오기", TeachHolder);
+
+        //배울 언어
+        LearnHolder = intent.getStringExtra("LearnHolder");
+        Log.d("싱글배울 언어 받아오기", LearnHolder);
+
+
 
 
         // 현재시간을 msec 으로 구한다.
@@ -349,6 +360,15 @@ public class Chat9 extends AppCompatActivity {
 
                 intent19.putExtra("ChatListHolder",UserListHolder);
 
+                //내가 가르칠 언어
+                intent19.putExtra("TeachHolder", TeachHolder);
+                //내가 배울 언어
+                intent19.putExtra("LearnHolder", LearnHolder);
+
+
+
+
+
                 startActivity(intent19);
 
 
@@ -448,6 +468,9 @@ public class Chat9 extends AppCompatActivity {
                     inchatData.setchat_content(message);
                     inchatData.setmy_email(MyEmailHolder);
                     inchatData.setchat_wdate(formatDate);
+
+                    inchatData.setteach_login(TeachHolder);
+                    inchatData.setlearn_login(LearnHolder);
 
                     Log.d("클라이언트 어레이리스트 사이즈 전", String.valueOf(icArrayList.size()));
                     icArrayList.add(inchatData);
@@ -620,6 +643,7 @@ public class Chat9 extends AppCompatActivity {
         }
 
     }
+
 
 
 
@@ -1193,6 +1217,8 @@ public class Chat9 extends AppCompatActivity {
 
                 inchatData.setchat_wdate(wdate);
 
+                inchatData.setteach_login(TeachHolder);
+                inchatData.setlearn_login(LearnHolder);
 
                 icArrayList.add(inchatData);
 
@@ -1347,6 +1373,8 @@ public class Chat9 extends AppCompatActivity {
                 inchatData.setchat_profile_name(chatuser_name);
                 inchatData.setchat_wdate(formatDate);
 
+                inchatData.setteach_login(TeachHolder);
+                inchatData.setlearn_login(LearnHolder);
 
                 icArrayList.add(inchatData);
                 Log.d("클라이언트 선 전달2", String.valueOf(inchatData));

@@ -58,6 +58,8 @@ public class Board_detailActivity extends AppCompatActivity {
     private static String TAG = "board_detail_test";
 
 
+    String clientId = "cv81DQOKSlPw4lX1hyEe";//애플리케이션 클라이언트 아이디값";
+    String clientSecret = "s3Rf0jQDf0";//애플리케이션 클라이언트 시크릿값";
 
 
 
@@ -1475,7 +1477,8 @@ public class Board_detailActivity extends AppCompatActivity {
 
 
         public static void main(String[] args) {
-
+            String clientId = "m651g3vgcv";//애플리케이션 클라이언트 아이디값";
+            String clientSecret = "pZIxomSQuCaOR41OcDYAg2jKxZZksv7sFo4z0RZu";//애플리케이션 클라이언트 시크릿값";
             try {
                 String text = URLEncoder.encode(args[0], "UTF-8"); // 13자
                 String apiURL = "https://naveropenapi.apigw.ntruss.com/voice/v1/tts";

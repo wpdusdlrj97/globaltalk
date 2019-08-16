@@ -8,6 +8,9 @@ public class InChatData {
     private String chat_content;
     private String chat_wdate;
 
+    private String teach_login;
+    private String learn_login;
+
     private String my_email;
 
 
@@ -25,7 +28,6 @@ public class InChatData {
         return chat_profile_name;
     }
 
-
     public String getchat_content() {
         return chat_content;
     }
@@ -33,6 +35,15 @@ public class InChatData {
     public String getchat_wdate() {
         return chat_wdate;
     }
+
+    public String getteach_login() {
+        return teach_login;
+    }
+
+    public String getlearn_login() {
+        return learn_login;
+    }
+
 
 
     public String getmy_email() {
@@ -61,6 +72,18 @@ public class InChatData {
     public void setchat_wdate(String chat_wdate) {
         this.chat_wdate = chat_wdate;
     }
+
+    public void setteach_login(String teach_login) {
+        this.teach_login = teach_login;
+    }
+
+    public void setlearn_login(String learn_login) {
+        this.learn_login = learn_login;
+    }
+
+
+
+
 
 
     public void setmy_email(String my_email) {

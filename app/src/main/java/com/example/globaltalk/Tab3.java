@@ -279,6 +279,12 @@ public class Tab3 extends Fragment {
 
                     intent.putExtra("friend_name", chatlistData.getroom_name());
 
+                    //내가 가르칠 언어
+                    intent.putExtra("TeachHolder", TeachHolder);
+                    //내가 배울 언어
+                    intent.putExtra("LearnHolder", LearnHolder);
+
+
                     startActivity(intent);
 
                     Log.d("채팅-싱글", String.valueOf(intent));
@@ -293,6 +299,11 @@ public class Tab3 extends Fragment {
                     intent9.putExtra("user_list", chatlistData.getuserlist());
 
                     intent9.putExtra("myemail", EmailHolder);
+
+                    //내가 가르칠 언어
+                    intent9.putExtra("TeachHolder", TeachHolder);
+                    //내가 배울 언어
+                    intent9.putExtra("LearnHolder", LearnHolder);
 
                     startActivity(intent9);
                     Log.d("채팅-멀티", String.valueOf(intent9));

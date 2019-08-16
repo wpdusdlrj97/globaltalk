@@ -10,6 +10,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -28,6 +34,8 @@
         <activity
             android:name=".ImageTranslateActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".Streaming_Activity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
         <activity
             android:name=".Board_editActivity"
             android:screenOrientation="portrait" />

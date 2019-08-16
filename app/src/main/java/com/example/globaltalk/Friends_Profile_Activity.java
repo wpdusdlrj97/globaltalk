@@ -92,6 +92,9 @@ public class Friends_Profile_Activity extends AppCompatActivity {
     String FriendEmailHolder;
     String LoginEmailHolder;
 
+    private String TeachHolder;
+    private String LearnHolder;
+
     //프로필 사진
     private ImageView friend_image;
 
@@ -138,6 +141,16 @@ public class Friends_Profile_Activity extends AppCompatActivity {
         //친구의 이메일
         FriendEmailHolder = intent.getStringExtra("Friend_email");
         Log.d("친구 이메일 받아오기", FriendEmailHolder);
+
+        //가르칠 언어
+        TeachHolder = intent.getStringExtra("TeachHolder");
+        Log.d("가르칠 언어 받아오기", TeachHolder);
+
+        //배울 언어
+        LearnHolder = intent.getStringExtra("LearnHolder");
+        Log.d("배울 언어 받아오기", LearnHolder);
+
+
 
 
         friend_image = (ImageView) findViewById(R.id.friend_image);
@@ -636,6 +649,14 @@ public class Friends_Profile_Activity extends AppCompatActivity {
                 intent.putExtra("room_id", chatResponseMsg );
                 intent.putExtra("myemail", LoginEmailHolder );
                 intent.putExtra("friend_name", f_name );
+                //내가 가르칠 언어
+                intent.putExtra("TeachHolder", TeachHolder);
+                //내가 배울 언어
+                intent.putExtra("LearnHolder", LearnHolder);
+
+
+
+
 
                 String user_list = ","+LoginEmailHolder+","+FriendEmailHolder;
 
