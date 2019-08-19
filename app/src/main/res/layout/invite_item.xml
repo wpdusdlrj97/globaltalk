@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/invite_list_name"
-            android:layout_width="187dp"
+            android:layout_width="159dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:padding="5dp"

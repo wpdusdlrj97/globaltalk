@@ -64,7 +64,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/m_inchatroom_user_list"
         android:layout_width="match_parent"
-        android:layout_height="468dp"
+        android:layout_height="398dp"
         android:layout_margin="3dp"
         android:padding="3dp" />
 

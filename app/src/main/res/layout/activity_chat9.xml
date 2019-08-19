@@ -28,7 +28,7 @@
 
         <TextView
             android:id="@+id/friend_name"
-            android:layout_width="338dp"
+            android:layout_width="296dp"
             android:layout_height="40dp"
             android:gravity="center"
             android:text="대화자"
@@ -67,20 +67,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/chat_write_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/plus" />
-
 
         <EditText
             android:id="@+id/editMessage"
-            android:layout_width="match_parent"
+            android:layout_width="358dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:ems="10"
-            android:hint="메시지를 작성해주세요"/>
+            android:hint="메시지를 작성해주세요" />
 
         <Button
             android:id="@+id/btnSend"

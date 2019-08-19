@@ -24,7 +24,7 @@
             android:id="@+id/chat_invite_finish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="160dp"
+            android:layout_marginLeft="130dp"
             android:text="초대하기"/>
 
     </LinearLayout>

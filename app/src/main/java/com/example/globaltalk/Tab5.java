@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
@@ -67,6 +68,9 @@ import javax.net.ssl.HttpsURLConnection;
 //Our class extending fragment
 public class Tab5 extends Fragment {
 
+
+
+
     private static String TAG = "phpquerytest";
 
     private static final String TAG_JSON = "webnautes";
@@ -105,8 +109,20 @@ public class Tab5 extends Fragment {
     ProgressDialog progressDialog ;
     boolean check = true;
 
+    HashMap<String, String> hashMap = new HashMap<>();
+    HttpParse httpParse = new HttpParse();
+    String finalResult;
+
+
+
     //프로필 사진
     private ImageView mypage_image;
+
+    //프로필 수정 버튼
+    private ImageView edit_profile_button;
+
+    //개인 방송 버튼
+    private ImageView start_streaming_button;
 
     //이름
     private TextView mypage_name;
@@ -132,14 +148,17 @@ public class Tab5 extends Fragment {
     private String EmailHolder;
     public static final String UserEmail = "";
 
-    Button button_logout1;
-    Button button_streaming;
+    //Button button_logout1;
+    //Button button_streaming;
 
 
     private ImageView pf_img1;
     private ImageView pf_img2;
     private ImageView pf_img3;
 
+
+    //다이얼로그 창에 입력하는 방 제목
+    String room_name;
 
     //Overriden method onCreateView
     @Override
@@ -157,7 +176,7 @@ public class Tab5 extends Fragment {
 
         mypage_image = (ImageView) rootView.findViewById(R.id.mypage_image);
 
-        button_logout1 = (Button) rootView.findViewById(R.id.button_logout1);
+        edit_profile_button = rootView.findViewById(R.id.edit_profile_button);
 
         mypage_name = (TextView) rootView.findViewById(R.id.mypage_name);
         mypage_age = (TextView) rootView.findViewById(R.id.mypage_age);
@@ -180,6 +199,9 @@ public class Tab5 extends Fragment {
         //Change R.layout.tab1 in you classes
 
 
+        //개인 방송하기 버튼 클릭 시
+        start_streaming_button = (ImageView) rootView.findViewById(R.id.start_streaming_button);
+
 
 
         return rootView;
@@ -200,7 +222,9 @@ public class Tab5 extends Fragment {
         //task.execute( mEditTextSearchKeyword1.getText().toString(), mEditTextSearchKeyword2.getText().toString());
         task.execute("http://54.180.122.247/global_communication/mypage.php", "");
 
-        button_logout1.setOnClickListener(new View.OnClickListener() {
+
+        // 프로필 수정 버튼 클릭 시
+        edit_profile_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -209,6 +233,82 @@ public class Tab5 extends Fragment {
                 intent5.putExtra(UserEmail, EmailHolder);
                 //intent.putExtra(UserEmail, email);
                 startActivity(intent5);
+            }
+        });
+
+
+
+        // 개인 방송하기 클릭 시
+        start_streaming_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                // 방 제목을 입력하는 다이얼로그 창
+                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+
+                ad.setTitle("방 제목");       // 제목 설정
+                ad.setMessage("방송 제목을 설정해주세요");   // 내용 설정
+
+                // EditText 삽입하기
+                final EditText et = new EditText(getActivity());
+                ad.setView(et);
+
+
+                // 확인 버튼 설정
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // Text 값 받아서 로그 남기기
+                        room_name = et.getText().toString();
+                        Toast.makeText(getContext(), "방 제목 : " +room_name + " 스트리밍 시작", Toast.LENGTH_SHORT).show();
+
+                        dialog.dismiss();     //닫기
+
+
+                        //확인 버튼을 누르면 서버로 가서 방을 생성하고 방번호를 받아온다
+                        //이때 DB에 저장할 것 (방장 이메일, 방제목, Stream_Name, 시청자 목록, 시청자 수)
+                        //받아온 방번호와 함께 방번호(for 채팅), 방제목, 방장이름(@빼고), StreamName(이메일)를 인텐트로 Streaming_Activity에 넘긴다
+                        //방송 시작 버튼을 누르면 방이 만들어진다
+
+                        Streaming_Key_Function();
+
+
+
+
+
+                        //서버 측
+
+
+
+
+                        // Event
+                    }
+                });
+
+
+                // 취소 버튼 설정
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Toast.makeText(getContext(), "취소하셨습니다", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();     //닫기
+                        // Event
+                    }
+                });
+
+
+                //창띄우기
+                ad.show();
+
+
+                // 서버 - DB에 방만들기
+                //서버에 보낼 정보 -> 이메일, 본인이 설정한 방제목
+
+
+
             }
         });
 
@@ -433,6 +533,75 @@ public class Tab5 extends Fragment {
             Log.d(TAG, "showResult : ", e);
         }
 
+    }
+
+
+
+
+
+
+    // 스트리밍 시작 전 DB값에 빈방 추가
+    // 빈방을 추가하기 전에 이미 있는 방인지 확인한다
+    public void Streaming_Key_Function() {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                Toast.makeText(getActivity(), chatResponseMsg, Toast.LENGTH_LONG).show();
+
+
+                Log.d("스트리밍 방 번호 가져오기",chatResponseMsg);
+
+
+
+                //인텐트로 던지기
+                Intent intent = new Intent(getActivity(), Streaming_Activity.class);
+
+                intent.putExtra("streaming_no", chatResponseMsg );
+                intent.putExtra("room_name", room_name );
+                intent.putExtra("StreamName", EmailHolder );
+
+
+
+
+                int idx = EmailHolder.indexOf("@");
+                String NameHolder = EmailHolder.substring(0, idx);
+
+                //intent.putExtra("Streamer", NameHolder);
+
+
+
+                //필요한 정보들을 넘기고 방송을 시작했을 때 -> DB를 통해 방 만들기
+                startActivity(intent);
+
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/streaming_key.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute();
     }
 
 

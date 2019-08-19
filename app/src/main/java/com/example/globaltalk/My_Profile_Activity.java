@@ -1,7 +1,9 @@
 package com.example.globaltalk;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,8 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -25,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 public class My_Profile_Activity extends AppCompatActivity {
 
@@ -57,6 +62,12 @@ public class My_Profile_Activity extends AppCompatActivity {
 
     String EmailHolder;
 
+    HashMap<String, String> hashMap = new HashMap<>();
+    HttpParse httpParse = new HttpParse();
+    String finalResult;
+
+
+
     //프로필 사진
     private ImageView friend_image;
 
@@ -81,10 +92,19 @@ public class My_Profile_Activity extends AppCompatActivity {
     private ImageView friend_img2;
     private ImageView friend_img3;
 
-    private Button button_change;
+    //private Button button_change;
 
     String f_follower;
     String f_following;
+
+    //프로필 수정 버튼
+    private ImageView edit_profile_button1;
+
+    //개인 방송 버튼
+    private ImageView start_streaming_button1;
+
+    //다이얼로그 창에 입력하는 방 제목
+    String room_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +124,8 @@ public class My_Profile_Activity extends AppCompatActivity {
 
         friends_intro = (TextView) findViewById(R.id.friends_intro);
 
-        button_change = findViewById(R.id.button_change);
-
+        edit_profile_button1 = findViewById(R.id.edit_profile_button1);
+        start_streaming_button1 = findViewById(R.id.start_streaming_button1);
 
 
 
@@ -151,7 +171,7 @@ public class My_Profile_Activity extends AppCompatActivity {
         });
 
 
-        button_change.setOnClickListener(new View.OnClickListener() {
+        edit_profile_button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -162,6 +182,86 @@ public class My_Profile_Activity extends AppCompatActivity {
                 startActivity(intent5);
             }
         });
+
+
+
+
+        //스트리밍 버튼
+        start_streaming_button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                // 방 제목을 입력하는 다이얼로그 창
+                AlertDialog.Builder ad = new AlertDialog.Builder(My_Profile_Activity.this);
+
+                ad.setTitle("방 제목");       // 제목 설정
+                ad.setMessage("방송 제목을 설정해주세요");   // 내용 설정
+
+                // EditText 삽입하기
+                final EditText et = new EditText(My_Profile_Activity.this);
+                ad.setView(et);
+
+
+                // 확인 버튼 설정
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // Text 값 받아서 로그 남기기
+                        room_name = et.getText().toString();
+                        Toast.makeText(My_Profile_Activity.this, "방 제목 : " +room_name + " 스트리밍 시작", Toast.LENGTH_SHORT).show();
+
+                        dialog.dismiss();     //닫기
+
+
+                        //확인 버튼을 누르면 서버로 가서 방을 생성하고 방번호를 받아온다
+                        //이때 DB에 저장할 것 (방장 이메일, 방제목, Stream_Name, 시청자 목록, 시청자 수)
+                        //받아온 방번호와 함께 방번호(for 채팅), 방제목, 방장이름(@빼고), StreamName(이메일)를 인텐트로 Streaming_Activity에 넘긴다
+                        //방송 시작 버튼을 누르면 방이 만들어진다
+
+                        Streaming_Key_Function();
+
+
+
+
+
+                        //서버 측
+
+
+
+
+                        // Event
+                    }
+                });
+
+
+                // 취소 버튼 설정
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Toast.makeText(My_Profile_Activity.this, "취소하셨습니다", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();     //닫기
+                        // Event
+                    }
+                });
+
+
+                //창띄우기
+                ad.show();
+
+
+                // 서버 - DB에 방만들기
+                //서버에 보낼 정보 -> 이메일, 본인이 설정한 방제목
+
+
+            }
+        });
+
+
+
+
 
 
         //나를 팔로우 한사람 목록    following목록에 내가 포함된 리스트     select * from global where following목록 like %,나의이메일%
@@ -400,4 +500,66 @@ public class My_Profile_Activity extends AppCompatActivity {
         }
 
     }
+
+
+    // 스트리밍 시작 전 DB값에 빈방 추가
+    // 빈방을 추가하기 전에 이미 있는 방인지 확인한다
+    public void Streaming_Key_Function() {
+
+        class UserLoginClass extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected void onPostExecute(String chatResponseMsg) {
+
+                super.onPostExecute(chatResponseMsg);
+
+                // 채팅방 키 가져오기
+                Toast.makeText(My_Profile_Activity.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+
+                //인텐트로 던지기
+                Intent intent = new Intent(My_Profile_Activity.this, Streaming_Activity.class);
+
+                intent.putExtra("streaming_no", chatResponseMsg );
+                intent.putExtra("room_name", room_name );
+                intent.putExtra("StreamName", EmailHolder );
+
+
+                int idx = EmailHolder.indexOf("@");
+                String NameHolder = EmailHolder.substring(0, idx);
+
+                intent.putExtra("Streamer", NameHolder);
+
+
+
+                //필요한 정보들을 넘기고 방송을 시작했을 때 -> DB를 통해 방 만들기
+                startActivity(intent);
+
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+
+                finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/streaming_key.php");
+
+                return finalResult;
+            }
+        }
+
+        UserLoginClass userLoginClass = new UserLoginClass();
+
+        userLoginClass.execute();
+    }
+
+
+
+
 }
