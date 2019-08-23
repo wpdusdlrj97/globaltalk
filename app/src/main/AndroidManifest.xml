@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Camera_Activity"></activity>
+        <activity android:name=".Streaming_ListActivity"></activity>
         <activity android:name=".Player_Activity" />
         <activity android:name=".Follower_list_Activity" />
         <activity android:name=".Following_list_Activity" />
@@ -35,7 +35,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Streaming_Activity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Board_editActivity"
             android:screenOrientation="portrait" />

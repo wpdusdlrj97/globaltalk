@@ -55,12 +55,14 @@ public class Pager extends FragmentStatePagerAdapter {
                 tab5.setArguments(bundle);
                 return tab5;
 
+                /*
             case 5:
                 //번들 전달하기
                 //프래그먼트 갱신
                 Tab6 tab6 = new Tab6();
                 tab6.setArguments(bundle);
                 return tab6;
+                */
 
 
             default:

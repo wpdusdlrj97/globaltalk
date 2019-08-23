@@ -14,9 +14,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +40,11 @@ import com.wowza.gocoder.sdk.api.status.WOWZState;
 import com.wowza.gocoder.sdk.api.status.WOWZStatus;
 import com.wowza.gocoder.sdk.api.status.WOWZStatusCallback;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -87,20 +96,60 @@ public class Streaming_Activity extends AppCompatActivity
 
 
     //스트리밍을 위한 준비물 인텐트로 받아오기
-    String streaming_no;
+
     String room_name;
     String StreamName;
-    String Streamer;
+    String TeachHolder;
+    String LearnHolder;
 
     HashMap<String, String> hashMap = new HashMap<>();
     HttpParse httpParse = new HttpParse();
     String finalResult;
 
 
+
+    //채팅
+    //TextView stream_txtMessage;
+    Button stream_btnSend;
+    EditText stream_editMessage;
+
+    Handler msgHandler;
+
+    String IP = "192.168.0.41";
+    String PORT = "9999";
+
+    Socket socket;
+    Context context;
+
+    String stream_message;
+
+    //쓰레드 3개 만들 것
+    SocketClient client;
+    ReceiveThread receive;
+    SendThread send;
+
+
+    String Servermessage;
+    int idx;
+    int idx_name;
+    String chatuser_email;
+    String chatuser_name;
+    String chat_content;
+
+
+    private ArrayList<InStreamingData> isArrayList;
+    private InStreamingAdapter isAdapter;
+    private RecyclerView isRecyclerView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_streaming);
+
+
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
 
         // Initialize the GoCoder SDK
         // 와우자의 GoCoder sdk를 라이센스키를 입력해 시작한다
@@ -146,27 +195,271 @@ public class Streaming_Activity extends AppCompatActivity
         //로그인할 때 받아온 이메일 값
         Intent intent = getIntent();
 
-
-        //나의 이메일
-        streaming_no = intent.getStringExtra("streaming_no");
-        Log.d("스트리밍 방번호", streaming_no);
-
-        //친구의 이름
+        //방 제목
         room_name = intent.getStringExtra("room_name");
         Log.d("스트리밍 방제목",room_name);
-
-        //채팅 유저리스트
+        //스트림 네임
         StreamName = intent.getStringExtra("StreamName");
         Log.d("스트리밍 키", StreamName);
 
-        //Streamer = intent.getStringExtra("Streamer");
-        //Log.d("스트리머 이름", Streamer);
+        TeachHolder = intent.getStringExtra("TeachHolder");
+
+        LearnHolder = intent.getStringExtra("LearnHolder");
 
 
 
+
+
+
+        //스트리밍 채팅
+
+        context = this;
+        stream_editMessage = findViewById(R.id.stream_editMessage);
+        stream_btnSend = findViewById(R.id.stream_btnSend);
+
+        //stream_txtMessage = findViewById(R.id.stream_txtMessage);
+
+
+        isRecyclerView = (RecyclerView) findViewById(R.id.stream_bubble_list);
+        isRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        isArrayList = new ArrayList<>();
+
+        isAdapter = new InStreamingAdapter(this, isArrayList);
+        isRecyclerView.setAdapter(isAdapter);
+
+
+        //onCreate에서 스트리밍 시작 전에은 채팅창 GONE
+        isRecyclerView.setVisibility(View.INVISIBLE);
+        stream_editMessage.setVisibility(View.INVISIBLE);
+        stream_btnSend.setVisibility(View.INVISIBLE);
+        //stream_txtMessage.setVisibility(View.GONE);
+
+
+
+
+
+
+
+        //핸들러는 액티비티가 만들어질 때 여기서 동작한다
+        //안드로이드에서 네트워크 작업을 할 시 백그라운드로 돌려야한다
+        //백그라운드에서는 메인UI를 건드릴 수 없으므로 runOnUi를 쓰든지 핸들러를 써야한다
+        //핸들러는 화면을 고치는 일을 전담한다
+        msgHandler = new Handler() {
+            //메시지 수신시 백그라운드 스레드에서 받은 메시지를 처리
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == 1111) { //1111은 식별자로 핸들러는 하나지만 핸들러를 호출하는 곳은 여러군데일 수 있다
+                    //채팅 서버로부터 수신한 메시지를 텍스트뷰에 추가
+
+                    //서버로부터 받은 메시지형태 -> heungmin@naver.com : aaaaa
+                    //따라서 이메일과 aaaa를 구분한뒤 adapter에 넣어줘야 한다
+                    Servermessage = msg.obj.toString();
+
+                    idx = Servermessage.indexOf(":");
+
+                    chatuser_email = Servermessage.substring(0, idx);
+
+                    // 뒷부분을 추출
+                    // 아래 substring은 @ 바로 뒷부분인 n부터 추출된다.
+                    chat_content = Servermessage.substring(idx + 1);
+
+                    idx_name = chatuser_email.indexOf("@");
+
+                    chatuser_name = chatuser_email.substring(0, idx_name);
+
+
+                    InStreamingData instreamingData = new InStreamingData();
+
+                    instreamingData.setchat_email(chatuser_email);
+                    Log.d("스트리밍 채팅이메일",chatuser_email);
+
+                    instreamingData.setchat_profile_name(chatuser_name);
+                    Log.d("스트리밍 채팅이름",chatuser_name);
+
+                    instreamingData.setchat_content(chat_content);
+                    Log.d("스트리밍 채팅내용",chat_content);
+
+                    instreamingData.setStream_Name(StreamName);
+
+                    instreamingData.setlearn_login(LearnHolder);
+                    instreamingData.setteach_login(TeachHolder);
+
+
+
+                    isArrayList.add(instreamingData);
+                    Log.d("클라이언트 선 전달2", String.valueOf(instreamingData));
+                    // 밑의 두 방식 모두 가능하지만 첫번쨰 notifyDatasetchange는 깜빡거리고 insert는 그떄 뷰만 추가
+                    //icAdapter.notifyDataSetChanged();
+                    isAdapter.notifyItemInserted(isArrayList.size());
+                    isRecyclerView.smoothScrollToPosition(isAdapter.getItemCount() - 1);
+                    //stream_txtMessage.append(msg.obj.toString() + "\n");
+
+
+
+
+                }
+            }
+        };
+
+
+        //서버에 메시지를 전송하는 버튼
+        stream_btnSend.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                /////////자바 서버로 보내기/////////
+                //사용자가 입력한 메시지
+                stream_message = stream_editMessage.getText().toString();
+                //입력한 메시지가 null도 아니고 빈값도 아닐 시
+                if (!stream_message.equals("")) {
+                    //send 쓰레드를 전송용 쓰레드를 만들어서 호출
+                    send = new SendThread(socket);
+                    send.start();
+                    stream_editMessage.setText("");
+                }
+
+
+
+
+            }
+        });
 
 
     }
+
+
+
+    //채팅 내부 클래스
+    //내부 클래스
+    class SocketClient extends Thread {
+        boolean threadAlive; //쓰레드의 동작여부 (필요한 이유-> 앱은 종료되는데 쓰레드가 죽지않는 경우 때문에)
+        String ip;
+        String port;
+        OutputStream outputStream = null;
+        DataOutputStream output = null;
+
+        public SocketClient(String ip, String port) {
+            threadAlive = true;
+            this.ip = ip;
+            this.port = port;
+        }
+
+        public void run() {
+            try {
+                //채팅서버에 접속 (IP와 포트번호를 전달 시 accept 대기상태인 서버에서 소켓을 만들어준다)
+                socket = new Socket(ip, Integer.parseInt(port));
+                //서버에 메시지를 전달하기 위한 스트림 생성
+                output = new DataOutputStream(socket.getOutputStream());
+                //서버에서 받은 메시지를 수신하는 스레드 생성
+                receive = new ReceiveThread(socket);
+                receive.start();
+
+
+                //방번호 -> DB의 고유한 키값
+                output.writeUTF(StreamName);
+                Log.d("Room",StreamName);
+
+                //식별자 -> 나의 이메일
+                output.writeUTF(StreamName);
+                Log.d("MyEmail", StreamName);
+
+
+                //서버 코드
+                //InetAddress ip=socket.getInetAddress();
+                //System.out.println(ip+" connected");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }// 소켓 클라이언트 쓰레드의 끝
+
+
+    //내부 클래스 (메시지 수신용 쓰레드) 메시지를 받는 역할을 한다
+    class ReceiveThread extends Thread {
+        Socket socket = null;
+        DataInputStream input = null;
+
+        public ReceiveThread(Socket socket) {
+            this.socket = socket;
+            try {
+                //채팅서버로부터 메시지를 받기 위한 스트림 생성
+                input = new DataInputStream(socket.getInputStream());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        public void run() {
+            try {
+                while (input != null) {
+                    //채팅 서버로부터 받은 메시지
+                    String msg = input.readUTF();
+                    if (msg != null) {
+                        //핸들러에게 전달할 메시지 객체
+                        Message hdmsg = msgHandler.obtainMessage();
+                        hdmsg.what = 1111; //메시지의 식별자
+                        hdmsg.obj = msg; //메시지의 본문
+                        //핸들러에게 메시지 전달(화면 변경 요청)
+                        msgHandler.sendMessage(hdmsg);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }// 수신용 쓰레드 클래스의 끝
+
+
+    //내부 클래스
+    class SendThread extends Thread {
+        Socket socket;
+        String sendmsg = stream_editMessage.getText().toString();
+        DataOutputStream output;
+
+        public SendThread(Socket socket) {
+            this.socket = socket;
+            try {
+                //채팅서버로 메시지를 보내기 위한  스트림 생성
+                output = new DataOutputStream(socket.getOutputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run() {
+            try {
+                if (output != null) {
+                    if (sendmsg != null) {
+                        output.writeUTF(StreamName + ":" + sendmsg);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
 
     //
 // Enable Android's immersive, sticky full-screen mode
@@ -259,7 +552,7 @@ public class Streaming_Activity extends AppCompatActivity
 
         // Create a configuration instance for the broadcaster
         // 방송 송신 관련 설정을 위한 객체 생성
-        goCoderBroadcastConfig = new WOWZBroadcastConfig(WOWZMediaConfig.FRAME_SIZE_1920x1080);
+        goCoderBroadcastConfig = new WOWZBroadcastConfig(WOWZMediaConfig.FRAME_SIZE_640x480);
 
 
         // Set the connection properties for the target Wowza Streaming Engine server or Wowza Streaming Cloud live stream
@@ -306,6 +599,16 @@ public class Streaming_Activity extends AppCompatActivity
             goCoderBroadcaster.endBroadcast(this);
 
             timeThread.interrupt();
+
+            //방 삭제해주기
+            Streaming_delete_Function(StreamName);
+
+            //onCreate에서 스트리밍 시작 전에은 채팅창 GONE
+            //stream_editMessage.setVisibility(View.GONE);
+            //stream_btnSend.setVisibility(View.GONE);
+            //stream_txtMessage.setVisibility(View.GONE);
+
+            //clear();
 
             Toast.makeText(this, "스트리밍 종료", Toast.LENGTH_SHORT).show();
 
@@ -388,7 +691,7 @@ public class Streaming_Activity extends AppCompatActivity
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(Streaming_Activity.this, statusMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(Streaming_Activity.this, statusMessage, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -441,7 +744,17 @@ public class Streaming_Activity extends AppCompatActivity
 
 
             //방송 끌 시에는 방 없애기
-            Streaming_delete_Function(streaming_no);
+            Streaming_delete_Function(StreamName);
+
+
+            //스트리밍 종료 후에는 채팅창 GONE
+            stream_editMessage.setVisibility(View.INVISIBLE);
+            stream_btnSend.setVisibility(View.INVISIBLE);
+            isRecyclerView.setVisibility(View.INVISIBLE);
+            //stream_txtMessage.setVisibility(View.GONE);
+
+            //스트리밍 종료 후 해당 채팅 삭제
+            //clear();
 
 
 
@@ -458,16 +771,39 @@ public class Streaming_Activity extends AppCompatActivity
             timeThread.start();
 
 
-            //방송 시작 시 DB에 정보 업데이트하기
-            Streaming_Start_Function(StreamName, room_name, streaming_no);
 
-            Log.d("정보", StreamName);
-            Log.d("정보", room_name);
-            Log.d("정보", streaming_no);
+            //방송 시작 시 채팅 소켓 연결
+            client = new SocketClient(IP, PORT);
+            //client 스타트시 SocketClient에서 run 메서드를 돌린다다
+            client.start();
+
+
+
+            //방송 시작 시 DB에 정보 넣어주기 (Insert로)
+            Streaming_Start_Function(StreamName,room_name);
+
+            //스트리밍 시작 후에는 채팅창 VISIBLE
+            stream_editMessage.setVisibility(View.VISIBLE);
+            stream_btnSend.setVisibility(View.VISIBLE);
+            isRecyclerView.setVisibility(View.VISIBLE);
+
+
+
+            //재시작할 때 채팅한 것 없애기
+            //리사이클러뷰 초기화후, 재정렬
+            isArrayList.clear();
+            isAdapter.notifyDataSetChanged();
+
+
+
+
 
 
         }
     }
+
+
+
 
 
     @SuppressLint("HandlerLeak")
@@ -530,7 +866,7 @@ public class Streaming_Activity extends AppCompatActivity
 
 
     //스트리밍 방 생성 함수
-    public void Streaming_Start_Function(final String stream_name, final String room_name, final String streaming_no) {
+    public void Streaming_Start_Function(final String stream_name, final String room_name) {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -545,8 +881,8 @@ public class Streaming_Activity extends AppCompatActivity
 
                 super.onPostExecute(httpResponseMsg);
 
-                //'좋아요를 누르셨습니다' 토스트
-                Toast.makeText(Streaming_Activity.this, httpResponseMsg, Toast.LENGTH_LONG).show();
+                //'스트리밍을 시작하였습니다' 토스트
+                Toast.makeText(Streaming_Activity.this, httpResponseMsg, Toast.LENGTH_SHORT).show();
 
 
 
@@ -559,8 +895,6 @@ public class Streaming_Activity extends AppCompatActivity
 
                 hashMap.put("room_name", params[1]);
 
-                hashMap.put("streaming_no", params[2]);
-
                 finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/streaming_start.php");
 
                 return finalResult;
@@ -569,7 +903,7 @@ public class Streaming_Activity extends AppCompatActivity
 
         UserLoginClass userLoginClass = new UserLoginClass();
 
-        userLoginClass.execute(stream_name, room_name, streaming_no);
+        userLoginClass.execute(stream_name, room_name);
     }
 
 
@@ -577,7 +911,7 @@ public class Streaming_Activity extends AppCompatActivity
 
 
     // 스트리밍 방 삭제 함수
-    public void Streaming_delete_Function(final String streaming_no) {
+    public void Streaming_delete_Function(final String stream_name) {
 
         class UserLoginClass extends AsyncTask<String, Void, String> {
 
@@ -592,8 +926,8 @@ public class Streaming_Activity extends AppCompatActivity
 
                 super.onPostExecute(chatResponseMsg);
 
-                // 채팅방 키 가져오기
-                //Toast.makeText(Chat9.this, chatResponseMsg, Toast.LENGTH_LONG).show();
+                // 스트리밍 종료 토스트
+                Toast.makeText(Streaming_Activity.this, chatResponseMsg, Toast.LENGTH_SHORT).show();
 
 
             }
@@ -601,7 +935,7 @@ public class Streaming_Activity extends AppCompatActivity
             @Override
             protected String doInBackground(String... params) {
 
-                hashMap.put("streaming_no", params[0]);
+                hashMap.put("stream_name", params[0]);
 
 
                 finalResult = httpParse.postRequest(hashMap, "http://54.180.122.247/global_communication/streaming_delete.php");
@@ -612,7 +946,7 @@ public class Streaming_Activity extends AppCompatActivity
 
         UserLoginClass userLoginClass = new UserLoginClass();
 
-        userLoginClass.execute(streaming_no);
+        userLoginClass.execute(stream_name);
     }
 
 

@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_selector3));
                 tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_selector4));
                 tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_selector5));
-                tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_selector6));
+                //tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_selector6));
                 tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
                 //Initializing viewPager

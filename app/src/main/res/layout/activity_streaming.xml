@@ -1,57 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:wowza="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_main"
+    android:id="@+id/activity_streaming"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
 
     <!-- The camera preview display -->
     <com.wowza.gocoder.sdk.api.devices.WOWZCameraView
         android:id="@+id/camera_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="414dp"
+        android:layout_height="738dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         wowza:defaultCamera="back"
-        wowza:frameSizePreset="frameSize1280x720"
+        wowza:frameSizePreset="frameSize640x480"
+        wowza:layout_constraintBottom_toBottomOf="parent"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintHorizontal_bias="0.421"
+        wowza:layout_constraintStart_toStartOf="parent"
+        wowza:layout_constraintTop_toTopOf="parent"
+        wowza:layout_constraintVertical_bias="0.521"
         wowza:scaleMode="fill" />
+
+
+    <!-- Camera Switch Button -->
+    <ImageView
+        android:id="@+id/switch_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_switch_camera"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintHorizontal_bias="0.026"
+        wowza:layout_constraintStart_toStartOf="parent"
+        wowza:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/timeView"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="8dp"
+        android:text="00:00:00"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="25sp"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintHorizontal_bias="0.583"
+        wowza:layout_constraintStart_toStartOf="parent"
+        wowza:layout_constraintTop_toTopOf="@+id/camera_preview" />
 
     <!-- The broadcast button -->
     <ImageView
         android:id="@+id/broadcast_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:src="@drawable/ic_start" />
+        android:layout_gravity="center"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="24dp"
+        android:src="@drawable/ic_start"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
-        android:id="@+id/timeView"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="139dp"
-        android:layout_marginTop="20dp"
-        android:text="00:00:00"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="25sp" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/stream_bubble_list"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="#4D000000"
+        android:padding="3dp"
+        wowza:layout_constraintBottom_toTopOf="@+id/stream_editMessage"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintHorizontal_bias="0.0"
+        wowza:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Camera Switch Button -->
-    <ImageView
-        android:id="@+id/switch_camera"
-        android:layout_width="110dp"
-        android:layout_height="85dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="299dp"
-        android:src="@drawable/ic_switch_camera" />
+    <EditText
+        android:id="@+id/stream_editMessage"
+        android:layout_width="293dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="36dp"
+        android:ems="10"
+        android:hint="채팅을 작성하세요"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        wowza:layout_constraintBottom_toBottomOf="parent"
+        wowza:layout_constraintEnd_toStartOf="@+id/stream_btnSend"
+        wowza:layout_constraintHorizontal_bias="0.0"
+        wowza:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/stream_btnSend"
+        android:layout_width="88dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="전송"
+        wowza:layout_constraintBottom_toBottomOf="@+id/stream_editMessage"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintTop_toTopOf="@+id/stream_editMessage"
+        wowza:layout_constraintVertical_bias="1.0" />
 
 
-</RelativeLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>

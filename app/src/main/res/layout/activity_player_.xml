@@ -1,22 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:wowza="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_main"
+    android:id="@+id/activity_player_"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000000">
-
+    android:layout_height="match_parent">
 
 
     <com.wowza.gocoder.sdk.api.player.WOWZPlayerView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
         android:id="@+id/vwStreamPlayer"
+        android:layout_width="420dp"
+        android:layout_height="726dp"
         android:layout_alignParentStart="false"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        wowza:layout_constraintBottom_toBottomOf="parent"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintHorizontal_bias="0.545"
+        wowza:layout_constraintStart_toStartOf="parent"
+        wowza:layout_constraintTop_toTopOf="parent"
+        wowza:layout_constraintVertical_bias="0.333" />
+
+    <ImageView
+        android:id="@+id/streaming_exit_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/exit"
+        wowza:layout_constraintBottom_toBottomOf="parent"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintHorizontal_bias="0.977"
+        wowza:layout_constraintStart_toStartOf="parent"
+        wowza:layout_constraintTop_toTopOf="parent"
+        wowza:layout_constraintVertical_bias="0.025" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/player_bubble_list"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:layout_margin="3dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#4D000000"
+        android:padding="3dp"
+        tools:layout_editor_absoluteX="3dp"
+        wowza:layout_constraintBottom_toTopOf="@+id/player_editMessage"
+        wowza:layout_constraintTop_toTopOf="@+id/vwStreamPlayer"
+        wowza:layout_constraintVertical_bias="0.805" />
+
+    <EditText
+        android:id="@+id/player_editMessage"
+        android:layout_width="293dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:hint="채팅을 작성하세요"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        wowza:layout_constraintBottom_toBottomOf="parent"
+        wowza:layout_constraintEnd_toStartOf="@+id/player_btnSend"
+        wowza:layout_constraintHorizontal_bias="1.0"
+        wowza:layout_constraintStart_toStartOf="parent"
+        wowza:layout_constraintTop_toTopOf="parent"
+        wowza:layout_constraintVertical_bias="0.953" />
+
+    <Button
+        android:id="@+id/player_btnSend"
+        android:layout_width="88dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="전송"
+        wowza:layout_constraintBottom_toBottomOf="@+id/player_editMessage"
+        wowza:layout_constraintEnd_toEndOf="parent"
+        wowza:layout_constraintTop_toTopOf="@+id/player_editMessage"
+        wowza:layout_constraintVertical_bias="1.0" />
 
 
 
-</RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
