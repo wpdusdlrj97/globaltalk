@@ -20,10 +20,20 @@
             android:textSize="19dp" />
 
         <TextView
+            android:id="@+id/watch_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="150dp"
+            android:text="뉴스 보기"
+            android:background="@drawable/chat_bubble_translate"
+            android:textColor="@android:color/black"
+            android:textSize="19dp" />
+
+        <TextView
             android:id="@+id/watch_streaming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="190dp"
+            android:layout_marginLeft="10dp"
             android:text="스트리밍 보기"
             android:background="@drawable/chat_bubble_translate"
             android:textColor="@android:color/black"
@@ -366,6 +376,14 @@
 
 
     </LinearLayout>
+
+
+    <Button
+        android:id="@+id/Logout_Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="로그아웃"/>
+
 
 
 </LinearLayout>

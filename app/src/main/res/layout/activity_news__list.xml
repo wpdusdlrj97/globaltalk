@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="스트리밍"
+            android:text="뉴스"
             android:layout_marginLeft="5dp"
             android:textColor="@android:color/black"
             android:textSize="29dp" />
@@ -44,7 +44,7 @@
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/streaming_main_list"
+            android:id="@+id/news_main_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="3dp"

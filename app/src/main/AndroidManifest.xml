@@ -20,7 +20,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Streaming_ListActivity"></activity>
+        <activity android:name=".News_watchActivity"></activity>
+        <activity android:name=".News_ListActivity" />
+        <activity android:name=".Streaming_ListActivity" />
         <activity android:name=".Player_Activity" />
         <activity android:name=".Follower_list_Activity" />
         <activity android:name=".Following_list_Activity" />
